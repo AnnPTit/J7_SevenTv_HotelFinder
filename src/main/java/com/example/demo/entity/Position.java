@@ -2,8 +2,8 @@ package com.example.demo.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -13,7 +13,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
-
 
 import java.util.Date;
 import java.util.List;
@@ -28,10 +27,9 @@ import java.util.UUID;
 @Entity
 @Table(name = "position")
 public class Position {
-   @Id
+    @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
-    @GeneratedValue(generator = "ganerator")
     @GeneratedValue(generator = "ganerator")
     private UUID id;
 
@@ -62,7 +60,7 @@ public class Position {
     @Column(name = "status")
     private Integer status;
 
-    @OneToMany(mappedBy = "positionId", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "position", fetch = FetchType.LAZY)
     private List<Account> accountList;
 
 
