@@ -23,10 +23,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "history_transaction")
 public class HistoryTransaction {
+
     @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
@@ -60,6 +60,5 @@ public class HistoryTransaction {
 
     @Column(name = "status")
     private Integer status;
-
 
 }

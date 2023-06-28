@@ -23,10 +23,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "service_type")
 public class ServiceType {
+
     @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
@@ -62,6 +62,5 @@ public class ServiceType {
 
     @OneToMany(mappedBy = "serviceType", fetch = FetchType.LAZY)
     private List<Service> serviceList;
-
 
 }

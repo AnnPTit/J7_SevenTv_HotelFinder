@@ -23,10 +23,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "floor")
 public class Floor {
+
     @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
@@ -62,6 +62,5 @@ public class Floor {
 
     @OneToMany(mappedBy = "floor", fetch = FetchType.LAZY)
     private List<Room> roomList;
-
 
 }

@@ -17,23 +17,24 @@ import org.hibernate.annotations.GenericGenerator;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "payment_method")
 public class PaymentMethod {
-  @Id
+
+    @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
     @GeneratedValue(generator = "ganerator")
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "order_id" , nullable = false)
+    @JoinColumn(name = "order_id", nullable = false)
     private Order orderPayMent;
 
     @Column(name = "payment_method_code")
@@ -62,6 +63,5 @@ public class PaymentMethod {
 
     @Column(name = "status")
     private Integer status;
-
 
 }

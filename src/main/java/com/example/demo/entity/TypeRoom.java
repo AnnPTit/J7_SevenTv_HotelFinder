@@ -24,10 +24,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "type_room")
 public class TypeRoom {
+
     @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
@@ -79,7 +79,7 @@ public class TypeRoom {
     @Column(name = "status")
     private Integer status;
 
-
     @OneToMany(mappedBy = "typeRoom", fetch = FetchType.LAZY)
     private List<Room> roomList;
+
 }

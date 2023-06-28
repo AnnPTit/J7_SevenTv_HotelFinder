@@ -18,23 +18,24 @@ import java.math.BigDecimal;
 import java.util.Date;
 
 import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "combo_service")
 public class ComboService {
-  @Id
+
+    @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
     @GeneratedValue(generator = "ganerator")
     private UUID id;
 
-   @ManyToOne
-   @JoinColumn(name = "service_id" , nullable = false)
+    @ManyToOne
+    @JoinColumn(name = "service_id", nullable = false)
     private Service service;
 
     @ManyToOne
@@ -61,6 +62,5 @@ public class ComboService {
 
     @Column(name = "status")
     private Integer status;
-
 
 }

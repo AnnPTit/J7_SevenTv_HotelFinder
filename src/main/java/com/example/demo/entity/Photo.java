@@ -21,11 +21,11 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "photo")
 public class Photo {
-  @Id
+
+    @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
     @GeneratedValue(generator = "ganerator")
@@ -61,6 +61,5 @@ public class Photo {
 
     @Column(name = "status")
     private Integer status;
-
 
 }

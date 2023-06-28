@@ -14,16 +14,17 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
 import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "deposit")
 public class Deposit {
-  @Id
+
+    @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
     @GeneratedValue(generator = "ganerator")
@@ -52,6 +53,5 @@ public class Deposit {
 
     @Column(name = "status")
     private Integer status;
-
 
 }

@@ -25,6 +25,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "book_room")
 public class BookRoom {
+
     @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
@@ -71,6 +72,5 @@ public class BookRoom {
 
     @Column(name = "status")
     private Integer status;
-
 
 }

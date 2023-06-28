@@ -23,10 +23,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "position")
 public class Position {
+
     @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
@@ -62,6 +62,5 @@ public class Position {
 
     @OneToMany(mappedBy = "position", fetch = FetchType.LAZY)
     private List<Account> accountList;
-
 
 }

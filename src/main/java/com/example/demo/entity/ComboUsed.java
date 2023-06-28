@@ -17,27 +17,28 @@ import org.hibernate.annotations.GenericGenerator;
 import java.util.Date;
 
 import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "combo_used")
 public class ComboUsed {
-  @Id
+
+    @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
     @GeneratedValue(generator = "ganerator")
     private UUID id;
 
     @ManyToOne
-    @JoinColumn(name = "combo_id" , nullable = false)
+    @JoinColumn(name = "combo_id", nullable = false)
     private Combo combo;
 
     @ManyToOne
-    @JoinColumn(name = "order_detail_id" , nullable = false)
+    @JoinColumn(name = "order_detail_id", nullable = false)
     private OrderDetail orderDetail;
 
     @Column(name = "quantity")
@@ -63,6 +64,5 @@ public class ComboUsed {
 
     @Column(name = "status")
     private Integer status;
-
 
 }

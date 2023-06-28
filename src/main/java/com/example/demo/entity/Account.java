@@ -28,6 +28,7 @@ import java.util.UUID;
 @Builder
 @Table(name = "account")
 public class Account {
+
     @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
@@ -82,6 +83,5 @@ public class Account {
 
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     private List<Order> orderList;
-
 
 }

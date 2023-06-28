@@ -28,6 +28,7 @@ import java.util.UUID;
 @Entity
 @Table(name = "combo")
 public class Combo {
+
     @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
@@ -66,8 +67,8 @@ public class Combo {
 
     @OneToMany(mappedBy = "combo", fetch = FetchType.LAZY)
     private List<ComboService> comboServiceList;
+
     @OneToMany(mappedBy = "combo", fetch = FetchType.LAZY)
     private List<ComboUsed> comboUsedList;
-
 
 }

@@ -26,10 +26,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "order")
 public class Order {
+
     @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
@@ -97,8 +97,10 @@ public class Order {
 
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<HistoryTransaction> historyTransactionList;
+
     @OneToMany(mappedBy = "orderPayMent", fetch = FetchType.LAZY)
     private List<PaymentMethod> paymentMethodList;
+
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetailList;
 

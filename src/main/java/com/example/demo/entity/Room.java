@@ -25,10 +25,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "room")
 public class Room {
+
     @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
@@ -69,10 +69,14 @@ public class Room {
 
     @Column(name = "status")
     private Integer status;
+
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<BookRoom> bookRoomList;
+
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<Photo> photoList;
+
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetailList;
+    
 }

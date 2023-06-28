@@ -23,10 +23,10 @@ import java.util.UUID;
 @Getter
 @Setter
 @Builder
-
 @Entity
 @Table(name = "service_used")
 public class ServiceUsed {
+
     @Id
     @Column(name = "id")
     @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
@@ -64,6 +64,5 @@ public class ServiceUsed {
 
     @Column(name = "status")
     private Integer status;
-
 
 }
