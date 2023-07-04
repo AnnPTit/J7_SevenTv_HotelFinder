@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -65,9 +66,11 @@ public class Combo {
     @Column(name = "status")
     private Integer status;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "combo", fetch = FetchType.LAZY)
     private List<ComboService> comboServiceList;
 
+    @JsonIgnore
     @OneToMany(mappedBy = "combo", fetch = FetchType.LAZY)
     private List<ComboUsed> comboUsedList;
 

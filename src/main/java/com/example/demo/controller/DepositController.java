@@ -28,7 +28,7 @@ public class DepositController {
     public List<Deposit> getAll() {
         return depositService.getAll();
     }
-    
+
     @GetMapping( "/detail/{id}")
     public ResponseEntity<Deposit> detail(@PathVariable("id") UUID id) {
         Deposit deposit = depositService.getDepositById(id);
