@@ -7,5 +7,5 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface ComboRepository extends JpaRepository<Combo, UUID> {
+public interface ComboRepository extends JpaRepository<Combo, String> {
 }
