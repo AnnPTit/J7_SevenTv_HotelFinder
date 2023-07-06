@@ -8,9 +8,7 @@ import org.springframework.stereotype.Repository;
 import java.util.UUID;
 
 @Repository
-public interface DepositRepository extends JpaRepository<Deposit, UUID> {
+public interface DepositRepository extends JpaRepository<Deposit, String> {
 
-    @Query(value = "SELECT dp FROM Deposit dp WHERE dp.id=:id")
-    Deposit getDepositById(UUID id);
 
 }

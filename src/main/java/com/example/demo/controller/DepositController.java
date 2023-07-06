@@ -29,8 +29,8 @@ public class DepositController {
         return depositService.getAll();
     }
 
-    @GetMapping( "/detail/{id}")
-    public ResponseEntity<Deposit> detail(@PathVariable("id") UUID id) {
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<Deposit> detail(@PathVariable("id") String id) {
         Deposit deposit = depositService.getDepositById(id);
         System.out.println("Id: " + id);
         System.out.println("Deposit: " + deposit.toString());
@@ -38,19 +38,20 @@ public class DepositController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") UUID id) {
+    public ResponseEntity<String> delete(@PathVariable("id") String id) {
         depositService.delete(id);
-        return new ResponseEntity<String>("Deleted id '"+id+"' successful", HttpStatus.OK);
+        return new ResponseEntity<String>("Deleted id '" + id + "' successful", HttpStatus.OK);
     }
 
     @PostMapping("/save")
     public String add(@RequestBody Deposit deposit) {
+        deposit.setId(UUID.randomUUID().toString());
         depositService.add(deposit);
         return "Add successfully";
     }
-    
+
     @PutMapping("/update/{id}")
-    public ResponseEntity<Deposit> update(@PathVariable("id") UUID id, @RequestBody Deposit deposit) {
+    public ResponseEntity<Deposit> update(@PathVariable("id") String id, @RequestBody Deposit deposit) {
         Deposit dps = depositService.getDepositById(id);
         dps.setPileValue(deposit.getPileValue());
         dps.setUnit(deposit.getUnit());

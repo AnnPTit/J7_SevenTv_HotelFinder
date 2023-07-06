@@ -21,8 +21,8 @@ public class DepositServiceImpl implements DepositService {
     }
 
     @Override
-    public Deposit getDepositById(UUID id) {
-        return depositRepository.getDepositById(id);
+    public Deposit getDepositById(String id) {
+        return depositRepository.findById(id).orElse(null);
     }
 
     @Override
@@ -31,7 +31,7 @@ public class DepositServiceImpl implements DepositService {
     }
 
     @Override
-    public void delete(UUID id) {
+    public void delete(String id) {
          depositRepository.deleteById(id);
     }
 }

@@ -9,10 +9,10 @@ public interface DepositService {
 
     List<Deposit> getAll();
 
-    Deposit getDepositById(UUID id);
+    Deposit getDepositById(String id);
 
     Deposit add(Deposit deposit);
 
-    void delete(UUID id);
+    void delete(String id);
 
 }

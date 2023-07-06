@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -32,11 +33,10 @@ import java.util.UUID;
 @Table(name = "service")
 public class Service {
 
-    @Id
+   @Id
     @Column(name = "id")
-    @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
-    @GeneratedValue(generator = "ganerator")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @ManyToOne
     @JoinColumn(name = "service_type_id", nullable = false)
@@ -62,16 +62,16 @@ public class Service {
     private Date createAt;
 
     @Column(name = "create_by")
-    private UUID createBy;
+    private String createBy;
 
     @Column(name = "update_at")
     private Date updateAt;
 
     @Column(name = "updated_by")
-    private UUID updatedBy;
+    private String updatedBy;
 
     @Column(name = "deleted")
-    private UUID deleted;
+    private String deleted;
 
     @Column(name = "status")
     private Integer status;

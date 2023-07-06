@@ -5,6 +5,7 @@ import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
 import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
@@ -29,11 +30,10 @@ import java.util.UUID;
 @Table(name = "type_room")
 public class TypeRoom {
 
-    @Id
+   @Id
     @Column(name = "id")
-    @GenericGenerator(name = "ganerator", strategy = "uuid2", parameters = {})
-    @GeneratedValue(generator = "ganerator")
-    private UUID id;
+    @GeneratedValue(strategy = GenerationType.UUID)
+    private String id;
 
     @Column(name = "type_room_code")
     private String typeRoomCode;
@@ -66,16 +66,16 @@ public class TypeRoom {
     private Date createAt;
 
     @Column(name = "create_by")
-    private UUID createBy;
+    private String createBy;
 
     @Column(name = "update_at")
     private Date updateAt;
 
     @Column(name = "updated_by")
-    private UUID updatedBy;
+    private String updatedBy;
 
     @Column(name = "deleted")
-    private UUID deleted;
+    private String deleted;
 
     @Column(name = "status")
     private Integer status;

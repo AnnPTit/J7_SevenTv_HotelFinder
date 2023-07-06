@@ -12,6 +12,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
 import java.util.UUID;
@@ -27,9 +28,9 @@ import java.util.UUID;
 public class Deposit {
 
     @Id
-    @Column(name = "id", unique = true, nullable = false, length = 36)
+    @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
-    private UUID id;
+    private String id;
 
     @Column(name = "pile_value")
     private Integer pileValue;
@@ -41,18 +42,20 @@ public class Deposit {
     private Date createAt;
 
     @Column(name = "create_by")
-    private UUID createBy;
+    private String createBy;
 
     @Column(name = "update_at")
     private Date updateAt;
 
     @Column(name = "updated_by")
-    private UUID updatedBy;
+    private String updatedBy;
 
     @Column(name = "deleted")
-    private UUID deleted;
+    private String deleted;
 
     @Column(name = "status")
     private Integer status;
+
+
 
 }
