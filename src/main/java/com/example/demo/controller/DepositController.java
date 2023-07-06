@@ -45,7 +45,6 @@ public class DepositController {
 
     @PostMapping("/save")
     public String add(@RequestBody Deposit deposit) {
-        deposit.setId(UUID.randomUUID().toString());
         depositService.add(deposit);
         return "Add successfully";
     }
