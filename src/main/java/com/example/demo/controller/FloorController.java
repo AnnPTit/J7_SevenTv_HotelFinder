@@ -2,8 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Deposit;
 import com.example.demo.entity.Floor;
+import com.example.demo.entity.Unit;
 import com.example.demo.service.FloorService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -13,6 +17,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
@@ -26,8 +31,10 @@ public class FloorController {
     private FloorService floorService;
 
     @GetMapping("load")
-    public List<Floor> getAll() {
-        return floorService.getAll();
+    public List<Floor> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        Page<Floor> page = floorService.getAll(pageable);
+        return page.getContent();
     }
 
     @GetMapping("detail/{id}")
@@ -58,7 +65,7 @@ public class FloorController {
     @DeleteMapping("delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         floorService.delete(id);
-        return new ResponseEntity<String>("Deleted "+id+" successfully", HttpStatus.OK);
+        return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 
 }
