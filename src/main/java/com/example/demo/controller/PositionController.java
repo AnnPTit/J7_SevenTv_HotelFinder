@@ -17,10 +17,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @RestController
-@RequestMapping("/position")
+@RequestMapping("/api/position")
 public class PositionController {
 
     @Autowired
