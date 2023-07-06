@@ -30,9 +30,9 @@ import java.util.UUID;
 public class Position {
 
    @Id
-    @Column(name = "id")
-    @GeneratedValue(strategy = GenerationType.UUID)
-    private String id;
+   @Column(name = "id")
+   @GeneratedValue(strategy = GenerationType.UUID)
+   private String id;
 
     @Column(name = "position_code")
     private String positionCode;
