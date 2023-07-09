@@ -36,8 +36,13 @@ public class UnitController {
     }
 
     @GetMapping("/detail/{id}")
-    public ResponseEntity<Unit> detail(@PathVariable("id") String id) {
-        return ResponseEntity.ok(unitService.getById(id));
+    public ResponseEntity<?> detail(@PathVariable("id") String id) {
+        Unit unit = unitService.getById(id);
+        if (unit == null) {
+            String errorMessage = "Không tìm thấy đối tượng với id: " + id;
+            return ResponseEntity.badRequest().body(errorMessage);
+        }
+        return ResponseEntity.ok(unit);
     }
 
     @PostMapping("/save")
