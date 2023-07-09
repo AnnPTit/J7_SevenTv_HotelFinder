@@ -39,7 +39,7 @@ public class FloorServiceImpl implements FloorService {
         try {
             floorRepository.deleteById(id);
         } catch (Exception e) {
-            System.out.println("Add error!");
+            System.out.println("Delete error!");
         }
     }
 }
