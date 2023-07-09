@@ -1,7 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Floor;
-import com.example.demo.service.FloorService;
+import com.example.demo.entity.TypeRoom;
+import com.example.demo.service.TypeRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -24,47 +25,44 @@ import java.util.List;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/floor")
-public class FloorController {
+@RequestMapping("/api/type-room")
+public class TypeRoomController {
 
     @Autowired
-    private FloorService floorService;
+    private TypeRoomService typeRoomService;
 
     @GetMapping("/load")
-    public List<Floor> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+    public List<TypeRoom> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        Page<Floor> page = floorService.getAll(pageable);
+        Page<TypeRoom> page = typeRoomService.getAll(pageable);
         return page.getContent();
     }
 
     @GetMapping("/detail/{id}")
-    public ResponseEntity<Floor> detail(@PathVariable("id") String id) {
-        Floor floor = floorService.getFloorById(id);
-        return new ResponseEntity<Floor>(floor, HttpStatus.OK);
+    public ResponseEntity<TypeRoom> detail(@PathVariable("id") String id) {
+        TypeRoom typeRoom = typeRoomService.getTypeRoomById(id);
+        return new ResponseEntity<TypeRoom>(typeRoom, HttpStatus.OK);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Floor> save(@RequestBody Floor floor) {
-        floor.setCreateAt(new Date());
-        floor.setUpdateAt(new Date());
-        floorService.add(floor);
-        return new ResponseEntity<Floor>(floor, HttpStatus.OK);
+    public ResponseEntity<TypeRoom> save(@RequestBody TypeRoom typeRoom) {
+        typeRoom.setCreateAt(new Date());
+        typeRoom.setUpdateAt(new Date());
+        typeRoomService.add(typeRoom);
+        return new ResponseEntity<TypeRoom>(typeRoom, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Floor> save(@PathVariable("id") String id, @RequestBody Floor floor) {
-        Floor fl = floorService.getFloorById(id);
-        fl.setFloorCode(floor.getFloorCode());
-        fl.setFloorName(floor.getFloorName());
-        fl.setNote(floor.getNote());
-        fl.setUpdateAt(new Date());
-        floorService.add(fl);
-        return new ResponseEntity<Floor>(fl, HttpStatus.OK);
+    public ResponseEntity<TypeRoom> save(@PathVariable("id") String id, @RequestBody TypeRoom typeRoom) {
+        typeRoom.setId(id);
+        typeRoom.setUpdateAt(new Date());
+        typeRoomService.add(typeRoom);
+        return new ResponseEntity<TypeRoom>(typeRoom, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        floorService.delete(id);
+        typeRoomService.delete(id);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 
