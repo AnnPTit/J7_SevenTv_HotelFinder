@@ -30,7 +30,7 @@ public class PositionController {
         return positionService.getAll();
     }
 
-    @PostMapping("/add")
+    @PostMapping("/save")
     public Position add(@RequestBody Position position) {
         position.setCreateAt(new Date());
         return positionService.add(position);
