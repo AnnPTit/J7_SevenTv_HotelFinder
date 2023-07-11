@@ -24,7 +24,7 @@ public class UserInfoUserDetails implements UserDetails {
 
     public UserInfoUserDetails(Account account) {
         id= account.getId();
-        name = account.getAccountCode();
+        name = account.getEmail();
         password = account.getPassword();
         System.out.println();
         authorities = Arrays.stream(account.getPosition().getPositionName().split(","))

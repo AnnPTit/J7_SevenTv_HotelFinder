@@ -17,11 +17,11 @@ public class UserInfoDetailService implements UserDetailsService {
     private final AccountRepository repository;
 
     @Override
-    public UserDetails loadUserByUsername(String code) throws UsernameNotFoundException {
-        Optional<Account> userInfo = repository.findByAccountCode(code);
+    public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
+        Optional<Account> userInfo = repository.findByEmail(email);
         System.out.println(userInfo);
         return userInfo.map(UserInfoUserDetails::new)
-                .orElseThrow(() -> new UsernameNotFoundException("user not found: " + code));
+                .orElseThrow(() -> new UsernameNotFoundException("user not found: " + email));
 
     }
 

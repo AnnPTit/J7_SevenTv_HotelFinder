@@ -47,7 +47,7 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable()
+        return http.csrf().disable().cors().and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/account/load").permitAll()
                 .requestMatchers("/access-denied").permitAll()// với endpoint /hello thì sẽ được cho qua
