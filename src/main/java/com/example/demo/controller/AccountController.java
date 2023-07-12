@@ -3,7 +3,10 @@ package com.example.demo.controller;
 import com.example.demo.entity.Account;
 import com.example.demo.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -16,9 +19,12 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 import java.util.List;
 
+
+@CrossOrigin("*")
 @RestController
 @RequestMapping("/api/account")
 public class AccountController {
+
 
     @Autowired
     private AccountService accountService;
@@ -28,9 +34,10 @@ public class AccountController {
         return accountService.getAll();
     }
 
-    @PostMapping("/add")
+    @PostMapping("/save")
     public Account add(@RequestBody Account account) {
         account.setCreateAt(new Date());
+
         return accountService.add(account);
     }
 
@@ -40,6 +47,7 @@ public class AccountController {
     }
 
     @GetMapping("/detail/{id}")
+//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Account> detail(@PathVariable("id") String id) {
         return ResponseEntity.ok(accountService.getAccountById(id));
     }
