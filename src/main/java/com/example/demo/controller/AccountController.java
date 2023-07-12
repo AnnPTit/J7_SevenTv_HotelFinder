@@ -1,10 +1,9 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Position;
-import com.example.demo.service.PositionService;
+import com.example.demo.entity.Account;
+import com.example.demo.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -17,40 +16,39 @@ import org.springframework.web.bind.annotation.RestController;
 import java.util.Date;
 import java.util.List;
 
-@CrossOrigin("*")
 @RestController
-@RequestMapping("/api/position")
-public class PositionController {
+@RequestMapping("/api/account")
+public class AccountController {
 
     @Autowired
-    private PositionService positionService;
+    private AccountService accountService;
 
     @GetMapping("/load")
-    public List<Position> getAll() {
-        return positionService.getAll();
+    public List<Account> getAll() {
+        return accountService.getAll();
     }
 
     @PostMapping("/add")
-    public Position add(@RequestBody Position position) {
-        position.setCreateAt(new Date());
-        return positionService.add(position);
+    public Account add(@RequestBody Account account) {
+        account.setCreateAt(new Date());
+        return accountService.add(account);
     }
 
     @DeleteMapping("/delete/{id}")
     public boolean delete(@PathVariable("id") String id) {
-        return positionService.delete(id);
+        return accountService.delete(id);
     }
 
     @GetMapping("/detail/{id}")
-    public ResponseEntity<Position> detail(@PathVariable("id") String id) {
-        return ResponseEntity.ok(positionService.getPositionById(id));
+    public ResponseEntity<Account> detail(@PathVariable("id") String id) {
+        return ResponseEntity.ok(accountService.getAccountById(id));
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Position> update(@PathVariable("id") String id, @RequestBody Position position) {
-        position.setId(id);
-        position.setUpdateAt(new Date());
-        positionService.add(position);
-        return ResponseEntity.ok(position);
+    public ResponseEntity<Account> update(@PathVariable("id") String id, @RequestBody Account account) {
+        account.setId(id);
+        account.setUpdateAt(new Date());
+        accountService.add(account);
+        return ResponseEntity.ok(account);
     }
 }

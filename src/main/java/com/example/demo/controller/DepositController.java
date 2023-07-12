@@ -5,6 +5,7 @@ import com.example.demo.service.DepositService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -15,10 +16,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
-import java.util.UUID;
 
+@CrossOrigin("*")
 @RestController
-@RequestMapping("/deposit")
+@RequestMapping("/api/deposit")
 public class DepositController {
 
     @Autowired
@@ -44,10 +45,9 @@ public class DepositController {
     }
 
     @PostMapping("/save")
-    public String add(@RequestBody Deposit deposit) {
+    public ResponseEntity<Deposit> add(@RequestBody Deposit deposit) {
         depositService.add(deposit);
-        return "Add successfully";
-    }
+        return new ResponseEntity<Deposit>(deposit, HttpStatus.OK);    }
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Deposit> update(@PathVariable("id") String id, @RequestBody Deposit deposit) {
