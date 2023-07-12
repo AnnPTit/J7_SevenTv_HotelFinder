@@ -50,20 +50,14 @@ public class SecurityConfig {
         return http.csrf().disable().cors().and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/account/load").permitAll()
-                .requestMatchers("/access-denied").permitAll()// với endpoint /hello thì sẽ được cho qua
+                .requestMatchers("/api/access-denied").permitAll()// với endpoint /hello thì sẽ được cho qua
                 .and()
-//                .authorizeHttpRequests()
-//                .requestMatchers("/customer/**").authenticated() // với endpoint /customer/** sẽ yêu cầu authenticate
-//                .and().authorizeHttpRequests().requestMatchers("/admin").hasRole("ADMIN")
-//                .and().formLogin() // trả về page login nếu chưa authenticate
-//                .and().exceptionHandling().accessDeniedPage("/access-denied").and()
-//                .and().logout().permitAll().and().addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
-//                .build();
                 .authorizeHttpRequests().requestMatchers("/api/login").permitAll()
                 .and().authorizeHttpRequests().requestMatchers("/api/account/detail/*").hasRole("ADMIN")
+                .and().authorizeHttpRequests().requestMatchers("/api/customers/load").hasRole("ADMIN")
                 .anyRequest().authenticated()
+                .and().exceptionHandling().accessDeniedPage("/api/access-denied")
                 .and().formLogin() // trả về page login nếu chưa authenticate
-                .and().exceptionHandling().accessDeniedPage("/access-denied")
                 .and().logout().permitAll().and()
                 .addFilterBefore(jwtAuthenticationFilter(), UsernamePasswordAuthenticationFilter.class)
                 .build();
