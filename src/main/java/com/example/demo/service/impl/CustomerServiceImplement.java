@@ -4,9 +4,9 @@ import com.example.demo.entity.Customer;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class CustomerServiceImplement implements CustomerService {
@@ -15,8 +15,8 @@ public class CustomerServiceImplement implements CustomerService {
     CustomerRepository customerRepository;
 
     @Override
-    public List<Customer> getAll() {
-        return customerRepository.findAll();
+    public Page<Customer> getAll(Pageable pageable) {
+        return customerRepository.findAll(pageable);
     }
 
     @Override
@@ -41,7 +41,12 @@ public class CustomerServiceImplement implements CustomerService {
 
     @Override
     public void remove(String id) {
-        customerRepository.deleteById(id);
+        try {
+            customerRepository.deleteById(id);
+        } catch (Exception e) {
+            System.out.println("Delete Error");
+            e.printStackTrace();
+        }
     }
 
 }
