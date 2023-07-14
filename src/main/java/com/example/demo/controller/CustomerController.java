@@ -42,7 +42,7 @@ public class CustomerController {
     }
 
     @GetMapping("/detail/{id}")
-    public Customer detail(@PathVariable("id") String id) {
+    public Customer detail(@PathVariable("id") String id)    {
         return customerService.getOne(id);
     }
 

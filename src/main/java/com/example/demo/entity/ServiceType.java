@@ -9,6 +9,7 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -29,14 +30,17 @@ import java.util.UUID;
 @Table(name = "service_type")
 public class ServiceType {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "service_type_code")
+
+    @NotBlank(message = "Service type code  is required")
+    @Column(name = "service_type_code", unique = true)
     private String serviceTypeCode;
 
+    @NotBlank(message = "Service type name  is required")
     @Column(name = "service_type_name")
     private String serviceTypeName;
 
