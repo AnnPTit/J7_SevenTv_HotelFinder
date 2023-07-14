@@ -29,16 +29,17 @@ import java.util.UUID;
 @Setter
 @Builder
 @Entity
-@Table(name = "order")
+@Table(name = "`order`")
 public class Order {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "book_room_id")
-    private String bookRoomId;
+    @ManyToOne
+    @JoinColumn(name = " book_room_id", nullable = false)
+    private BookRoom bookRoom;
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)

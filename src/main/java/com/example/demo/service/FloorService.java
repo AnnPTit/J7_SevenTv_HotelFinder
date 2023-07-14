@@ -1,12 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Floor;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.Pageable;
+
+import java.util.List;
 
 public interface FloorService {
 
-    Page<Floor> getAll(Pageable pageable);
+    List<Floor> getAll();
 
     Floor getFloorById(String id);
 

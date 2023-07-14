@@ -47,14 +47,18 @@ public class SecurityConfig {
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
-        return http.csrf().disable().cors().and()
+        return http
+                .csrf().disable().cors().and()
                 .authorizeHttpRequests()
                 .requestMatchers("/api/account/load").permitAll()
+                .requestMatchers("/api/order/load").permitAll()
                 .requestMatchers("/api/access-denied").permitAll()// với endpoint /hello thì sẽ được cho qua
                 .and()
                 .authorizeHttpRequests().requestMatchers("/api/login").permitAll()
                 .and().authorizeHttpRequests().requestMatchers("/api/account/detail/*").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/customers/load").hasRole("ADMIN")
+                .and().authorizeHttpRequests().requestMatchers("/api/floor/**").hasRole("ADMIN")
+                .and().authorizeHttpRequests().requestMatchers("/api/room/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().exceptionHandling().accessDeniedPage("/api/access-denied")
                 .and().formLogin() // trả về page login nếu chưa authenticate

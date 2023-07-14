@@ -31,10 +31,8 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/load")
-    public List<Order> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
-        Pageable pageable = PageRequest.of(current_page, 5);
-        Page<Order> page = orderService.getAll(pageable);
-        return page.getContent();
+    public List<Order> getAll() {
+        return orderService.getAll();
     }
 
     @GetMapping("/detail/{id}")

@@ -31,10 +31,8 @@ public class FloorController {
     private FloorService floorService;
 
     @GetMapping("/load")
-    public List<Floor> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
-        Pageable pageable = PageRequest.of(current_page, 5);
-        Page<Floor> page = floorService.getAll(pageable);
-        return page.getContent();
+    public List<Floor> getAll() {
+        return floorService.getAll();
     }
 
     @GetMapping("/detail/{id}")
@@ -47,6 +45,7 @@ public class FloorController {
     public ResponseEntity<Floor> save(@RequestBody Floor floor) {
         floor.setCreateAt(new Date());
         floor.setUpdateAt(new Date());
+        floor.setStatus(1);
         floorService.add(floor);
         return new ResponseEntity<Floor>(floor, HttpStatus.OK);
     }
