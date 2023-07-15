@@ -59,6 +59,7 @@ public class SecurityConfig {
                 .and().authorizeHttpRequests().requestMatchers("/api/customers/load").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/floor/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/room/**").hasRole("ADMIN")
+                .and().authorizeHttpRequests().requestMatchers("/api/service-type/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().exceptionHandling().accessDeniedPage("/api/access-denied")
                 .and().formLogin() // trả về page login nếu chưa authenticate

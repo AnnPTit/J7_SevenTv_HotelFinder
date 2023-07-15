@@ -8,8 +8,6 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-
 @Service
 public class FloorServiceImpl implements FloorService {
 
@@ -17,8 +15,8 @@ public class FloorServiceImpl implements FloorService {
     private FloorRepository floorRepository;
 
     @Override
-    public List<Floor> getAll() {
-        return floorRepository.findAll();
+    public Page<Floor> getAll(Pageable pageable) {
+        return floorRepository.findAll(pageable);
     }
 
     @Override

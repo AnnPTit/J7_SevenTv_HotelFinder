@@ -38,7 +38,7 @@ public class Order {
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = " book_room_id", nullable = false)
+    @JoinColumn(name = "book_room_id", nullable = false)
     private BookRoom bookRoom;
 
     @ManyToOne

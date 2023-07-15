@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
-import java.util.List;
 
 @CrossOrigin("*")
 @RestController
@@ -31,8 +30,9 @@ public class OrderController {
     private OrderService orderService;
 
     @GetMapping("/load")
-    public List<Order> getAll() {
-        return orderService.getAll();
+    public Page<Order> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return orderService.getAll(pageable);
     }
 
     @GetMapping("/detail/{id}")

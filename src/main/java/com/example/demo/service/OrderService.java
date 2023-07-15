@@ -1,12 +1,12 @@
 package com.example.demo.service;
 
 import com.example.demo.entity.Order;
-
-import java.util.List;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 
 public interface OrderService {
 
-    List<Order> getAll();
+    Page<Order> getAll(Pageable pageable);
 
     Order getOrderById(String id);
 

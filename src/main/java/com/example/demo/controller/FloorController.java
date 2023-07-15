@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Floor;
+import com.example.demo.entity.ServiceType;
 import com.example.demo.service.FloorService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -31,8 +32,9 @@ public class FloorController {
     private FloorService floorService;
 
     @GetMapping("/load")
-    public List<Floor> getAll() {
-        return floorService.getAll();
+    public Page<Floor> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return floorService.getAll(pageable);
     }
 
     @GetMapping("/detail/{id}")
