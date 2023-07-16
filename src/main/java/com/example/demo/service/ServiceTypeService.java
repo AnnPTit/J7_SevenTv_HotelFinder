@@ -8,6 +8,8 @@ public interface ServiceTypeService {
 
     Page<ServiceType> getAll(Pageable pageable);
 
+    Page<ServiceType> findByCodeOrName(String key , Pageable pageable);
+
     ServiceType findById(String id);
 
     ServiceType add(ServiceType serviceType);

@@ -21,6 +21,11 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
     }
 
     @Override
+    public Page<ServiceType> findByCodeOrName(String key, Pageable pageable) {
+        return serviceTypeRepository.findByCodeOrName(key , "%" +key +"%" , pageable);
+    }
+
+    @Override
     public ServiceType findById(String id) {
         return serviceTypeRepository.findById(id).orElse(null);
     }

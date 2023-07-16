@@ -11,6 +11,9 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -33,7 +36,7 @@ import java.util.UUID;
 @Table(name = "service")
 public class Service {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -46,12 +49,16 @@ public class Service {
     @JoinColumn(name = "unit_id", nullable = false)
     private Unit unit;
 
+    @NotBlank(message = "Service code  is required")
     @Column(name = "service_code")
     private String serviceCode;
 
+    @NotBlank(message = "Service name   is required")
     @Column(name = "service_name")
     private String serviceName;
 
+    @NotNull(message = "Price is not null")
+    @Min(1)
     @Column(name = "price")
     private BigDecimal price;
 

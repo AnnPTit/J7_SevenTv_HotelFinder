@@ -15,5 +15,9 @@ public interface ServiceTypeRepository extends JpaRepository<ServiceType, String
     @Query(value = "select * from service_type where status =1", nativeQuery = true)
     Page<ServiceType> findAll(Pageable pageable);
 
+    @Query(value = "select * from service_type where\n" +
+            "(service_type_code = ?1 or service_type_name like ?2) and status = 1 ", nativeQuery = true)
+    Page<ServiceType> findByCodeOrName(String code, String name, Pageable pageable);
+
     boolean existsByServiceTypeCode(String code);
 }
