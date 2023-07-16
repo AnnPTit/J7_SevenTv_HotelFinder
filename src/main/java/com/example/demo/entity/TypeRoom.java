@@ -30,7 +30,7 @@ import java.util.UUID;
 @Table(name = "type_room")
 public class TypeRoom {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;

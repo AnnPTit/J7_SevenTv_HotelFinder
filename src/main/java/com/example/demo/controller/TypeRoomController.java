@@ -1,6 +1,5 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Floor;
 import com.example.demo.entity.TypeRoom;
 import com.example.demo.service.TypeRoomService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,7 +20,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
-import java.util.List;
 
 @CrossOrigin("*")
 @RestController
@@ -32,10 +30,9 @@ public class TypeRoomController {
     private TypeRoomService typeRoomService;
 
     @GetMapping("/load")
-    public List<TypeRoom> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+    public Page<TypeRoom> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        Page<TypeRoom> page = typeRoomService.getAll(pageable);
-        return page.getContent();
+        return typeRoomService.getAll(pageable);
     }
 
     @GetMapping("/detail/{id}")
@@ -48,6 +45,7 @@ public class TypeRoomController {
     public ResponseEntity<TypeRoom> save(@RequestBody TypeRoom typeRoom) {
         typeRoom.setCreateAt(new Date());
         typeRoom.setUpdateAt(new Date());
+        typeRoom.setStatus(1);
         typeRoomService.add(typeRoom);
         return new ResponseEntity<TypeRoom>(typeRoom, HttpStatus.OK);
     }
