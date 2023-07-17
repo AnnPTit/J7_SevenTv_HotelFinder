@@ -82,8 +82,10 @@ public class ServiceTypeController {
         return new ResponseEntity<ServiceType>(serviceType, HttpStatus.OK);
     }
 
-    @PutMapping("/update")
-    public ResponseEntity<ServiceType> update(@Valid
+    @PutMapping("/update/{id}")
+    public ResponseEntity<ServiceType> update(
+            @PathVariable("id") String id,
+            @Valid
                                               @RequestBody ServiceType serviceType,
                                               BindingResult result) {
         if (result.hasErrors()) {
