@@ -3,12 +3,15 @@ package com.example.demo.controller;
 import com.example.demo.entity.Floor;
 import com.example.demo.entity.ServiceType;
 import com.example.demo.service.FloorService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -21,7 +24,9 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
@@ -31,10 +36,26 @@ public class FloorController {
     @Autowired
     private FloorService floorService;
 
+    @GetMapping("/getList")
+    public List<Floor> getList() {
+        return floorService.getList();
+    }
+
     @GetMapping("/load")
     public Page<Floor> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
         return floorService.getAll(pageable);
+    }
+
+    @GetMapping("/search")
+    public Page<Floor> findByCodeOrName(@RequestParam(name = "key") String key,
+                                        @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        if (key == "") {
+            return floorService.getAll(pageable);
+        }
+
+        return floorService.findByCodeOrName(key, pageable);
     }
 
     @GetMapping("/detail/{id}")
@@ -44,7 +65,19 @@ public class FloorController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Floor> save(@RequestBody Floor floor) {
+    public ResponseEntity<Floor> save(@Valid @RequestBody Floor floor, BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : result.getFieldErrors()) {
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+                errorMap.put(key, value);
+            }
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
+        if (floorService.existsByCode(floor.getFloorCode())) {
+            return new ResponseEntity("Floor Code is exists !", HttpStatus.BAD_REQUEST);
+        }
         floor.setCreateAt(new Date());
         floor.setUpdateAt(new Date());
         floor.setStatus(1);
@@ -53,8 +86,20 @@ public class FloorController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Floor> save(@PathVariable("id") String id, @RequestBody Floor floor) {
+    public ResponseEntity<Floor> update(@PathVariable("id") String id,
+                                        @Valid @RequestBody Floor floor,
+                                        BindingResult result) {
         Floor fl = floorService.getFloorById(id);
+        if (result.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : result.getFieldErrors()) {
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+                errorMap.put(key, value);
+            }
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
+
         fl.setFloorCode(floor.getFloorCode());
         fl.setFloorName(floor.getFloorName());
         fl.setNote(floor.getNote());
@@ -64,9 +109,11 @@ public class FloorController {
     }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        floorService.delete(id);
-        return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
+    public ResponseEntity<Floor> delete(@PathVariable("id") String id) {
+        Floor floor = floorService.getFloorById(id);
+        floor.setStatus(0);
+        floorService.add(floor);
+        return new ResponseEntity("Deleted", HttpStatus.OK);
     }
 
 }

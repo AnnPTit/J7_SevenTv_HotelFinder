@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.List;
 
 @CrossOrigin("*")
 @RestController
@@ -28,6 +29,11 @@ public class TypeRoomController {
 
     @Autowired
     private TypeRoomService typeRoomService;
+
+    @GetMapping("/getList")
+    public List<TypeRoom> getList() {
+        return typeRoomService.getList();
+    }
 
     @GetMapping("/load")
     public Page<TypeRoom> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
