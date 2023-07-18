@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
 import java.util.UUID;
 
 @Repository
@@ -14,6 +15,10 @@ public interface ServiceTypeRepository extends JpaRepository<ServiceType, String
 
     @Query(value = "select * from service_type where status =1", nativeQuery = true)
     Page<ServiceType> findAll(Pageable pageable);
+
+
+    @Query(value = "select * from service_type where status =1", nativeQuery = true)
+    List<ServiceType> getAll();
 
     @Query(value = "select * from service_type where\n" +
             "(service_type_code = ?1 or service_type_name like ?2) and status = 1 ", nativeQuery = true)

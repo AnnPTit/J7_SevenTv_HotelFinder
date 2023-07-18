@@ -8,6 +8,8 @@ import org.springframework.data.domain.Pageable;
 public interface ServiceService {
     Page<Service> getAll(Pageable pageable);
 
+    Page<Service> findByCodeOrName(String key , Pageable pageable);
+
     Service findById(String id);
 
     Service add(Service serviceType);

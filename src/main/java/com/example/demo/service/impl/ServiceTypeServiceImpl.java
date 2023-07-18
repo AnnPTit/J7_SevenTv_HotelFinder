@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ServiceTypeServiceImpl implements ServiceTypeService {
 
@@ -18,6 +20,11 @@ public class ServiceTypeServiceImpl implements ServiceTypeService {
     @Override
     public Page<ServiceType> getAll(Pageable pageable) {
         return serviceTypeRepository.findAll(pageable);
+    }
+
+    @Override
+    public List<ServiceType> findAll() {
+        return serviceTypeRepository.getAll();
     }
 
     @Override

@@ -22,7 +22,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -30,7 +29,7 @@ import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/service-type")
+@RequestMapping("/api/admin/service-type")
 public class ServiceTypeController {
 
     @Autowired
@@ -41,6 +40,10 @@ public class ServiceTypeController {
         Pageable pageable = PageRequest.of(current_page, 5);
         return serviceTypeServicel.getAll(pageable);
     }
+    @GetMapping("getAll")
+    public List<ServiceType> findAll(){
+        return serviceTypeServicel.findAll();
+    }
 
     @GetMapping("/search")
     public Page<ServiceType> findByCodeOrName(@RequestParam(name = "key") String key,
@@ -49,7 +52,6 @@ public class ServiceTypeController {
         if (key == "") {
             return serviceTypeServicel.getAll(pageable);
         }
-
         return serviceTypeServicel.findByCodeOrName(key, pageable);
     }
 

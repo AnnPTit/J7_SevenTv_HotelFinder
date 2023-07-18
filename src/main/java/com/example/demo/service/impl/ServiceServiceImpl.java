@@ -18,6 +18,11 @@ public class ServiceServiceImpl implements ServiceService {
     }
 
     @Override
+    public Page<com.example.demo.entity.Service> findByCodeOrName(String key, Pageable pageable) {
+        return serviceRepository.findByCodeOrName(key , "%" +key +"%" , pageable);
+    }
+
+    @Override
     public com.example.demo.entity.Service findById(String id) {
         return serviceRepository.findById(id).orElse(null);
     }

@@ -38,6 +38,17 @@ public class ServiceController {
         return serviceService.getAll(pageable);
     }
 
+    @GetMapping("/search")
+    public Page<Service> findByCodeOrName(@RequestParam(name = "key") String key,
+                                          @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        if (key == "") {
+            return serviceService.getAll(pageable);
+        }
+
+        return serviceService.findByCodeOrName(key, pageable);
+    }
+
     @GetMapping("/detail/{id}")
     public ResponseEntity<Service> detail(@PathVariable("id") String id) {
         Service service = serviceService.findById(id);

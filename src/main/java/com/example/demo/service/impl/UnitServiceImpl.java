@@ -21,6 +21,11 @@ public class UnitServiceImpl implements UnitService {
     }
 
     @Override
+    public List<Unit> findAll() {
+        return unitRepository.getAll();
+    }
+
+    @Override
     public Unit save(Unit unit) {
         try {
             unitRepository.save(unit);

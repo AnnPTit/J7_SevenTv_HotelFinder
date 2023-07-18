@@ -24,7 +24,7 @@ import java.util.List;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/unit")
+@RequestMapping("/api/admin/unit")
 public class UnitController {
 
     @Autowired
@@ -35,6 +35,11 @@ public class UnitController {
         Pageable pageable = PageRequest.of(current_page, 5);
         Page<Unit> page = unitService.getAll(pageable);
         return page.getContent();
+    }
+
+    @GetMapping("/getAll")
+    public List<Unit> findAll() {
+        return unitService.findAll();
     }
 
     @GetMapping("/detail/{id}")
