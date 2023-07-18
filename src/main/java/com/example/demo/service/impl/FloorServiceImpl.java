@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class FloorServiceImpl implements FloorService {
 
@@ -15,8 +17,18 @@ public class FloorServiceImpl implements FloorService {
     private FloorRepository floorRepository;
 
     @Override
+    public List<Floor> getList() {
+        return floorRepository.findAll();
+    }
+
+    @Override
     public Page<Floor> getAll(Pageable pageable) {
         return floorRepository.findAll(pageable);
+    }
+
+    @Override
+    public Page<Floor> findByCodeOrName(String key, Pageable pageable) {
+        return floorRepository.findByCodeOrName(key , "%" +key +"%" , pageable);
     }
 
     @Override
@@ -41,5 +53,10 @@ public class FloorServiceImpl implements FloorService {
         } catch (Exception e) {
             System.out.println("Delete error!");
         }
+    }
+
+    @Override
+    public boolean existsByCode(String code) {
+        return floorRepository.existsByFloorCode(code);
     }
 }

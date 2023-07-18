@@ -1,0 +1,26 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.entity.Photo;
+import com.example.demo.repository.PhotoRepository;
+import com.example.demo.service.PhotoService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+public class PhotoServiceImpl implements PhotoService {
+
+    @Autowired
+    private PhotoRepository photoRepository;
+
+    public List<Photo> save(List<Photo> photoList) {
+        try {
+            return photoRepository.saveAll(photoList);
+        } catch (Exception e) {
+            System.out.println("Add error!");
+            return null;
+        }
+    }
+
+}
