@@ -27,7 +27,7 @@ import java.util.List;
 @Table(name = "floor")
 public class Floor {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
