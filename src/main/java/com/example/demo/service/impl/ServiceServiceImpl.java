@@ -17,9 +17,16 @@ public class ServiceServiceImpl implements ServiceService {
         return serviceRepository.findAll(pageable);
     }
 
+
     @Override
-    public Page<com.example.demo.entity.Service> findByCodeOrName(String key, Pageable pageable) {
-        return serviceRepository.findByCodeOrName(key , "%" +key +"%" , pageable);
+    public Page<com.example.demo.entity.Service> loadAndSearch(String serviceCode, String serviceName, String serviceTypeId, String unitId, Pageable pageable) {
+        return serviceRepository.loadAndSearch(
+                (serviceCode != null && !serviceCode.isEmpty()) ? serviceCode : null,
+                (serviceName != null && !serviceName.isEmpty()) ? "%" + serviceName + "%" : null,
+                (serviceTypeId != null && !serviceTypeId.isEmpty()) ? serviceTypeId : null,
+                (unitId != null && !unitId.isEmpty()) ? unitId : null,
+                pageable
+        );
     }
 
     @Override
