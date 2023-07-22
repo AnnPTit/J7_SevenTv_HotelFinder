@@ -11,12 +11,17 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Email;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 import java.util.List;
@@ -41,24 +46,30 @@ public class Account {
     private Position position;
 
     @Column(name = "account_code")
+    @NotBlank(message = "Account code is required")
     private String accountCode;
 
     @Column(name = "password")
     private String password;
 
     @Column(name = "fullname")
+    @NotBlank(message = "Fullname is required")
     private String fullname;
 
     @Column(name = "gender")
     private Boolean gender;
 
     @Column(name = "birthday")
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @NotNull(message = "Birthday is required")
     private Date birthday;
 
     @Column(name = "email")
+    @Email(message = "Invalid email")
     private String email;
 
     @Column(name = "phone_number")
+    @NotBlank(message = "Phone Number isn't empty")
     private String phoneNumber;
 
     @Column(name = "citizen_id")

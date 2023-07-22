@@ -12,7 +12,6 @@ public interface ServiceTypeService {
 
     List<ServiceType> findAll();
 
-
     Page<ServiceType> findByCodeOrName(String key, Pageable pageable);
 
     ServiceType findById(String id);

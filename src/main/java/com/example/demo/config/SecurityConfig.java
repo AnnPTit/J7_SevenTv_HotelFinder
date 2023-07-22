@@ -58,6 +58,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests().requestMatchers("/api/login").permitAll()
                 .and().authorizeHttpRequests().requestMatchers("/api/account/detail/*").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/customers/load").hasRole("ADMIN")
+                .and().authorizeHttpRequests().requestMatchers("/api/admin/account/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/floor/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/room/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/type-room/**").hasRole("ADMIN")
