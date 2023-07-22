@@ -14,12 +14,12 @@ public class PhotoServiceImpl implements PhotoService {
     @Autowired
     private PhotoRepository photoRepository;
 
-    public List<Photo> save(List<Photo> photoList) {
+    public void save(List<Photo> photoList) {
         try {
-            return photoRepository.saveAll(photoList);
+            photoRepository.saveAll(photoList);
         } catch (Exception e) {
             System.out.println("Add error!");
-            return null;
+            e.printStackTrace();
         }
     }
 

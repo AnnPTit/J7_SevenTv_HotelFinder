@@ -6,6 +6,6 @@ import java.util.List;
 
 public interface PhotoService {
 
-    List<Photo> save(List<Photo> photoList);
+    void save(List<Photo> photoList);
 
 }

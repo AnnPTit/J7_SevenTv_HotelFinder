@@ -52,6 +52,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/account/load").permitAll()
                 .requestMatchers("/api/order/load").permitAll()
+                .requestMatchers("/assets/img/room/*").permitAll()
                 .requestMatchers("/api/access-denied").permitAll()// với endpoint /hello thì sẽ được cho qua
                 .and()
                 .authorizeHttpRequests().requestMatchers("/api/login").permitAll()

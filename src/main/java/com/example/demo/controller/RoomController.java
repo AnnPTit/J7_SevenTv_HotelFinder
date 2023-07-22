@@ -5,6 +5,7 @@ import com.example.demo.entity.Room;
 import com.example.demo.service.PhotoService;
 import com.example.demo.service.RoomService;
 import jakarta.validation.Valid;
+import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +33,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 @CrossOrigin("*")
 @RestController
@@ -44,10 +46,9 @@ public class RoomController {
     private PhotoService photoService;
 
     @GetMapping("/load")
-    public List<Room> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+    public Page<Room> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        Page<Room> page = roomService.getAll(pageable);
-        return page.getContent();
+        return roomService.getAll(pageable);
     }
 
     @GetMapping("/detail/{id}")
@@ -76,14 +77,15 @@ public class RoomController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<Room> save(@RequestBody Room room, @RequestParam("photos") MultipartFile[] photos) {
+    public ResponseEntity<Room> save(@ModelAttribute Room room, @PathParam("photos") MultipartFile[] photos) {
         List<Photo> photoList = new ArrayList<>();
         savePicture(room, photos, photoList);
-        room.setPhotoList(photoList);
-        room.setCreateAt(new Date());
-        room.setUpdateAt(new Date());
-        room.setStatus(1);
-        roomService.add(room);
+        System.out.println("PhotoList:" + photoList.toString());
+//        room.setPhotoList(photoList);
+//        room.setCreateAt(new Date());
+//        room.setUpdateAt(new Date());
+//        room.setStatus(1);
+//        roomService.add(room);
         return new ResponseEntity<Room>(room, HttpStatus.OK);
     }
 
@@ -97,26 +99,37 @@ public class RoomController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        roomService.delete(id);
+        Room room = roomService.getRoomById(id);
+        room.setStatus(0);
+        roomService.add(room);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 
-    private void savePicture(@RequestBody Room room,
-                             @RequestParam("photos") MultipartFile[] photos,
+    private void savePicture(@ModelAttribute Room room,
+                             @PathParam("photos") MultipartFile[] photos,
                              List<Photo> photoList) {
         if (photos != null && photos.length > 0) {
+            // Save the Room entity first
+            room.setCreateAt(new Date());
+            room.setUpdateAt(new Date());
+            room.setStatus(1);
+            roomService.add(room);
+
             for (MultipartFile photoFile : photos) {
                 if (!photoFile.isEmpty()) {
                     try {
                         String fileName = photoFile.getOriginalFilename();
-                        String filePath = "D:/Photo/" + fileName;
-                        String filePathForSql = "D:/Photo/" + fileName;
-//                        File dest = new File(filePath);
+                        String filePath = "D:/J7_HangNT169/src/main/resources/static/assets/img/room/" + fileName;
+                        String filePathForSql = "/assets/img/room/" + fileName;
+                        File dest = new File(filePath);
                         // Luu hinh anh vao thu muc
-//                        photoFile.transferTo(dest);
+                        photoFile.transferTo(dest);
                         System.out.println(filePath);
                         // Tao doi tuong hinh
                         Photo photo = new Photo();
+                        String id = UUID.randomUUID().toString();
+                        photo.setId(id);
+                        // Set the managed Room entity to the Photo
                         photo.setRoom(room);
                         photo.setUrl(filePathForSql);
                         photo.setCreateAt(new Date());
@@ -130,8 +143,8 @@ public class RoomController {
                     }
                 }
             }
+            // Save the list of Photo entities
+            photoService.save(photoList);
         }
-
     }
-
 }

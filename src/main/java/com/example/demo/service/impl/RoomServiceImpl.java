@@ -30,6 +30,7 @@ public class RoomServiceImpl implements RoomService {
             return roomRepository.save(room);
         } catch (Exception e) {
             System.out.println("Add error!");
+            e.printStackTrace();
             return null;
         }
     }
