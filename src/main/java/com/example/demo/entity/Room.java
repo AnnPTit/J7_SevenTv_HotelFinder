@@ -1,6 +1,8 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.FetchType;
@@ -73,12 +75,12 @@ public class Room {
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<BookRoom> bookRoomList;
 
-    @JsonIgnore
+//    @JsonManagedReference
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<Photo> photoList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetailList;
-    
+
 }

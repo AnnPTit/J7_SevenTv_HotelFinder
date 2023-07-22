@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.entity.Floor;
 import com.example.demo.entity.TypeRoom;
 import com.example.demo.repository.TypeRoomRepository;
 import com.example.demo.service.TypeRoomService;
@@ -27,6 +28,11 @@ public class TypeRoomServiceImpl implements TypeRoomService {
     }
 
     @Override
+    public Page<TypeRoom> findByCodeOrName(String key, Pageable pageable) {
+        return typeRoomRepository.findByCodeOrName(key , "%" +key +"%" , pageable);
+    }
+
+    @Override
     public TypeRoom getTypeRoomById(String id) {
         return typeRoomRepository.findById(id).orElse(null);
     }
@@ -48,5 +54,10 @@ public class TypeRoomServiceImpl implements TypeRoomService {
         } catch (Exception e){
             System.out.println("Delete Error!");
         }
+    }
+
+    @Override
+    public boolean existsByCode(String code) {
+        return typeRoomRepository.existsByTypeRoomCode(code);
     }
 }
