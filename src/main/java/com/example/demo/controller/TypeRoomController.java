@@ -31,7 +31,7 @@ import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/type-room")
+@RequestMapping("/api/admin/type-room")
 public class TypeRoomController {
 
     @Autowired
@@ -50,7 +50,7 @@ public class TypeRoomController {
 
     @GetMapping("/search")
     public Page<TypeRoom> findByCodeOrName(@RequestParam(name = "key") String key,
-                                       @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
         if (key == "") {
             return typeRoomService.getAll(pageable);
@@ -76,6 +76,10 @@ public class TypeRoomController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+        if (typeRoom.getTypeRoomCode().trim().isEmpty() || typeRoom.getTypeRoomName().trim().isEmpty()
+                || typeRoom.getNote().trim().isEmpty()) {
+            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
+        }
         if (typeRoomService.existsByCode(typeRoom.getTypeRoomCode())) {
             return new ResponseEntity("Type Room Code is exists !", HttpStatus.BAD_REQUEST);
         }
@@ -98,6 +102,9 @@ public class TypeRoomController {
                 errorMap.put(key, value);
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
+        if (typeRoom.getTypeRoomName().trim().isEmpty() || typeRoom.getNote().trim().isEmpty()) {
+            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
         }
         typeRoom.setId(id);
         typeRoom.setUpdateAt(new Date());

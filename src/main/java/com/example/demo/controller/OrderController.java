@@ -23,7 +23,7 @@ import java.util.Date;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/order")
+@RequestMapping("/api/admin/order")
 public class OrderController {
 
     @Autowired

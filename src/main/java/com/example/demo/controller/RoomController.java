@@ -38,16 +38,13 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/room")
+@RequestMapping("/api/admin/room")
 public class RoomController {
 
     @Autowired
@@ -63,6 +60,22 @@ public class RoomController {
     private static String accessKey = "AKIAYEQDRZP5KHP3T2EK";
     private static String secretKey = "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";
     private static String region = "us-east-1"; // Ví dụ: "ap-southeast-1"
+
+    @GetMapping("/load")
+    public Page<Room> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return roomService.getAll(pageable);
+    }
+
+    @GetMapping("/loadAndSearch")
+    public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
+                                    @RequestParam(name = "floorId", defaultValue = "") String floorId,
+                                    @RequestParam(name = "typeRoomId", defaultValue = "") String typeRoomId,
+                                    @RequestParam(name = "current_page", defaultValue = "0") int current_page
+    ) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return roomService.loadAndSearch(key, key, floorId, typeRoomId, pageable);
+    }
 
     @PostMapping("upload")
     public void uploadFile(@RequestParam("file") MultipartFile[] files) {
@@ -111,10 +124,29 @@ public class RoomController {
 
 
     @PostMapping("/save")
-    public ResponseEntity<Room> save(@ModelAttribute Room room, @PathParam("photos") MultipartFile[] photos) {
-
-//        List<String> listURL = new ArrayList<>();
+    public ResponseEntity<Room> save(@Valid @ModelAttribute Room room,
+                                     BindingResult bindingResult,
+                                     @PathParam("photos") MultipartFile[] photos) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+                errorMap.put(key, value);
+            }
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
+        if (room.getRoomCode().trim().isEmpty() || room.getRoomName().trim().isEmpty()
+                || room.getNote().trim().isEmpty()) {
+            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
+        }
+        if (roomService.existsByCode(room.getRoomCode())) {
+            return new ResponseEntity("Room Code is exists !", HttpStatus.BAD_REQUEST);
+        }
         try {
+            room.setCreateAt(new Date());
+            room.setUpdateAt(new Date());
+            room.setStatus(1);
             roomService.add(room);
             for (MultipartFile file : photos) {
                 File fileObj = convertMultiPartToFile(file);
@@ -166,19 +198,11 @@ public class RoomController {
 //        return new Date(expirationInMillis);
 //}
 
-
-    @GetMapping("/load")
-    public Page<Room> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
-        Pageable pageable = PageRequest.of(current_page, 5);
-        return roomService.getAll(pageable);
-    }
-
     @GetMapping("/detail/{id}")
     public ResponseEntity<Room> detail(@PathVariable("id") String id) {
         Room room = roomService.getRoomById(id);
         return new ResponseEntity<Room>(room, HttpStatus.OK);
     }
-
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Room> update(@PathVariable("id") String id, @RequestBody Room room) {
@@ -196,46 +220,5 @@ public class RoomController {
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 
-//    private void savePicture(@ModelAttribute Room room,
-//                             @PathParam("photos") MultipartFile[] photos,
-//                             List<Photo> photoList) {
-//        if (photos != null && photos.length > 0) {
-//            // Save the Room entity first
-//            room.setCreateAt(new Date());
-//            room.setUpdateAt(new Date());
-//            room.setStatus(1);
-//            roomService.add(room);
-//
-//            for (MultipartFile photoFile : photos) {
-//                if (!photoFile.isEmpty()) {
-//                    try {
-//                        String fileName = photoFile.getOriginalFilename();
-//                        String filePath = "D:/J7_HangNT169/src/main/resources/static/assets/img/room/" + fileName;
-//                        String filePathForSql = "/assets/img/room/" + fileName;
-//                        File dest = new File(filePath);
-//                        // Luu hinh anh vao thu muc
-//                        photoFile.transferTo(dest);
-//                        System.out.println(filePath);
-//                        // Tao doi tuong hinh
-//                        Photo photo = new Photo();
-//                        String id = UUID.randomUUID().toString();
-//                        photo.setId(id);
-//                        // Set the managed Room entity to the Photo
-//                        photo.setRoom(room);
-//                        photo.setUrl(filePathForSql);
-//                        photo.setCreateAt(new Date());
-//                        photo.setUpdateAt(new Date());
-//                        photo.setStatus(1);
-//                        // add hinh vao list
-//                        photoList.add(photo);
-//                    } catch (Exception e) {
-//                        // Xử lý lỗi khi lưu file
-//                        e.printStackTrace();
-//                    }
-//                }
-//            }
-//            // Save the list of Photo entities
-//            photoService.save(photoList);
-//        }
 }
 

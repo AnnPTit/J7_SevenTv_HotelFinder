@@ -30,7 +30,7 @@ import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/floor")
+@RequestMapping("/api/admin/floor")
 public class FloorController {
 
     @Autowired
@@ -75,6 +75,10 @@ public class FloorController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+        if (floor.getFloorCode().trim().isEmpty() || floor.getFloorName().trim().isEmpty()
+                || floor.getNote().trim().isEmpty()) {
+            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
+        }
         if (floorService.existsByCode(floor.getFloorCode())) {
             return new ResponseEntity("Floor Code is exists !", HttpStatus.BAD_REQUEST);
         }
@@ -98,6 +102,9 @@ public class FloorController {
                 errorMap.put(key, value);
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
+        if (floor.getFloorName().trim().isEmpty() || floor.getNote().trim().isEmpty()) {
+            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
         }
 
         fl.setFloorCode(floor.getFloorCode());
