@@ -8,4 +8,6 @@ public interface PhotoService {
 
     void save(List<Photo> photoList);
 
+    Photo add(Photo photo);
+
 }
