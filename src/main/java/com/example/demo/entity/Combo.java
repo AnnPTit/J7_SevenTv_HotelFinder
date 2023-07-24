@@ -9,6 +9,10 @@ import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
 import jakarta.persistence.Table;
+import jakarta.validation.Valid;
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotNull;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -27,18 +31,21 @@ import java.util.List;
 @Entity
 @Table(name = "combo")
 public class Combo {
-
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "combo_service_id")
-    private String comboServiceId;
+    @NotBlank(message = "Combo code  is required")
+    @Column(name = "combo_code")
+    private String comboCode;
 
+    @NotBlank(message = "Combo name  is required")
     @Column(name = "combo_name")
     private String comboName;
 
+    @NotNull(message = "Price is not null")
+    @Min(1)
     @Column(name = "price")
     private BigDecimal price;
 
