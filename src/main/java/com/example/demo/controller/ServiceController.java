@@ -106,7 +106,6 @@ public class ServiceController {
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
         service.setUpdateAt(new Date());
-        service.setStatus(1);
         serviceService.add(service);
         return new ResponseEntity<Service>(service, HttpStatus.OK);
     }
