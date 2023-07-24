@@ -84,7 +84,6 @@ public class ServiceController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Service> delete(@PathVariable("id") String id) {
         Service service = serviceService.findById(id);
-
         service.setStatus(0);
         serviceService.add(service);
         return new ResponseEntity("Deleted", HttpStatus.OK);
@@ -94,8 +93,9 @@ public class ServiceController {
     public ResponseEntity<Service> update(
             @PathVariable("id") String id,
             @Valid
-            @RequestBody Service Service,
+            @RequestBody Service service,
             BindingResult result) {
+        System.out.println(service);
         if (result.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
             for (FieldError error : result.getFieldErrors()) {
@@ -105,9 +105,9 @@ public class ServiceController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
-        Service.setUpdateAt(new Date());
-        serviceService.add(Service);
-        return new ResponseEntity<Service>(Service, HttpStatus.OK);
+        service.setUpdateAt(new Date());
+        serviceService.add(service);
+        return new ResponseEntity<Service>(service, HttpStatus.OK);
     }
 
 
