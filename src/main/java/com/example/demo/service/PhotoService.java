@@ -10,4 +10,6 @@ public interface PhotoService {
 
     Photo add(Photo photo);
 
+    List<Photo> getPhotoByRoomId(String id);
+
 }

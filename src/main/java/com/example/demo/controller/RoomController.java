@@ -38,8 +38,10 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.net.URL;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin("*")
@@ -219,6 +221,22 @@ public class RoomController {
         room.setStatus(0);
         roomService.add(room);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
+    }
+
+    @GetMapping("/photo/{id}")
+    public ResponseEntity<List<String>> getRoomImages(@PathVariable("id") String id) {
+        List<String> imageUrls = new ArrayList<>();
+        // Fetch room images by roomId (use the roomId to query the database or any other data source)
+        // For example, assuming you have a service method to get room images by ID:
+        List<Photo> roomPhotos = photoService.getPhotoByRoomId(id);
+
+        // Iterate through the roomImages and extract the image URLs
+        for (Photo photo : roomPhotos) {
+            imageUrls.add(photo.getUrl()); // Assuming 'getUrl()' method returns the image URL from the Photo entity
+        }
+
+        // Return the list of image URLs in the response
+        return new ResponseEntity<>(imageUrls, HttpStatus.OK);
     }
 
 }

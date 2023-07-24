@@ -28,4 +28,9 @@ public class PhotoServiceImpl implements PhotoService {
         return photoRepository.save(photo);
     }
 
+    @Override
+    public List<Photo> getPhotoByRoomId(String id) {
+        return photoRepository.getPhotoByRoomId(id);
+    }
+
 }
