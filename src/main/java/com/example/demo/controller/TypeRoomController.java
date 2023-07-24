@@ -23,7 +23,6 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.lang.reflect.Type;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -31,7 +30,7 @@ import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/type-room")
+@RequestMapping("/api/admin/type-room")
 public class TypeRoomController {
 
     @Autowired
@@ -50,7 +49,7 @@ public class TypeRoomController {
 
     @GetMapping("/search")
     public Page<TypeRoom> findByCodeOrName(@RequestParam(name = "key") String key,
-                                       @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
         if (key == "") {
             return typeRoomService.getAll(pageable);
@@ -102,6 +101,9 @@ public class TypeRoomController {
                 errorMap.put(key, value);
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
+        if (typeRoom.getTypeRoomName().trim().isEmpty() || typeRoom.getNote().trim().isEmpty()) {
+            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
         }
         typeRoom.setId(id);
         typeRoom.setUpdateAt(new Date());

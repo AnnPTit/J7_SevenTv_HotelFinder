@@ -23,4 +23,9 @@ public class PhotoServiceImpl implements PhotoService {
         }
     }
 
+    @Override
+    public Photo add(Photo photo) {
+        return photoRepository.save(photo);
+    }
+
 }
