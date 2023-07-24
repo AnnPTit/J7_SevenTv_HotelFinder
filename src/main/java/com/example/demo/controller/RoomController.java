@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Photo;
 import com.example.demo.entity.Room;
+import com.example.demo.entity.Service;
 import com.example.demo.service.PhotoService;
 import com.example.demo.service.RoomService;
 import jakarta.validation.Valid;
@@ -51,15 +52,26 @@ public class RoomController {
         return roomService.getAll(pageable);
     }
 
+    @GetMapping("/loadAndSearch")
+    public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
+                                    @RequestParam(name = "floorId", defaultValue = "") String floorId,
+                                    @RequestParam(name = "typeRoomId", defaultValue = "") String typeRoomId,
+                                    @RequestParam(name = "current_page", defaultValue = "0") int current_page
+    ) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return roomService.loadAndSearch(key, key, floorId, typeRoomId, pageable);
+    }
+
     @GetMapping("/detail/{id}")
     public ResponseEntity<Room> detail(@PathVariable("id") String id) {
         Room room = roomService.getRoomById(id);
         return new ResponseEntity<Room>(room, HttpStatus.OK);
     }
 
-    @PostMapping("/add")
-    public ResponseEntity<Room> add(@Valid @RequestBody Room room,
-                                    BindingResult result) {
+    @PostMapping("/save")
+    public ResponseEntity<Room> save(@Valid @ModelAttribute Room room,
+                                     @PathParam("photos") MultipartFile[] photos,
+                                     BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
             for (FieldError error : result.getFieldErrors()) {
@@ -69,15 +81,13 @@ public class RoomController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
-        room.setCreateAt(new Date());
-        room.setUpdateAt(new Date());
-        room.setStatus(1);
-        roomService.add(room);
-        return new ResponseEntity<Room>(room, HttpStatus.OK);
-    }
-
-    @PostMapping("/save")
-    public ResponseEntity<Room> save(@ModelAttribute Room room, @PathParam("photos") MultipartFile[] photos) {
+        if (room.getRoomCode().trim().isEmpty() || room.getRoomName().trim().isEmpty()
+                || room.getNote().trim().isEmpty()) {
+            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
+        }
+        if (roomService.existsByCode(room.getRoomCode())) {
+            return new ResponseEntity("Room Code is exists !", HttpStatus.BAD_REQUEST);
+        }
         List<Photo> photoList = new ArrayList<>();
         savePicture(room, photos, photoList);
         System.out.println("PhotoList:" + photoList.toString());
@@ -105,7 +115,7 @@ public class RoomController {
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 
-    private void savePicture(@ModelAttribute Room room,
+    private void savePicture( @ModelAttribute Room room,
                              @PathParam("photos") MultipartFile[] photos,
                              List<Photo> photoList) {
         if (photos != null && photos.length > 0) {

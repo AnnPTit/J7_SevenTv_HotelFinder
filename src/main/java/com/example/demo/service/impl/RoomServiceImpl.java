@@ -20,6 +20,17 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public Page<Room> loadAndSearch(String roomCode, String roomName, String floorId, String typeRoomId, Pageable pageable) {
+        return roomRepository.loadAndSearch(
+                (roomCode != null && !roomCode.isEmpty()) ? roomCode : null,
+                (roomName != null && !roomName.isEmpty()) ? "%" + roomName + "%" : null,
+                (floorId != null && !floorId.isEmpty()) ? floorId : null,
+                (typeRoomId != null && !typeRoomId.isEmpty()) ? typeRoomId : null,
+                pageable
+        );
+    }
+
+    @Override
     public Room getRoomById(String id) {
         return roomRepository.findById(id).orElse(null);
     }
@@ -42,5 +53,10 @@ public class RoomServiceImpl implements RoomService {
         } catch (Exception e) {
             System.out.println("Delete error!");
         }
+    }
+
+    @Override
+    public boolean existsByCode(String code) {
+        return roomRepository.existsByRoomCode(code);
     }
 }
