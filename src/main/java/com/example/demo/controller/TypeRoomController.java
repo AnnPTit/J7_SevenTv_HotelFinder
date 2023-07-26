@@ -75,12 +75,14 @@ public class TypeRoomController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
-        if (typeRoom.getTypeRoomCode().trim().isEmpty() || typeRoom.getTypeRoomName().trim().isEmpty()
-                || typeRoom.getNote().trim().isEmpty()) {
+        if (typeRoom.getTypeRoomCode().trim().isEmpty() || typeRoom.getTypeRoomName().trim().isEmpty()) {
             return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
         }
         if (typeRoomService.existsByCode(typeRoom.getTypeRoomCode())) {
             return new ResponseEntity("Type Room Code is exists !", HttpStatus.BAD_REQUEST);
+        }
+        if (typeRoom.getNote().isBlank()) {
+            typeRoom.setNote("No note.");
         }
         typeRoom.setCreateAt(new Date());
         typeRoom.setUpdateAt(new Date());
