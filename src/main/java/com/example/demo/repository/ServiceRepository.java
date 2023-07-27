@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, String> {
@@ -28,6 +30,9 @@ public interface ServiceRepository extends JpaRepository<Service, String> {
                                 @Param("serviceTypeId") String serviceTypeId,
                                 @Param("unitId") String unitId,
                                 Pageable pageable);
+
+    @Query(value = "select * from service where status =1", nativeQuery = true)
+    List<Service> getAll();
 
     boolean existsByServiceCode(String code);
 

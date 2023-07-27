@@ -7,13 +7,15 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class ServiceServiceImpl implements ServiceService {
     @Autowired
     private ServiceRepository serviceRepository;
 
     @Override
-    public Page<com.example.demo.entity.Service> getAll(Pageable pageable) {
+    public Page<com.example.demo.entity.Service> load(Pageable pageable) {
         return serviceRepository.findAll(pageable);
     }
 
@@ -27,6 +29,11 @@ public class ServiceServiceImpl implements ServiceService {
                 (unitId != null && !unitId.isEmpty()) ? unitId : null,
                 pageable
         );
+    }
+
+    @Override
+    public List<com.example.demo.entity.Service> getAll() {
+        return serviceRepository.getAll();
     }
 
     @Override

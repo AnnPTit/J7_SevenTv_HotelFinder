@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin("*")
@@ -35,9 +36,14 @@ public class ServiceController {
     private ServiceService serviceService;
 
     @GetMapping("/load")
-    public Page<Service> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+    public Page<Service> load(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        return serviceService.getAll(pageable);
+        return serviceService.load(pageable);
+    }
+
+    @GetMapping("/getAll")
+    public List<Service> getAll() {
+        return serviceService.getAll();
     }
 
 
