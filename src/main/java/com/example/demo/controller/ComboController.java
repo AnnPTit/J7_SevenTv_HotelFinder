@@ -204,10 +204,6 @@ public class ComboController {
         combo.setComboName(comboName);
         combo.setNote(note);
         combo.setPrice(price);
-
-        // Điều này giả định các trường khác trong đối tượng Combo không có trong payload,
-        // hoặc bạn có thể xử lý các trường khác tùy theo yêu cầu của ứng dụng
-
         return combo;
     }
 
