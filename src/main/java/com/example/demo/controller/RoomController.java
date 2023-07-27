@@ -7,10 +7,13 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.demo.config.S3Util;
+import com.example.demo.dto.PhotoDTO;
+import com.example.demo.entity.Floor;
 import com.example.demo.entity.Photo;
 import com.example.demo.entity.Room;
 import com.example.demo.service.PhotoService;
 import com.example.demo.service.RoomService;
+import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,6 +22,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -28,7 +32,6 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -181,6 +184,7 @@ public class RoomController {
                 photo.setUrl(imageUrl);
                 photo.setRoom(room);
                 photo.setCreateAt(new Date());
+                photo.setUpdateAt(new Date());
                 photo.setStatus(1);
                 photoService.add(photo);
 
@@ -208,10 +212,71 @@ public class RoomController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Room> update(@PathVariable("id") String id, @RequestBody Room room) {
-        room.setId(id);
-        room.setUpdateAt(new Date());
-        roomService.add(room);
+    public ResponseEntity<Room> update(@PathVariable("id") String id, @Valid @ModelAttribute Room room,
+                                       BindingResult bindingResult,
+                                       @PathParam("photos") MultipartFile[] photos) {
+        if (bindingResult.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : bindingResult.getFieldErrors()) {
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+                errorMap.put(key, value);
+            }
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
+        if (room.getRoomCode().trim().isEmpty() || room.getRoomName().trim().isEmpty()
+                || room.getNote().trim().isEmpty()) {
+            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
+        }
+
+        try {
+            room.setId(id);
+            room.setUpdateAt(new Date());
+            room.setStatus(1);
+            roomService.add(room);
+            if (photos != null) {
+                for (MultipartFile file : photos) {
+                    File fileObj = convertMultiPartToFile(file);
+                    String key = "AnDz" + file.getOriginalFilename();
+                    s3Util.uploadPhoto(key, fileObj);
+                    BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
+
+                    AmazonS3 s3Client = AmazonS3ClientBuilder.standard()
+                            .withRegion(region)
+                            .withCredentials(new AWSStaticCredentialsProvider(credentials))
+                            .build();
+
+
+//                // Tạo yêu cầu URL công khai
+//                GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(bucketName, key)
+//                        .withMethod(HttpMethod.GET);
+////                .withExpiration(getExpirationTime(expirationInSeconds));
+//
+//                // Lấy URL công khai
+//                URL publicUrl = s3Client.generatePresignedUrl(urlRequest);
+
+
+                    //
+                    String imageUrl = s3Client.getUrl(bucketName, key).toString();
+                    System.out.println(imageUrl);
+
+//                listURL.add(imageUrl);
+                    Photo photo = new Photo();
+                    photo.setUrl(imageUrl);
+                    photo.setRoom(room);
+                    photo.setCreateAt(new Date());
+                    photo.setUpdateAt(new Date());
+                    photo.setStatus(1);
+                    photoService.add(photo);
+
+                }
+                System.out.println("Them Thanh cong ");
+            }
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+
         return new ResponseEntity<Room>(room, HttpStatus.OK);
     }
 
@@ -224,19 +289,38 @@ public class RoomController {
     }
 
     @GetMapping("/photo/{id}")
-    public ResponseEntity<List<String>> getRoomImages(@PathVariable("id") String id) {
-        List<String> imageUrls = new ArrayList<>();
+    public ResponseEntity<List<PhotoDTO>> getRoomImages(@PathVariable("id") String id) {
+        List<PhotoDTO> photoDTOs = new ArrayList<>();
         // Fetch room images by roomId (use the roomId to query the database or any other data source)
         // For example, assuming you have a service method to get room images by ID:
         List<Photo> roomPhotos = photoService.getPhotoByRoomId(id);
 
         // Iterate through the roomImages and extract the image URLs
         for (Photo photo : roomPhotos) {
-            imageUrls.add(photo.getUrl()); // Assuming 'getUrl()' method returns the image URL from the Photo entity
+            PhotoDTO photoDTO = new PhotoDTO();
+            System.out.println("Id: " + photo.getId());
+            photoDTO.setId(photo.getId());
+            photoDTO.setUrl(photo.getUrl());
+            photoDTOs.add(photoDTO); // Assuming 'getUrl()' method returns the image URL from the Photo entity
         }
 
         // Return the list of image URLs in the response
-        return new ResponseEntity<>(imageUrls, HttpStatus.OK);
+        return new ResponseEntity<>(photoDTOs, HttpStatus.OK);
+    }
+
+    @DeleteMapping("/delete-photo/{id}")
+    public ResponseEntity<String> deletePhoto(@PathVariable("id") String id) {
+        System.out.println("Delete url: " + id);
+        Photo photo = photoService.getPhotoById(id);
+
+        if (photo != null) {
+            // Delete the photo entity from the database
+            photoService.deletePhoto(photo);
+            return new ResponseEntity<String>("Photo deleted successfully", HttpStatus.OK);
+        } else {
+            // Handle the case when the photo with the provided id does not exist
+            return new ResponseEntity<String>("Error deleting the photo", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 }
