@@ -31,10 +31,10 @@ public class UnitController {
     private UnitService unitService;
 
     @GetMapping("/load")
-    public List<Unit> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+    public Page<Unit> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
         Page<Unit> page = unitService.getAll(pageable);
-        return page.getContent();
+        return page;
     }
 
     @GetMapping("/getAll")
@@ -56,6 +56,7 @@ public class UnitController {
     public ResponseEntity<Unit> save(@RequestBody Unit unit) {
         unit.setCreateAt(new Date());
         unit.setUpdateAt(new Date());
+        unit.setStatus(1);
         unitService.save(unit);
         return ResponseEntity.ok(unit);
     }
@@ -64,13 +65,16 @@ public class UnitController {
     public ResponseEntity<Unit> update(@PathVariable("id") String id, @RequestBody Unit unit) {
         unit.setId(id);
         unit.setUpdateAt(new Date());
+        unit.setStatus(1);
         unitService.save(unit);
         return ResponseEntity.ok(unit);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Void> delete(@PathVariable("id") String id) {
-        unitService.delete(id);
+        Unit unit = unitService.getById(id);
+        unit.setStatus(0);
+        unitService.save(unit);
         return ResponseEntity.ok().build();
     }
 }

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.ComboListDTO;
 import com.example.demo.entity.Combo;
 import com.example.demo.entity.Service;
 import com.example.demo.service.ComboService;
@@ -48,6 +49,29 @@ public class ComboController {
         Pageable pageable = PageRequest.of(current_page, 5);
         return comboService.getAll(pageable);
     }
+
+    @GetMapping("/search")
+    public ComboListDTO search(@RequestParam(name = "current_page", defaultValue = "0") int current_page,
+                               @RequestParam(name = "key", defaultValue = "") String key,
+                               @RequestParam(name = "serviceId", defaultValue = "") String serviceId,
+                               @RequestParam(name = "start", defaultValue = "0") BigDecimal start,
+                               @RequestParam(name = "end", defaultValue = "10000000000000000000") BigDecimal end) {
+
+        int pageSize = 5;
+        int offset = pageSize * current_page;
+
+        long totalRecords = comboService.countSearch(key, key, serviceId, start, end);
+        int totalPages = (int) Math.ceil((double) totalRecords / pageSize);
+
+        List<Combo> list = comboService.searchCombosWithService(key, key, serviceId, start, end, pageSize, offset);
+
+        ComboListDTO comboListDTO = new ComboListDTO();
+        comboListDTO.setContent(list);
+        comboListDTO.setTotalPages(totalPages);
+        comboListDTO.setTotalElements(totalRecords);
+        return comboListDTO;
+    }
+
 
     @GetMapping("/detail/{id}")
     public ResponseEntity<Combo> detail(@PathVariable("id") String id) {

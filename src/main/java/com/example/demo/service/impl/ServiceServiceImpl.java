@@ -7,6 +7,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -21,12 +22,13 @@ public class ServiceServiceImpl implements ServiceService {
 
 
     @Override
-    public Page<com.example.demo.entity.Service> loadAndSearch(String serviceCode, String serviceName, String serviceTypeId, String unitId, Pageable pageable) {
+    public Page<com.example.demo.entity.Service> loadAndSearch(String serviceCode, String serviceName, String serviceTypeId, String unitId, BigDecimal start, BigDecimal end, Pageable pageable) {
         return serviceRepository.loadAndSearch(
                 (serviceCode != null && !serviceCode.isEmpty()) ? serviceCode : null,
                 (serviceName != null && !serviceName.isEmpty()) ? "%" + serviceName + "%" : null,
                 (serviceTypeId != null && !serviceTypeId.isEmpty()) ? serviceTypeId : null,
                 (unitId != null && !unitId.isEmpty()) ? unitId : null,
+                start, end,
                 pageable
         );
     }
