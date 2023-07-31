@@ -28,4 +28,33 @@ public class PhotoServiceImpl implements PhotoService {
         return photoRepository.save(photo);
     }
 
+    @Override
+    public List<Photo> getPhotoByRoomId(String id) {
+        return photoRepository.getPhotoByRoomId(id);
+    }
+
+    @Override
+    public void delete(String id) {
+        try {
+            photoRepository.deleteById(id);
+        } catch (Exception e) {
+            System.out.println("Delete error!");
+        }
+    }
+
+    @Override
+    public Photo getPhotoById(String id) {
+        return photoRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void deletePhotoById(String url) {
+        photoRepository.deletePhotoById(url);
+    }
+
+    @Override
+    public void deletePhoto(Photo photo) {
+         photoRepository.delete(photo);
+    }
+
 }

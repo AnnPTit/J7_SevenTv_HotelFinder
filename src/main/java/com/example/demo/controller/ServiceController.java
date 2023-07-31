@@ -22,8 +22,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @CrossOrigin("*")
@@ -35,9 +37,14 @@ public class ServiceController {
     private ServiceService serviceService;
 
     @GetMapping("/load")
-    public Page<Service> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+    public Page<Service> load(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        return serviceService.getAll(pageable);
+        return serviceService.load(pageable);
+    }
+
+    @GetMapping("/getAll")
+    public List<Service> getAll() {
+        return serviceService.getAll();
     }
 
 
@@ -45,10 +52,12 @@ public class ServiceController {
     public Page<Service> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
                                        @RequestParam(name = "serviceTypeId", defaultValue = "") String serviceTypeId,
                                        @RequestParam(name = "unitId", defaultValue = "") String unitId,
-                                       @RequestParam(name = "current_page", defaultValue = "0") int current_page
+                                       @RequestParam(name = "current_page", defaultValue = "0") int current_page,
+                                       @RequestParam(name = "start", defaultValue = "0") BigDecimal start,
+                                       @RequestParam(name = "end", defaultValue = "10000000000000000000") BigDecimal end
     ) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        return serviceService.loadAndSearch(key, key, serviceTypeId, unitId, pageable);
+        return serviceService.loadAndSearch(key, key, serviceTypeId, unitId, start, end, pageable);
 
     }
 

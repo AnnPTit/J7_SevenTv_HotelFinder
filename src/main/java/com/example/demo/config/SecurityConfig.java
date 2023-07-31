@@ -61,6 +61,7 @@ public class SecurityConfig {
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/floor/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/room/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/type-room/**").hasRole("ADMIN")
+                .and().authorizeHttpRequests().requestMatchers("/api/admin/photo/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/service-type/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().exceptionHandling().accessDeniedPage("/api/access-denied")

@@ -13,11 +13,11 @@ import java.util.UUID;
 @Repository
 public interface ServiceTypeRepository extends JpaRepository<ServiceType, String> {
 
-    @Query(value = "select * from service_type where status =1", nativeQuery = true)
+    @Query(value = "select * from service_type where status =1 order by create_at desc", nativeQuery = true)
     Page<ServiceType> findAll(Pageable pageable);
 
 
-    @Query(value = "select * from service_type where status =1", nativeQuery = true)
+    @Query(value = "select * from service_type where status =1 order by create_at desc", nativeQuery = true)
     List<ServiceType> getAll();
 
     @Query(value = "select * from service_type where\n" +
