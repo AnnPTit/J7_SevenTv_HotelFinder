@@ -25,7 +25,7 @@ public class PositionController {
     @Autowired
     private PositionService positionService;
 
-    @GetMapping("/load")
+    @GetMapping("getAll")
     public List<Position> getAll() {
         return positionService.getAll();
     }

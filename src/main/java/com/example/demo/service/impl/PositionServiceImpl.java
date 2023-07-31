@@ -16,7 +16,7 @@ public class PositionServiceImpl implements PositionService {
 
     @Override
     public List<Position> getAll() {
-        return positionRepository.findAll();
+        return positionRepository.getAll();
     }
 
     @Override
@@ -42,5 +42,10 @@ public class PositionServiceImpl implements PositionService {
             e.printStackTrace();
             return false;
         }
+    }
+
+    @Override
+    public Position getIdPosition() {
+        return positionRepository.getIdPosition();
     }
 }

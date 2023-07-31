@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Account;
 import com.example.demo.service.AccountService;
+import com.example.demo.service.PositionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -37,6 +38,9 @@ public class AccountController {
     @Autowired
     private AccountService accountService;
 
+    @Autowired
+    private PositionService positionService;
+
     @GetMapping("/load")
     public Page<Account> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
@@ -44,23 +48,22 @@ public class AccountController {
     }
 
     @GetMapping("getAll")
-    public List<Account> findAll(){
+    public List<Account> findAll() {
         return accountService.findAll();
     }
 
-    @GetMapping("/search")
-    public Page<Account> findByCodeOrName(@RequestParam(name = "key") String key,
-                                              @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+    @GetMapping("/loadAndSearch")
+    public Page<Account> findByCodeOrName(@RequestParam(name = "key", defaultValue = "") String key,
+                                          @RequestParam(name = "positionId", defaultValue = "") String positionId,
+                                          @RequestParam(name = "current_page", defaultValue = "0") int current_page
+    ) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        if (key == "") {
-            return accountService.getAll(pageable);
-        }
-        return accountService.findByCodeOrName(key, pageable);
+        return accountService.loadAndSearch(key, key, positionId, pageable);
     }
 
     @PostMapping("/save")
     public ResponseEntity<Account> add(@Valid @RequestBody Account account,
-                       BindingResult result) {
+                                       BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
             for (FieldError error : result.getFieldErrors()) {
@@ -73,6 +76,8 @@ public class AccountController {
         account.setCreateAt(new Date());
         account.setUpdateAt(new Date());
         account.setStatus(1);
+        account.setPassword("123");
+        account.setPosition(positionService.getIdPosition());
         accountService.add(account);
         return new ResponseEntity<Account>(account, HttpStatus.OK);
     }
