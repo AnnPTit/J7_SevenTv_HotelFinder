@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.entity.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 
@@ -12,11 +13,11 @@ public interface AccountService {
 
     List<Account> findAll();
 
-    Page<Account> findByCodeOrName(String key , Pageable pageable);
+    Page<Account> loadAndSearch(String accountCode, String fullname, String positionId, Pageable pageable);
 
     Account findById(String id);
 
-    Account add(Account account);
+    Boolean add(Account account);
 
     Boolean delete(String id);
 

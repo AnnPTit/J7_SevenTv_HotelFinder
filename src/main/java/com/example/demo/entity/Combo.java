@@ -70,7 +70,7 @@ public class Combo {
     @Column(name = "status")
     private Integer status;
 
-    @JsonIgnore
+/*    @JsonIgnore*/
     @OneToMany(mappedBy = "combo", fetch = FetchType.LAZY)
     private List<ComboService> comboServiceList;
 

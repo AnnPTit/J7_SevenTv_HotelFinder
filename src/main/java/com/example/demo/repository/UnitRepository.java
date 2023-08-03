@@ -11,6 +11,6 @@ import java.util.List;
 public interface UnitRepository extends JpaRepository<Unit, String> {
 
     @Query(value = "select *\n" +
-            "from unit where status = 1" , nativeQuery = true)
+            "from unit where status = 1 order by create_at desc" , nativeQuery = true)
     List<Unit> getAll();
 }

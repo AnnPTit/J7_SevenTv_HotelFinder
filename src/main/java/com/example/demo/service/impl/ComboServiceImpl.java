@@ -8,6 +8,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.List;
+
 @Service
 public class ComboServiceImpl implements ComboService {
 
@@ -44,4 +47,28 @@ public class ComboServiceImpl implements ComboService {
     public boolean existsByCode(String code) {
         return comboRepository.existsByComboCode(code);
     }
+
+    @Override
+    public List<Combo> searchCombosWithService(String comboCode, String comboName, String serviceId, BigDecimal start, BigDecimal end, int pageSize, int offset) {
+        return comboRepository.searchCombosWithService(
+                (comboCode != null && !comboCode.isEmpty()) ? comboCode : null,
+                (comboName != null && !comboName.isEmpty()) ? "%" + comboName + "%" : null,
+                (serviceId != null && !serviceId.isEmpty()) ? serviceId : null,
+                start,
+                end,
+                pageSize, offset
+        );
+    }
+
+    @Override
+    public long countSearch(String comboCode, String comboName, String serviceId, BigDecimal start, BigDecimal end) {
+        return comboRepository.countSearch(
+                (comboCode != null && !comboCode.isEmpty()) ? comboCode : null,
+                (comboName != null && !comboName.isEmpty()) ? "%" + comboName + "%" : null,
+                (serviceId != null && !serviceId.isEmpty()) ? serviceId : null,
+                start,
+                end);
+    }
+
+
 }

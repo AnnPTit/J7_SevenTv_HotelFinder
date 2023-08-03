@@ -33,4 +33,20 @@ public class ComboServiceServiceImpl implements ComboServiceService {
             return null;
         }
     }
+
+    @Override
+    public ComboService findByComboAndService(String comboID, String serviceID) {
+        return comboServiceRepository.findByComboAndService(comboID, serviceID);
+    }
+
+    @Override
+    public boolean deteleComboService(String comboId, String serviceID) {
+        try {
+            comboServiceRepository.deteleComboService(comboId, serviceID);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+    }
 }

@@ -13,4 +13,6 @@ public interface PositionService {
     Position add(Position position);
 
     Boolean delete(String id);
+
+    Position getIdPosition();
 }

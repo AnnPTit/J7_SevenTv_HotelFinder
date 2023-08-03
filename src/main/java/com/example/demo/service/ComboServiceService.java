@@ -14,4 +14,8 @@ public interface ComboServiceService {
 
     ComboService add(ComboService comboService);
 
+    ComboService findByComboAndService(String comboID, String serviceID);
+
+    boolean deteleComboService(String comboId, String serviceID);
+
 }

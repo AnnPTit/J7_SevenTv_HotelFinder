@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -29,7 +30,7 @@ import java.util.UUID;
 @Table(name = "combo_service")
 public class ComboService {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -39,6 +40,7 @@ public class ComboService {
     private Service service;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "combo_id", nullable = false)
     private Combo combo;
 
