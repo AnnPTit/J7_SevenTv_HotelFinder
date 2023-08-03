@@ -66,6 +66,11 @@ public class RoomController {
     private static String secretKey = "jZ69u6/AsmYpB62B5HYicoNRL76wtXck4tPlgeSy";
     private static String region = "us-east-1"; // Ví dụ: "ap-southeast-1"
 
+    @GetMapping("/getList")
+    public List<Room> getList() {
+        return roomService.getList();
+    }
+
     @GetMapping("/load")
     public Page<Room> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
@@ -114,7 +119,6 @@ public class RoomController {
                 .withCredentials(new AWSStaticCredentialsProvider(credentials))
                 .build();
 
-
         // Tạo yêu cầu URL công khai
         GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(bucketName, fileName)
                 .withMethod(HttpMethod.GET);
@@ -126,7 +130,6 @@ public class RoomController {
         // Trả về URL công khai dưới dạng chuỗi
         return ResponseEntity.ok(publicUrl.toString());
     }
-
 
     @PostMapping("/save")
     public ResponseEntity<Room> save(@Valid @ModelAttribute Room room,
@@ -141,15 +144,19 @@ public class RoomController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
-        if (room.getRoomCode().trim().isEmpty() || room.getRoomName().trim().isEmpty()
-                || room.getNote().trim().isEmpty()) {
+        if (room.getRoomName().trim().isEmpty() || room.getNote().trim().isEmpty()) {
             return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
         }
-        if (roomService.existsByCode(room.getRoomCode())) {
-            return new ResponseEntity("Room Code is exists !", HttpStatus.BAD_REQUEST);
+        if (roomService.existsByRoomCode(room.getRoomCode())) {
+            return new ResponseEntity("Mã phòng đã tồn tại.", HttpStatus.BAD_REQUEST);
+        }
+        if (roomService.existsByRoomName(room.getRoomName())) {
+            return new ResponseEntity("Tên phòng đã tồn tại.", HttpStatus.BAD_REQUEST);
         }
 
         try {
+            String ma = "P" + (roomService.getList().size() + 1);
+            room.setRoomCode(ma);
             room.setCreateAt(new Date());
             room.setUpdateAt(new Date());
             room.setStatus(1);
@@ -165,7 +172,6 @@ public class RoomController {
                         .withCredentials(new AWSStaticCredentialsProvider(credentials))
                         .build();
 
-
 //                // Tạo yêu cầu URL công khai
 //                GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(bucketName, key)
 //                        .withMethod(HttpMethod.GET);
@@ -174,8 +180,6 @@ public class RoomController {
 //                // Lấy URL công khai
 //                URL publicUrl = s3Client.generatePresignedUrl(urlRequest);
 
-
-                //
                 String imageUrl = s3Client.getUrl(bucketName, key).toString();
                 System.out.println(imageUrl);
 
@@ -197,7 +201,6 @@ public class RoomController {
 
         return new ResponseEntity<Room>(room, HttpStatus.OK);
     }
-
 
     // Phương thức để tính thời gian hết hạn URL
 //    private static Date getExpirationTime(int expirationInSeconds) {
@@ -246,7 +249,6 @@ public class RoomController {
                             .withCredentials(new AWSStaticCredentialsProvider(credentials))
                             .build();
 
-
 //                // Tạo yêu cầu URL công khai
 //                GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(bucketName, key)
 //                        .withMethod(HttpMethod.GET);
@@ -255,8 +257,6 @@ public class RoomController {
 //                // Lấy URL công khai
 //                URL publicUrl = s3Client.generatePresignedUrl(urlRequest);
 
-
-                    //
                     String imageUrl = s3Client.getUrl(bucketName, key).toString();
                     System.out.println(imageUrl);
 
@@ -303,7 +303,6 @@ public class RoomController {
             photoDTO.setUrl(photo.getUrl());
             photoDTOs.add(photoDTO); // Assuming 'getUrl()' method returns the image URL from the Photo entity
         }
-
         // Return the list of image URLs in the response
         return new ResponseEntity<>(photoDTOs, HttpStatus.OK);
     }

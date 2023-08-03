@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.OrderDetailDTO;
 import com.example.demo.entity.OrderDetail;
 import com.example.demo.service.OrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +9,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.parameters.P;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -19,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +32,21 @@ public class OrderDetailController {
 
     @Autowired
     private OrderDetailService orderDetailService;
+
+    @GetMapping("/loadByOrderId/{id}")
+    public ResponseEntity<List<OrderDetailDTO>> loadByOrderId(@PathVariable("id") String id) {
+        List<OrderDetailDTO> orderDetailDTOS = new ArrayList<>();
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(id);
+        for (OrderDetail orderDetail : orderDetails) {
+            OrderDetailDTO orderDetailDTO = new OrderDetailDTO();
+            orderDetailDTO.setId(orderDetail.getId());
+            orderDetailDTO.setOrder(orderDetail.getOrder());
+            orderDetailDTO.setRoom(orderDetail.getRoom());
+            orderDetailDTO.setRoomPrice(orderDetail.getRoomPrice());
+            orderDetailDTOS.add(orderDetailDTO);
+        }
+        return new ResponseEntity<List<OrderDetailDTO>> (orderDetailDTOS, HttpStatus.OK);
+    }
 
     @GetMapping("/load")
     public List<OrderDetail> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {

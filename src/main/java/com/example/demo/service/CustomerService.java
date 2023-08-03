@@ -10,6 +10,8 @@ public interface CustomerService {
 
     Page<Customer> getAll(Pageable pageable);
 
+    List<Customer> getList();
+
     Customer getOne(String id);
 
     Customer add(Customer customer);

@@ -36,7 +36,7 @@ import java.util.UUID;
 @Table(name = "account")
 public class Account {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -97,5 +97,9 @@ public class Account {
     @JsonIgnore
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     private List<Order> orderList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private List<OrderTimeline> orderTimelineList;
 
 }

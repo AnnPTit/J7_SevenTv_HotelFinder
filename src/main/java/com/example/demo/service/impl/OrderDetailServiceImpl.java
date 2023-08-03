@@ -8,11 +8,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class OrderDetailServiceImpl implements OrderDetailService {
 
     @Autowired
     private OrderDetailRepository orderDetailRepository;
+
+    @Override
+    public List<OrderDetail> getOrderDetailByOrderId(String id) {
+        return orderDetailRepository.getOrderDetailByOrderId(id);
+    }
 
     @Override
     public Page<OrderDetail> getAll(Pageable pageable) {

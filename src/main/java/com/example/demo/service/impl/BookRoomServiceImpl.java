@@ -8,11 +8,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BookRoomServiceImpl implements BookRoomService {
 
     @Autowired
     private BookRoomRepository bookRoomRepository;
+
+    @Override
+    public List<BookRoom> getList() {
+        return bookRoomRepository.findAll();
+    }
 
     @Override
     public Page<BookRoom> getAll(Pageable pageable) {
