@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Order;
 import com.example.demo.service.OrderService;
+import org.aspectj.weaver.ast.Or;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
+import java.util.List;
 
 @CrossOrigin("*")
 @RestController
@@ -35,6 +37,11 @@ public class OrderController {
         return orderService.getAll(pageable);
     }
 
+    @GetMapping("/getList")
+    public List<Order> getList() {
+        return orderService.getList();
+    }
+
     @GetMapping("/detail/{id}")
     public ResponseEntity<Order> detail(@PathVariable("id") String id) {
         Order order = orderService.getOrderById(id);
@@ -45,21 +52,25 @@ public class OrderController {
     public ResponseEntity<Order> save(@RequestBody Order order) {
         order.setCreateAt(new Date());
         order.setUpdateAt(new Date());
+        order.setStatus(1);
         orderService.add(order);
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
+    @PutMapping("/update-accept/{id}")
     public ResponseEntity<Order> save(@PathVariable("id") String id, @RequestBody Order order) {
         order.setId(id);
         order.setUpdateAt(new Date());
+        order.setStatus(2);
         orderService.add(order);
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        orderService.delete(id);
+        Order order = orderService.getOrderById(id);
+        order.setStatus(0);
+        orderService.add(order);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 

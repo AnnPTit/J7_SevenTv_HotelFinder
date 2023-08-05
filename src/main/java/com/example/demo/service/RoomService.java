@@ -4,7 +4,11 @@ import com.example.demo.entity.Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.List;
+
 public interface RoomService {
+
+    List<Room> getList();
 
     Page<Room> getAll(Pageable pageable);
 
@@ -16,6 +20,8 @@ public interface RoomService {
 
     void delete(String id);
 
-    boolean existsByCode(String code);
+    boolean existsByRoomCode(String code);
+
+    boolean existsByRoomName(String name);
 
 }

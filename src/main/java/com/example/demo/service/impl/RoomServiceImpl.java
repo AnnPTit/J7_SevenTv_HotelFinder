@@ -8,11 +8,18 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RoomServiceImpl implements RoomService {
 
     @Autowired
     private RoomRepository roomRepository;
+
+    @Override
+    public List<Room> getList() {
+        return roomRepository.findAll();
+    }
 
     @Override
     public Page<Room> getAll(Pageable pageable) {
@@ -56,7 +63,12 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public boolean existsByCode(String code) {
+    public boolean existsByRoomCode(String code) {
         return roomRepository.existsByRoomCode(code);
+    }
+
+    @Override
+    public boolean existsByRoomName(String name) {
+        return roomRepository.existsByRoomName(name);
     }
 }

@@ -118,4 +118,8 @@ public class Account {
     @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
     private List<Order> orderList;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "account", fetch = FetchType.LAZY)
+    private List<OrderTimeline> orderTimelineList;
+
 }

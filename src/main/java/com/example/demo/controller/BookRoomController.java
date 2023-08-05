@@ -32,6 +32,11 @@ public class BookRoomController {
     @Autowired
     private BookRoomService bookRoomService;
 
+    @GetMapping("/getList")
+    public List<BookRoom> getList() {
+        return bookRoomService.getList();
+    }
+
     @GetMapping("/load")
     public List<BookRoom> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);

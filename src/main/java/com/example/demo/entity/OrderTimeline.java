@@ -13,11 +13,8 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,43 +22,30 @@ import java.util.UUID;
 @Setter
 @Builder
 @Entity
-@Table(name = "payment_method")
-public class PaymentMethod {
+@Table(name = "order_timeline")
+public class OrderTimeline {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne
     @JoinColumn(name = "order_id", nullable = false)
-    private Order orderPayment;
+    private Order order;
 
-    @Column(name = "payment_method_code")
-    private String paymentMethodCode;
+    @ManyToOne
+    @JoinColumn(name = "account_id", nullable = false)
+    private Account account;
 
-    @Column(name = "method")
-    private Boolean method;
+    @Column(name = "type")
+    private Integer type;
 
-    @Column(name = "total_money")
-    private BigDecimal totalMoney;
+    @Column(name = "note")
+    private String note;
 
     @Column(name = "create_at")
     private Date createAt;
 
-    @Column(name = "create_by")
-    private String createBy;
-
-    @Column(name = "update_at")
-    private Date updateAt;
-
-    @Column(name = "updated_by")
-    private String updatedBy;
-
-    @Column(name = "deleted")
-    private String deleted;
-
-    @Column(name = "status")
-    private Integer status;
 
 }

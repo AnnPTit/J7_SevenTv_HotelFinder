@@ -41,6 +41,11 @@ public class CustomerController {
         return page.getContent();
     }
 
+    @GetMapping("/getList")
+    public List<Customer> getList(){
+        return customerService.getList();
+    }
+
     @GetMapping("/detail/{id}")
     public Customer detail(@PathVariable("id") String id)    {
         return customerService.getOne(id);
