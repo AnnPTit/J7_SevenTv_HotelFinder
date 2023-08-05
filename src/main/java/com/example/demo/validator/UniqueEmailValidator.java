@@ -1,5 +1,6 @@
 package com.example.demo.validator;
 import com.example.demo.repository.AccountRepository;
+import com.example.demo.service.AccountService;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -7,11 +8,8 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, String> {
 
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
-    public UniqueEmailValidator(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
 
     @Override
     public void initialize(UniqueEmail constraintAnnotation) {
@@ -22,7 +20,7 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, St
         if (email == null || email.isEmpty()) {
             return true;
         }
-        return !accountRepository.existsByEmail(email);
+        return !accountService.existsByEmail(email);
     }
 }
 

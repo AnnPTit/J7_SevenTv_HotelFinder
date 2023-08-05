@@ -2,6 +2,7 @@ package com.example.demo.validator;
 
 
 import com.example.demo.repository.AccountRepository;
+import com.example.demo.service.AccountService;
 import jakarta.validation.ConstraintValidator;
 import jakarta.validation.ConstraintValidatorContext;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,11 +10,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 public class UniqueCitizenIdValidator implements ConstraintValidator<UniqueCitizenId, String> {
 
     @Autowired
-    private AccountRepository accountRepository;
+    private AccountService accountService;
 
-    public UniqueCitizenIdValidator(AccountRepository accountRepository) {
-        this.accountRepository = accountRepository;
-    }
+//    public UniqueCitizenIdValidator(AccountService accountService) {
+//        this.accountService = accountService;
+//    }
 
     @Override
     public void initialize(UniqueCitizenId constraintAnnotation) {
@@ -24,7 +25,7 @@ public class UniqueCitizenIdValidator implements ConstraintValidator<UniqueCitiz
         if (citizenId == null || citizenId.isEmpty()) {
             return true;
         }
-        return !accountRepository.existsByCitizenId(citizenId);
+        return !accountService.existsByCitizenId(citizenId);
     }
 }
 

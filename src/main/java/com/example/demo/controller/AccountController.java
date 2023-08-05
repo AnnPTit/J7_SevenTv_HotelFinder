@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Account;
+import com.example.demo.model.Mail;
 import com.example.demo.service.AccountService;
+import com.example.demo.service.MailService;
 import com.example.demo.service.PositionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -27,6 +29,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 
 @CrossOrigin("*")
@@ -40,6 +43,9 @@ public class AccountController {
 
     @Autowired
     private PositionService positionService;
+
+    @Autowired
+    private MailService mailService;
 
     @GetMapping("/load")
     public Page<Account> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
@@ -73,14 +79,27 @@ public class AccountController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+//        account.setId(UUID.randomUUID().toString());
         account.setCreateAt(new Date());
         account.setUpdateAt(new Date());
         account.setStatus(1);
         account.setPassword("123");
         account.setPosition(positionService.getIdPosition());
+
+        Mail mail = new Mail();
+        mail.setMailFrom("phamthanhanzwz@gmail.com");
+        mail.setMailTo(account.getEmail());
+        mail.setMailSubject("Thông tin tài khoản website");
+        mail.setMailContent(
+                        "Dear: " + account.getFullname() + "\n" +
+                        "Email của bạn là: " + account.getEmail() + "\n" + "\n" +
+                        "password: " + account.getPassword() + "\n"+
+                        "Đây là email tự động xin vui lòng không trả lời <3");
         accountService.add(account);
+        mailService.sendEmail(mail);
         return new ResponseEntity<Account>(account, HttpStatus.OK);
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Account> delete(@PathVariable("id") String id) {
@@ -115,4 +134,10 @@ public class AccountController {
         accountService.add(account);
         return new ResponseEntity<Account>(account, HttpStatus.OK);
     }
+
+//    @PostMapping("/mail")
+//    public ResponseEntity<Mail> add() {
+//
+//        return new ResponseEntity<Mail>(mail, HttpStatus.OK);
+//    }
 }

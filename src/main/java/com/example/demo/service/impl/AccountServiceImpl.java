@@ -1,7 +1,6 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.entity.Account;
-import com.example.demo.entity.Position;
 import com.example.demo.repository.AccountRepository;
 import com.example.demo.service.AccountService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -11,6 +10,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -47,44 +47,32 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findById(id).orElse(null);
     }
 
-//    @Override
-//    public Boolean add(Account account) {
-//        try {
-//            if (accountRepository.findByEmail(account.getEmail()) != null || accountRepository.findByCitizenId(account.getCitizenId()) != null) {
-//                return false;
-//            }
-//            account.setPassword(passwordEncoder.encode(account.getPassword()));
-//            accountRepository.save(account);
-//            return true;
-//        }catch (Exception e){
-//            e.printStackTrace();
-//            return false;
-//        }
-//    }
-
     @Override
     public Boolean add(Account account) {
         try {
-            // Thêm các điều kiện kiểm tra null
-            if (account == null || account.getEmail() == null || account.getCitizenId() == null || account.getPassword() == null) {
+            if (accountRepository.findByEmail(account.getEmail()) != null || accountRepository.findByCitizenId(account.getCitizenId()) != null){
                 return false;
             }
-
-            synchronized(this) { // Sử dụng khóa để ngăn các request xảy ra đồng thời
-                if (accountRepository.findByEmail(account.getEmail()) != null || accountRepository.findByCitizenId(account.getCitizenId()) != null) {
-                    return false;
-                }
-                account.setPassword(passwordEncoder.encode(account.getPassword()));
-                accountRepository.save(account);
-            }
+            account.setPassword(passwordEncoder.encode(account.getPassword()));
+            accountRepository.save(account);
             return true;
-        }catch (Exception e){
-            // Log lỗi thay vì chỉ in stack trace
-            // Log dùng logger của bạn, ví dụ: logger.error("Error adding account", e);
+        } catch (Exception e) {
             e.printStackTrace();
             return false;
         }
     }
+
+//    @Override
+//    public Account add(Account account) {
+//        if (accountRepository.existsByEmail(account.getEmail())) {
+//            throw new RuntimeException("Email đã tồn tại trong hệ thống");
+//        }
+//        if (accountRepository.existsByCitizenId(account.getCitizenId())) {
+//            throw new RuntimeException("Căn cước công dân đã tồn tại trong hệ thống");
+//        }
+//        account.setPassword(passwordEncoder.encode(account.getPassword()));
+//        return accountRepository.save(account);
+//    }
 
 
     @Override
@@ -97,4 +85,26 @@ public class AccountServiceImpl implements AccountService {
             return false;
         }
     }
+
+    @Override
+    public Optional<Account> findByEmail(String email) {
+        return accountRepository.findByEmail(email);
+    }
+
+    @Override
+    public Account findByCitizenId(String citizenId) {
+        return accountRepository.findByCitizenId(citizenId);
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return accountRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByCitizenId(String citizenId) {
+        return accountRepository.existsByCitizenId(citizenId);
+    }
+
+
 }

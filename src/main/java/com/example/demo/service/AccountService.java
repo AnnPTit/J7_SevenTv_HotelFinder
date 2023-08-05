@@ -6,6 +6,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface AccountService {
 
@@ -21,4 +22,11 @@ public interface AccountService {
 
     Boolean delete(String id);
 
+    Optional<Account> findByEmail(String email);
+
+    Account findByCitizenId(String citizenId);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByCitizenId(String citizenId);
 }
