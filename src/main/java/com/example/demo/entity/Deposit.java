@@ -5,6 +5,8 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -21,8 +23,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
-@ToString
 @Entity
 @Table(name = "deposit")
 public class Deposit {
@@ -32,11 +32,18 @@ public class Deposit {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
+    @Column(name = "deposit_code")
+    private String depositCode;
+
+    @Column(name = "deposit_name")
+    private String depositName;
+
     @Column(name = "pile_value")
     private Integer pileValue;
 
-    @Column(name = "unit")
-    private Integer unit;
+    @ManyToOne
+    @JoinColumn(name = "unit")
+    private Unit unit;
 
     @Column(name = "create_at")
     private Date createAt;
@@ -55,7 +62,4 @@ public class Deposit {
 
     @Column(name = "status")
     private Integer status;
-
-
-
 }

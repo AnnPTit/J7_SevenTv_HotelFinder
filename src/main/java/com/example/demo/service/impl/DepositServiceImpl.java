@@ -26,12 +26,22 @@ public class DepositServiceImpl implements DepositService {
     }
 
     @Override
+    public Deposit getByCode(String code) {
+        try {
+            return depositRepository.findByDepositCode(code);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    @Override
     public Deposit add(Deposit deposit) {
         return depositRepository.save(deposit);
     }
 
     @Override
     public void delete(String id) {
-         depositRepository.deleteById(id);
+        depositRepository.deleteById(id);
     }
 }

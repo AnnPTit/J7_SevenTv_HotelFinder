@@ -27,7 +27,7 @@ import java.util.List;
 @Table(name = "unit")
 public class Unit {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -56,5 +56,8 @@ public class Unit {
     @JsonIgnore
     @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY)
     private List<Service> serviceList;
+    @JsonIgnore
+    @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY)
+    private List<Deposit> depositList;
 
 }
