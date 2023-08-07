@@ -12,6 +12,8 @@ public interface OrderService {
 
     Page<Order> getAll(Pageable pageable);
 
+    Page<Order> getAllByStatus(Pageable pageable);
+
     Order getOrderById(String id);
 
     Order add(Order order);

@@ -66,6 +66,11 @@ public class RoomController {
     private static String secretKey = "jZ69u6/AsmYpB62B5HYicoNRL76wtXck4tPlgeSy";
     private static String region = "us-east-1"; // Ví dụ: "ap-southeast-1"
 
+    @GetMapping("/getAllByStatus")
+    public List<Room> getAllByStatus() {
+        return roomService.getAllByStatus();
+    }
+
     @GetMapping("/getList")
     public List<Room> getList() {
         return roomService.getList();

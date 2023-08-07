@@ -21,4 +21,6 @@ public interface AccountService {
 
     Boolean delete(String id);
 
+    Account getAccountById();
+
 }
