@@ -70,7 +70,7 @@ public class AccountServiceImpl implements AccountService {
                 return false;
             }
 
-            synchronized(this) { // Sử dụng khóa để ngăn các request xảy ra đồng thời
+            synchronized (this) { // Sử dụng khóa để ngăn các request xảy ra đồng thời
                 if (accountRepository.findByEmail(account.getEmail()) != null || accountRepository.findByCitizenId(account.getCitizenId()) != null) {
                     return false;
                 }
@@ -78,7 +78,7 @@ public class AccountServiceImpl implements AccountService {
                 accountRepository.save(account);
             }
             return true;
-        }catch (Exception e){
+        } catch (Exception e) {
             // Log lỗi thay vì chỉ in stack trace
             // Log dùng logger của bạn, ví dụ: logger.error("Error adding account", e);
             e.printStackTrace();
@@ -97,4 +97,10 @@ public class AccountServiceImpl implements AccountService {
             return false;
         }
     }
+
+    @Override
+    public Account getAccountById() {
+        return accountRepository.getAccountById();
+    }
+
 }

@@ -9,10 +9,12 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.util.List;
+
 @Repository
 public interface RoomRepository extends JpaRepository<Room, String> {
 
-    @Query(value = "select * from room where status = 1 order by room_code DESC", nativeQuery = true)
+    @Query(value = "select * from room where status = 1 order by create_at DESC", nativeQuery = true)
     Page<Room> findAll(Pageable pageable);
 
     @Query(value = "SELECT *\n" +
@@ -31,5 +33,8 @@ public interface RoomRepository extends JpaRepository<Room, String> {
     boolean existsByRoomCode(String code);
 
     boolean existsByRoomName(String name);
+
+    @Query(value = "select * from room where status = 1 order by create_at DESC", nativeQuery = true)
+    List<Room> findAllByStatus();
 
 }

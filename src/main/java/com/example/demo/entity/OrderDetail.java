@@ -49,10 +49,10 @@ public class OrderDetail {
     private String orderDetailCode;
 
     @Column(name = "check_in_datetime")
-    private java.sql.Timestamp checkInDatetime;
+    private Date checkInDatetime;
 
     @Column(name = "check_out_datetime")
-    private java.sql.Timestamp checkOutDatetime;
+    private Date checkOutDatetime;
 
     @Column(name = "time_in")
     private Integer timeIn;

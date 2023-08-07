@@ -52,7 +52,8 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/account/load").permitAll()
                 .requestMatchers("/api/book-room/**").permitAll()
-                .requestMatchers("/api/admin/order/load").permitAll()
+                .requestMatchers("/api/admin/order/**").permitAll()
+                .requestMatchers("/api/order-detail/**").permitAll()
                 .requestMatchers("/api/order-timeline/**").permitAll()
                 .requestMatchers("/api/access-denied").permitAll()// với endpoint /hello thì sẽ được cho qua
                 .and()

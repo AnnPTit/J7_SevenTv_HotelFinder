@@ -10,7 +10,10 @@ import java.util.List;
 @Repository
 public interface OrderDetailRepository extends JpaRepository<OrderDetail, String> {
 
-    @Query(value = "SELECT * FROM order_detail where order_id = ?1 ORDER BY create_at ASC",nativeQuery = true)
-    List<OrderDetail> getOrderDetailByOrderId(String id);
+    @Query(value = "SELECT * FROM order_detail where order_id = ?1 ORDER BY create_at ASC", nativeQuery = true)
+    List<OrderDetail> getAllByOrderId(String id);
+
+    @Query(value = "SELECT * FROM order_detail where order_id = ?1 ORDER BY create_at ASC", nativeQuery = true)
+    OrderDetail getOrderDetailByIdOrder(String id);
 
 }

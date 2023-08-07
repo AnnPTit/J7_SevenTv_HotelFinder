@@ -8,6 +8,8 @@ import java.util.List;
 
 public interface RoomService {
 
+    List<Room> getAllByStatus();
+
     List<Room> getList();
 
     Page<Room> getAll(Pageable pageable);
