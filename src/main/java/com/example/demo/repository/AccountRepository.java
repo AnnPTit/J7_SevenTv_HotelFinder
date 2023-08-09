@@ -40,4 +40,7 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     boolean existsByEmail(String email);
 
     boolean existsByCitizenId(String citizenId);
+
+    @Query(value = "SELECT * FROM account where id = '32b69123-34f2-11ee-8f16-489ebddaf682'", nativeQuery = true)
+    Account getAccountById();
 }

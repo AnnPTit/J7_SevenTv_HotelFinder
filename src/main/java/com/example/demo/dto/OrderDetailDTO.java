@@ -2,6 +2,7 @@ package com.example.demo.dto;
 
 import com.example.demo.entity.Order;
 import com.example.demo.entity.Room;
+import com.example.demo.entity.ServiceUsed;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -10,6 +11,7 @@ import lombok.ToString;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Getter
 @Setter
@@ -20,7 +22,9 @@ public class OrderDetailDTO {
 
     private String id;
     private Order order;
+    private String orderId;
     private Room room;
+    private String roomId;
     private String orderDetailCode;
     private Date checkIn;
     private Date checkOut;
@@ -32,5 +36,8 @@ public class OrderDetailDTO {
     private Date createAt;
     private Date updateAt;
     private Integer status;
+
+    private List<String> roomImages;
+    private List<ServiceUsed> serviceUsedList;
 
 }

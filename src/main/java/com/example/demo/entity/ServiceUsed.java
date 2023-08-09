@@ -28,7 +28,7 @@ import java.util.UUID;
 @Table(name = "service_used")
 public class ServiceUsed {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -38,7 +38,7 @@ public class ServiceUsed {
     private Service service;
 
     @ManyToOne
-    @JoinColumn(name = "order_detail_id" , nullable = false)
+    @JoinColumn(name = "order_detail_id", nullable = false)
     private OrderDetail orderDetail;
 
     @Column(name = "quantity")

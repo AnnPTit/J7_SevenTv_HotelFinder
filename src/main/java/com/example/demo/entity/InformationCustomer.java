@@ -13,11 +13,9 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
+import org.springframework.format.annotation.DateTimeFormat;
 
-import java.math.BigDecimal;
 import java.util.Date;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -25,26 +23,42 @@ import java.util.UUID;
 @Setter
 @Builder
 @Entity
-@Table(name = "payment_method")
-public class PaymentMethod {
+@Table(name = "information_customer")
+public class InformationCustomer {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
     @ManyToOne
-    @JoinColumn(name = "order_id", nullable = false)
-    private Order order;
+    @JoinColumn(name = "order_detail_id", nullable = false)
+    private OrderDetail orderDetail;
 
-    @Column(name = "payment_method_code")
-    private String paymentMethodCode;
+    @Column(name = "fullname")
+    private String fullname;
 
-    @Column(name = "method")
-    private Boolean method;
+    @Column(name = "gender")
+    private Boolean gender;
 
-    @Column(name = "total_money")
-    private BigDecimal totalMoney;
+    @DateTimeFormat(pattern = "yyyy-MM-dd")
+    @Column(name = "birthday")
+    private Date birthday;
+
+    @Column(name = "phone_number")
+    private String phoneNumber;
+
+    @Column(name = "citizen_id")
+    private String citizenId;
+
+    @Column(name = "passport")
+    private String passport;
+
+    @Column(name = "stay_from")
+    private Date stayFrom;
+
+    @Column(name = "stay_to")
+    private Date stayTo;
 
     @Column(name = "create_at")
     private Date createAt;

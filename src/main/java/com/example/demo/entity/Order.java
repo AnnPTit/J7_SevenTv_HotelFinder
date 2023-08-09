@@ -106,7 +106,7 @@ public class Order {
     private List<HistoryTransaction> historyTransactionList;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "orderPayment", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<PaymentMethod> paymentMethodList;
 
     @JsonIgnore
