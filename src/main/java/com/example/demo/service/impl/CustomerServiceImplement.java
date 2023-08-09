@@ -32,6 +32,11 @@ public class CustomerServiceImplement implements CustomerService {
     }
 
     @Override
+    public Customer findByCustomerCode(String code) {
+        return customerRepository.findByCustomerCode(code);
+    }
+
+    @Override
     public Customer add(Customer customer) {
         try {
             return customerRepository.save(customer);

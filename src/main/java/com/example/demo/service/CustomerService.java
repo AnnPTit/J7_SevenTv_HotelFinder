@@ -14,6 +14,8 @@ public interface CustomerService {
 
     Customer getOne(String id);
 
+    Customer findByCustomerCode(String code);
+
     Customer add(Customer customer);
 
     Customer update(Customer customer);
