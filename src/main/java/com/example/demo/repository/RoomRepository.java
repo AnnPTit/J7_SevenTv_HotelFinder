@@ -14,13 +14,12 @@ import java.util.List;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, String> {
 
-    @Query(value = "select * from room where status = 1 order by create_at DESC", nativeQuery = true)
+    @Query(value = "select * from room order by create_at DESC", nativeQuery = true)
     Page<Room> findAll(Pageable pageable);
 
     @Query(value = "SELECT *\n" +
             "FROM room\n" +
-            "WHERE status = 1\n" +
-            "  AND ((:roomCode IS NULL OR room_code = :roomCode)\n" +
+            "  WHERE ((:roomCode IS NULL OR room_code = :roomCode)\n" +
             "       OR (:roomName IS NULL OR room_name LIKE CONCAT('%', :roomName, '%')))\n" +
             "  AND (:floorId IS NULL OR floor_id = :floorId)\n" +
             "  AND (:typeRoomId IS NULL OR type_room_id = :typeRoomId) ORDER BY create_at DESC", nativeQuery = true)
@@ -34,7 +33,7 @@ public interface RoomRepository extends JpaRepository<Room, String> {
 
     boolean existsByRoomName(String name);
 
-    @Query(value = "select * from room where status = 1 order by create_at DESC", nativeQuery = true)
+    @Query(value = "select * from room order by create_at DESC", nativeQuery = true)
     List<Room> findAllByStatus();
 
 }

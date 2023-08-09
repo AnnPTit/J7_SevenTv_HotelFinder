@@ -78,6 +78,9 @@ public class Customer {
     @Column(name = "nationality")
     private String nationality;
 
+    @Column(name = "citizen_id")
+    private String citizenId;
+
     @Column(name = "create_at")
     private Date createAt;
 

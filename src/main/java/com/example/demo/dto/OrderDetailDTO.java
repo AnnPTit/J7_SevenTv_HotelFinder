@@ -2,6 +2,7 @@ package com.example.demo.dto;
 
 import com.example.demo.entity.Order;
 import com.example.demo.entity.Room;
+import com.example.demo.entity.ServiceUsed;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -37,5 +38,6 @@ public class OrderDetailDTO {
     private Integer status;
 
     private List<String> roomImages;
+    private List<ServiceUsed> serviceUsedList;
 
 }

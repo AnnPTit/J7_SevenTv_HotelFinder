@@ -16,12 +16,10 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import org.hibernate.annotations.GenericGenerator;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -32,7 +30,7 @@ import java.util.UUID;
 @Table(name = "order_detail")
 public class OrderDetail {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
@@ -94,5 +92,9 @@ public class OrderDetail {
     @JsonIgnore
     @OneToMany(mappedBy = "orderDetail", fetch = FetchType.LAZY)
     private List<ComboUsed> comboUsedList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "orderDetail", fetch = FetchType.LAZY)
+    private List<InformationCustomer> informationCustomerList;
 
 }

@@ -4,6 +4,7 @@ import com.example.demo.dto.OrderDetailDTO;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.Photo;
+import com.example.demo.entity.Room;
 import com.example.demo.service.OrderDetailService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.RoomService;
@@ -41,6 +42,8 @@ public class OrderDetailController {
     private OrderDetailService orderDetailService;
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private RoomService roomService;
 
     @GetMapping("/getList")
     public List<OrderDetail> getList() {
@@ -110,6 +113,10 @@ public class OrderDetailController {
         orderDetail.setUpdateAt(new Date());
         orderDetail.setStatus(1);
         orderDetailService.add(orderDetail);
+
+        Room room = orderDetailDTO.getRoom();
+        room.setStatus(2);
+        roomService.add(room);
         return new ResponseEntity<OrderDetail>(orderDetail, HttpStatus.OK);
     }
 
