@@ -47,8 +47,8 @@ public class DepositController {
     @PostMapping("/save")
     public ResponseEntity<Deposit> add(@RequestBody Deposit deposit) {
         depositService.add(deposit);
-        return new ResponseEntity<Deposit>(deposit, HttpStatus.OK);    }
-
+        return new ResponseEntity<Deposit>(deposit, HttpStatus.OK);
+    }
     @PutMapping("/update/{id}")
     public ResponseEntity<Deposit> update(@PathVariable("id") String id, @RequestBody Deposit deposit) {
         Deposit dps = depositService.getDepositById(id);
@@ -58,5 +58,4 @@ public class DepositController {
         depositService.add(dps);
         return new ResponseEntity<Deposit>(dps, HttpStatus.OK);
     }
-
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface OrderTimelineRepository extends JpaRepository<OrderTimeline, String> {
 
-    @Query(value = "SELECT * FROM order_timeline where order_id = ?1 ORDER BY create_at ASC",nativeQuery = true)
+    @Query(value = "SELECT * FROM order_timeline where order_id = ?1 ORDER BY create_at ASC", nativeQuery = true)
     List<OrderTimeline> getOrderTimelineByOrderId(String id);
 
 }

@@ -50,9 +50,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Boolean add(Account account) {
         try {
-//            if (accountRepository.findByEmail(account.getEmail()) != null || accountRepository.findByCitizenId(account.getCitizenId()) != null){
-//                return false;
-//            }
+            if (accountRepository.findByEmail(account.getEmail()) != null || accountRepository.findByCitizenId(account.getCitizenId()) != null){
+                return false;
+            }
             account.setPassword(passwordEncoder.encode(account.getPassword()));
             accountRepository.save(account);
             return true;
@@ -60,20 +60,8 @@ public class AccountServiceImpl implements AccountService {
             e.printStackTrace();
             return false;
         }
+
     }
-
-//    @Override
-//    public Account add(Account account) {
-//        if (accountRepository.existsByEmail(account.getEmail())) {
-//            throw new RuntimeException("Email đã tồn tại trong hệ thống");
-//        }
-//        if (accountRepository.existsByCitizenId(account.getCitizenId())) {
-//            throw new RuntimeException("Căn cước công dân đã tồn tại trong hệ thống");
-//        }
-//        account.setPassword(passwordEncoder.encode(account.getPassword()));
-//        return accountRepository.save(account);
-//    }
-
 
     @Override
     public Boolean delete(String id) {
@@ -96,15 +84,9 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findByCitizenId(citizenId);
     }
 
-    @Override
-    public boolean existsByEmail(String email) {
-        return accountRepository.existsByEmail(email);
-    }
 
-    @Override
-    public boolean existsByCitizenId(String citizenId) {
-        return accountRepository.existsByCitizenId(citizenId);
+    public Account getAccountByCode() {
+        return accountRepository.getAccountByCode();
     }
-
 
 }

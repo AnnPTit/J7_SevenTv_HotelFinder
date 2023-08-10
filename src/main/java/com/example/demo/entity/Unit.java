@@ -56,6 +56,9 @@ public class Unit {
     @JsonIgnore
     @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY)
     private List<Service> serviceList;
+    @JsonIgnore
+    @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY)
+    private List<Deposit> depositList;
 
     @JsonIgnore
     @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY)

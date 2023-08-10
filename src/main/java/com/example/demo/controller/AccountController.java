@@ -90,8 +90,8 @@ public class AccountController {
         mail.setMailSubject("Thông tin tài khoản website");
         mail.setMailContent(
                         "Dear: " + account.getFullname() + "\n" +
-                        "Email của bạn là: " + account.getEmail() + "\n" + "\n" +
-                        "password: " + account.getPassword() + "\n"+
+                        "Email của bạn là: " + account.getEmail() + "\n" +
+                        "password: " + account.getPassword() + "\n"+ "\n" +
                         "Đây là email tự động xin vui lòng không trả lời <3");
         accountService.add(account);
         mailService.sendEmail(mail);
@@ -132,10 +132,4 @@ public class AccountController {
         accountService.add(account);
         return new ResponseEntity<Account>(account, HttpStatus.OK);
     }
-
-//    @PostMapping("/mail")
-//    public ResponseEntity<Mail> add() {
-//
-//        return new ResponseEntity<Mail>(mail, HttpStatus.OK);
-//    }
 }

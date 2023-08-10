@@ -1,8 +1,23 @@
 package com.example.demo.controller;
 
+import com.example.demo.dto.OrderDTO;
+import com.example.demo.dto.OrderDetailDTO;
+import com.example.demo.entity.Account;
+import com.example.demo.entity.Customer;
+import com.example.demo.entity.HistoryTransaction;
 import com.example.demo.entity.Order;
+import com.example.demo.entity.OrderDetail;
+import com.example.demo.entity.OrderTimeline;
+import com.example.demo.entity.PaymentMethod;
+import com.example.demo.entity.Room;
+import com.example.demo.service.AccountService;
+import com.example.demo.service.CustomerService;
+import com.example.demo.service.HistoryTransactionService;
+import com.example.demo.service.OrderDetailService;
 import com.example.demo.service.OrderService;
-import org.aspectj.weaver.ast.Or;
+import com.example.demo.service.OrderTimelineService;
+import com.example.demo.service.PaymentMethodService;
+import com.example.demo.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -20,8 +35,12 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
+import java.util.UUID;
 
 @CrossOrigin("*")
 @RestController
@@ -30,11 +49,27 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private AccountService accountService;
+    @Autowired
+    private CustomerService customerService;
+    @Autowired
+    private PaymentMethodService paymentMethodService;
+    @Autowired
+    private HistoryTransactionService historyTransactionService;
+    @Autowired
+    private OrderTimelineService orderTimelineService;
 
     @GetMapping("/load")
     public Page<Order> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
         return orderService.getAll(pageable);
+    }
+
+    @GetMapping("/loadByStatus")
+    public Page<Order> getAllByStatus(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return orderService.getAllByStatus(pageable);
     }
 
     @GetMapping("/getList")
@@ -50,19 +85,105 @@ public class OrderController {
 
     @PostMapping("/save")
     public ResponseEntity<Order> save(@RequestBody Order order) {
+        Account account = accountService.getAccountByCode();
+        Customer customer = customerService.getCustomerByCode();
+
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        String formattedDate = currentDate.format(formatter);
+        Random random = new Random();
+        int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
+        String orderCode = "HD" + formattedDate + randomDigits;
+        order.setOrderCode(orderCode);
+        order.setTypeOfOrder(true);
+        order.setAccount(account);
+        order.setCustomer(customer);
         order.setCreateAt(new Date());
         order.setUpdateAt(new Date());
         order.setStatus(1);
+        orderService.add(order);
+
+        OrderTimeline orderTimeline = new OrderTimeline();
+        orderTimeline.setOrder(order);
+        orderTimeline.setAccount(order.getAccount());
+        orderTimeline.setType(1);
+        orderTimeline.setNote("Nhân viên tạo hóa đơn");
+        orderTimeline.setCreateAt(new Date());
+        orderTimelineService.add(orderTimeline);
+
+        return new ResponseEntity<Order>(order, HttpStatus.OK);
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Order> update(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
+        Order order = orderService.getOrderById(id);
+        order.setTotalMoney(orderDTO.getTotalMoney());
         orderService.add(order);
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 
     @PutMapping("/update-accept/{id}")
-    public ResponseEntity<Order> save(@PathVariable("id") String id, @RequestBody Order order) {
-        order.setId(id);
+    public ResponseEntity<Order> updateStatus(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
+        Order order = orderService.getOrderById(id);
+        order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
         order.setStatus(2);
         orderService.add(order);
+
+        OrderTimeline orderTimeline = new OrderTimeline();
+        orderTimeline.setOrder(order);
+        orderTimeline.setAccount(order.getAccount());
+        orderTimeline.setType(2);
+        orderTimeline.setNote(order.getNote());
+        orderTimeline.setCreateAt(new Date());
+        orderTimelineService.add(orderTimeline);
+        return new ResponseEntity<Order>(order, HttpStatus.OK);
+    }
+
+    @PutMapping("/update-return/{id}")
+    public ResponseEntity<Order> updateReturn(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
+        Order order = orderService.getOrderById(id);
+        order.setTotalMoney(orderDTO.getTotalMoney());
+        order.setVat(orderDTO.getVat());
+        order.setMoneyGivenByCustomer(orderDTO.getMoneyGivenByCustomer());
+        order.setExcessMoney(orderDTO.getExcessMoney());
+        order.setNote(orderDTO.getNote());
+        order.setUpdateAt(new Date());
+        order.setStatus(3);
+        orderService.add(order);
+
+        PaymentMethod paymentMethod = new PaymentMethod();
+        paymentMethod.setOrder(order);
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        String formattedDate = currentDate.format(formatter);
+        Random random = new Random();
+        int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
+        String paymentMethodCode = "PT" + formattedDate + randomDigits;
+        paymentMethod.setPaymentMethodCode(paymentMethodCode);
+        paymentMethod.setMethod(true);
+        paymentMethod.setTotalMoney(order.getTotalMoney());
+        paymentMethod.setCreateAt(new Date());
+        paymentMethod.setUpdateAt(new Date());
+        paymentMethod.setStatus(1);
+        paymentMethodService.add(paymentMethod);
+
+        HistoryTransaction historyTransaction = new HistoryTransaction();
+        historyTransaction.setOrder(order);
+        historyTransaction.setTotalMoney(order.getTotalMoney());
+        historyTransaction.setNote(order.getNote());
+        historyTransaction.setCreateAt(new Date());
+        historyTransaction.setUpdateAt(new Date());
+        historyTransaction.setStatus(1);
+        historyTransactionService.add(historyTransaction);
+
+        OrderTimeline orderTimeline = new OrderTimeline();
+        orderTimeline.setOrder(order);
+        orderTimeline.setAccount(order.getAccount());
+        orderTimeline.setType(3);
+        orderTimeline.setNote(order.getNote());
+        orderTimeline.setCreateAt(new Date());
+        orderTimelineService.add(orderTimeline);
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 

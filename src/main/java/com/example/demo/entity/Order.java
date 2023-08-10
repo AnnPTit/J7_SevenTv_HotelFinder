@@ -35,9 +35,9 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne
-    @JoinColumn(name = "book_room_id", nullable = false)
-    private BookRoom bookRoom;
+//    @ManyToOne
+//    @JoinColumn(name = "book_room_id", nullable = false)
+//    private BookRoom bookRoom;
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
@@ -61,6 +61,12 @@ public class Order {
 
     @Column(name = "deposit")
     private BigDecimal deposit;
+
+    @Column(name = "booking_date_start")
+    private Date bookingDateStart;
+
+    @Column(name = "booking_date_end")
+    private Date bookingDateEnd;
 
     @Column(name = "surcharge")
     private BigDecimal surcharge;
@@ -100,7 +106,7 @@ public class Order {
     private List<HistoryTransaction> historyTransactionList;
 
     @JsonIgnore
-    @OneToMany(mappedBy = "orderPayment", fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<PaymentMethod> paymentMethodList;
 
     @JsonIgnore

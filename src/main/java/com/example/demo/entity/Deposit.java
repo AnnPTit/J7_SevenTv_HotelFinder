@@ -23,8 +23,6 @@ import java.util.UUID;
 @NoArgsConstructor
 @Getter
 @Setter
-@Builder
-@ToString
 @Entity
 @Table(name = "deposit")
 public class Deposit {
@@ -64,5 +62,4 @@ public class Deposit {
 
     @Column(name = "status")
     private Integer status;
-
 }

@@ -8,7 +8,11 @@ import java.util.List;
 
 public interface OrderDetailService {
 
+    List<OrderDetail> getList();
+
     List<OrderDetail> getOrderDetailByOrderId(String id);
+
+    OrderDetail getOrderDetailByIdOrder(String id);
 
     Page<OrderDetail> getAll(Pageable pageable);
 

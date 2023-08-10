@@ -47,15 +47,6 @@ public class TypeRoom {
     @Column(name = "price_per_hours")
     private BigDecimal pricePerHours;
 
-    @Column(name = "price_per_daytime")
-    private BigDecimal pricePerDaytime;
-
-    @Column(name = "price_per_nighttime")
-    private BigDecimal pricePerNighttime;
-
-    @Column(name = "price_overtime")
-    private BigDecimal priceOvertime;
-
     @Column(name = "capacity")
     private Integer capacity;
 

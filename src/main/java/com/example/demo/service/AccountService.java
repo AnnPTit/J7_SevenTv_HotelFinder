@@ -26,7 +26,6 @@ public interface AccountService {
 
     Account findByCitizenId(String citizenId);
 
-    boolean existsByEmail(String email);
+    Account getAccountByCode();
 
-    boolean existsByCitizenId(String citizenId);
 }

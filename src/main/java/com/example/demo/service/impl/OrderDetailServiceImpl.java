@@ -17,8 +17,18 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     private OrderDetailRepository orderDetailRepository;
 
     @Override
+    public List<OrderDetail> getList() {
+        return orderDetailRepository.findAll();
+    }
+
+    @Override
     public List<OrderDetail> getOrderDetailByOrderId(String id) {
-        return orderDetailRepository.getOrderDetailByOrderId(id);
+        return orderDetailRepository.getAllByOrderId(id);
+    }
+
+    @Override
+    public OrderDetail getOrderDetailByIdOrder(String id) {
+        return orderDetailRepository.getOrderDetailByIdOrder(id);
     }
 
     @Override

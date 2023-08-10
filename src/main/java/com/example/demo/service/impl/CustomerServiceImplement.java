@@ -56,4 +56,9 @@ public class CustomerServiceImplement implements CustomerService {
         }
     }
 
+    @Override
+    public Customer getCustomerByCode() {
+        return customerRepository.getCustomerByCode();
+    }
+
 }

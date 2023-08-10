@@ -11,6 +11,8 @@ public interface DepositService {
 
     Deposit getDepositById(String id);
 
+    Deposit getByCode(String code);
+
     Deposit add(Deposit deposit);
 
     void delete(String id);
