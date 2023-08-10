@@ -29,7 +29,6 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.UUID;
 
 
 @CrossOrigin("*")
@@ -79,7 +78,6 @@ public class AccountController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
-//        account.setId(UUID.randomUUID().toString());
         account.setCreateAt(new Date());
         account.setUpdateAt(new Date());
         account.setStatus(1);
