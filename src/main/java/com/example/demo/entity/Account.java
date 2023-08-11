@@ -1,8 +1,6 @@
 package com.example.demo.entity;
 
 import com.example.demo.validator.MinAge;
-import com.example.demo.validator.UniqueCitizenId;
-import com.example.demo.validator.UniqueEmail;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -66,7 +64,6 @@ public class Account {
     @MinAge(value = 18, message = "Bạn phải ít nhất 18 tuổi!!")
     private Date birthday;
 
-//    @UniqueEmail
     @Column(name = "email")
     @NotBlank(message = "Email không được để trống!!")
     @Email(message = "Email không đúng định dạng!!")
@@ -79,7 +76,6 @@ public class Account {
     @Pattern(regexp = "^(\\+84|0)[35789][0-9]{8}$", message = "Số điện thoại không đúng định dạng!!")
     private String phoneNumber;
 
-//    @UniqueCitizenId
     @Column(name = "citizen_id")
     @NotBlank(message = "Căn cước công dân không được để trống!!")
     @Pattern(regexp = "\\d{12}", message = "Căn cước công dân không đúng định dạng!!")
