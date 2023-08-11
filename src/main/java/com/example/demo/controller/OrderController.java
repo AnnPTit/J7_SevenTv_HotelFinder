@@ -40,6 +40,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
+import java.util.UUID;
 
 @CrossOrigin("*")
 @RestController
@@ -84,8 +85,9 @@ public class OrderController {
 
     @PostMapping("/save")
     public ResponseEntity<Order> save(@RequestBody Order order) {
-        Customer customer = customerService.getCustomerById();
-        Account account = accountService.getAccountById();
+        Account account = accountService.getAccountByCode();
+        Customer customer = customerService.getCustomerByCode();
+
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
         String formattedDate = currentDate.format(formatter);

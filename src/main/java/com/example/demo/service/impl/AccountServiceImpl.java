@@ -99,8 +99,8 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
-    public Account getAccountById() {
-        return accountRepository.getAccountById();
+    public Account getAccountByCode() {
+        return accountRepository.getAccountByCode();
     }
 
 }

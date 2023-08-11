@@ -22,6 +22,6 @@ public interface CustomerService {
 
     void remove(String id);
 
-    Customer getCustomerById();
+    Customer getCustomerByCode();
 
 }

@@ -11,8 +11,8 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
 
     Customer findByCustomerCode(String code);
 
-    @Query(value = "SELECT * FROM customer where id = 'd9113f24-350f-11ee-8f16-489ebddaf682'", nativeQuery = true)
-    Customer getCustomerById();
+    @Query(value = "SELECT * FROM customer where customer_code = 'KH00'", nativeQuery = true)
+    Customer getCustomerByCode();
 
 
 }
