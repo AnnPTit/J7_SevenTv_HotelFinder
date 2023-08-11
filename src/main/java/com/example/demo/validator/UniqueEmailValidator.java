@@ -1,4 +1,5 @@
 package com.example.demo.validator;
+
 import com.example.demo.repository.AccountRepository;
 import com.example.demo.service.AccountService;
 import jakarta.validation.ConstraintValidator;
@@ -20,7 +21,8 @@ public class UniqueEmailValidator implements ConstraintValidator<UniqueEmail, St
         if (email == null || email.isEmpty()) {
             return true;
         }
-        return !accountService.existsByEmail(email);
+//        return !accountService.existsByEmail(email);
+        return true;
     }
 }
 

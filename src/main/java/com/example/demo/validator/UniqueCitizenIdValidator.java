@@ -25,7 +25,8 @@ public class UniqueCitizenIdValidator implements ConstraintValidator<UniqueCitiz
         if (citizenId == null || citizenId.isEmpty()) {
             return true;
         }
-        return !accountService.existsByCitizenId(citizenId);
+//        return !accountService.existsByCitizenId(citizenId);
+        return true;
     }
 }
 
