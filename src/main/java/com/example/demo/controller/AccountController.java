@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Account;
+import com.example.demo.model.Mail;
 import com.example.demo.service.AccountService;
+import com.example.demo.service.MailService;
 import com.example.demo.service.PositionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,9 @@ public class AccountController {
     @Autowired
     private PositionService positionService;
 
+    @Autowired
+    private MailService mailService;
+
     @GetMapping("/load")
     public Page<Account> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
@@ -78,9 +83,21 @@ public class AccountController {
         account.setStatus(1);
         account.setPassword("123");
         account.setPosition(positionService.getIdPosition());
+
+        Mail mail = new Mail();
+        mail.setMailFrom("phamthanhanzwz@gmail.com");
+        mail.setMailTo(account.getEmail());
+        mail.setMailSubject("Thông tin tài khoản website");
+        mail.setMailContent(
+                        "Dear: " + account.getFullname() + "\n" +
+                        "Email của bạn là: " + account.getEmail() + "\n" +
+                        "password: " + account.getPassword() + "\n"+ "\n" +
+                        "Đây là email tự động xin vui lòng không trả lời <3");
         accountService.add(account);
+        mailService.sendEmail(mail);
         return new ResponseEntity<Account>(account, HttpStatus.OK);
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Account> delete(@PathVariable("id") String id) {

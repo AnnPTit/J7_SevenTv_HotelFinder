@@ -60,4 +60,8 @@ public class Unit {
     @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY)
     private List<Deposit> depositList;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "unit", fetch = FetchType.LAZY)
+    private List<Deposit> depositList;
+
 }

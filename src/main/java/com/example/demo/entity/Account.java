@@ -66,10 +66,11 @@ public class Account {
     @MinAge(value = 18, message = "Bạn phải ít nhất 18 tuổi!!")
     private Date birthday;
 
+//    @UniqueEmail
     @Column(name = "email")
     @NotBlank(message = "Email không được để trống!!")
     @Email(message = "Email không đúng định dạng!!")
-    @UniqueEmail
+
     private String email;
 
     @Column(name = "phone_number")
@@ -78,10 +79,11 @@ public class Account {
     @Pattern(regexp = "^(\\+84|0)[35789][0-9]{8}$", message = "Số điện thoại không đúng định dạng!!")
     private String phoneNumber;
 
+//    @UniqueCitizenId
     @Column(name = "citizen_id")
     @NotBlank(message = "Căn cước công dân không được để trống!!")
     @Pattern(regexp = "\\d{12}", message = "Căn cước công dân không đúng định dạng!!")
-    @UniqueCitizenId
+
     private String citizenId;
 
     @Column(name = "provinces")

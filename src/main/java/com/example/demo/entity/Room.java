@@ -71,9 +71,6 @@ public class Room {
     @Column(name = "status")
     private Integer status;
 
-    @JsonIgnore
-    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
-    private List<BookRoom> bookRoomList;
 
 //    @JsonManagedReference
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)

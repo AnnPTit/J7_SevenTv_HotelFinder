@@ -42,7 +42,7 @@ public class Deposit {
     private Integer pileValue;
 
     @ManyToOne
-    @JoinColumn(name = "unit")
+    @JoinColumn(name = "unit", nullable = false)
     private Unit unit;
 
     @Column(name = "create_at")
