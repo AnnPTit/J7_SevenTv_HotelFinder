@@ -18,6 +18,7 @@ public interface RoomService {
 
     Page<Room> loadAndSearchForHome(String roomCode, String roomName, String floorId, String typeRoomId, String id, Pageable pageable);
 
+    Page<Room> findRoomsOrderByOrderDetailCountDesc(Pageable pageable);
 
     Room getRoomById(String id);
 

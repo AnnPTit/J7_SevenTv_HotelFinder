@@ -55,6 +55,12 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public Page<Room> findRoomsOrderByOrderDetailCountDesc(Pageable pageable) {
+        return roomRepository.findRoomsOrderByOrderDetailCountDesc(pageable);
+    }
+
+
+    @Override
     public Room getRoomById(String id) {
         return roomRepository.findById(id).orElse(null);
     }

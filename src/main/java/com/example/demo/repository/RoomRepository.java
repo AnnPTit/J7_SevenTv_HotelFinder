@@ -46,6 +46,12 @@ public interface RoomRepository extends JpaRepository<Room, String> {
                                     @Param("id") String id,
                                     Pageable pageable);
 
+    @Query("SELECT r FROM Room r " +
+            "JOIN FETCH r.orderDetailList od " +
+            "GROUP BY r.id " +
+            "ORDER BY COUNT(od) DESC")
+    Page<Room> findRoomsOrderByOrderDetailCountDesc(Pageable pageable);
+
     boolean existsByRoomCode(String code);
 
     boolean existsByRoomName(String name);

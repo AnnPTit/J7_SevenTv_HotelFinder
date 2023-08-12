@@ -49,12 +49,18 @@ public class HomeController {
 
     @GetMapping("/room/loadAndSearch1")
     public Page<Room> loadAndSearch1(@RequestParam(name = "key", defaultValue = "") String key,
-                                    @RequestParam(name = "floorId", defaultValue = "") String floorId,
-                                    @RequestParam(name = "typeRoomId", defaultValue = "") String typeRoomId,
-                                    @RequestParam(name = "current_page", defaultValue = "0") int current_page
+                                     @RequestParam(name = "floorId", defaultValue = "") String floorId,
+                                     @RequestParam(name = "typeRoomId", defaultValue = "") String typeRoomId,
+                                     @RequestParam(name = "current_page", defaultValue = "0") int current_page
     ) {
         Pageable pageable = PageRequest.of(current_page, 5);
         return roomService.loadAndSearch(key, key, floorId, typeRoomId, pageable);
+    }
+
+    @GetMapping("/room/loadByBook")
+    public Page<Room> getRoomByVBooking(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return roomService.findRoomsOrderByOrderDetailCountDesc(pageable);
     }
 
     @GetMapping("/room/detail/{id}")
