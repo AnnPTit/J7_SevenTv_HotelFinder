@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.OrderDTO;
-import com.example.demo.dto.OrderDetailDTO;
 import com.example.demo.entity.Account;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.HistoryTransaction;
@@ -40,7 +39,6 @@ import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 @CrossOrigin("*")
 @RestController
@@ -49,6 +47,10 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrderDetailService orderDetailService;
+    @Autowired
+    private RoomService roomService;
     @Autowired
     private AccountService accountService;
     @Autowired
@@ -130,6 +132,13 @@ public class OrderController {
         order.setStatus(2);
         orderService.add(order);
 
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
+        for (OrderDetail orderDetail : orderDetails) {
+            Room room = orderDetail.getRoom();
+            room.setStatus(3);
+            roomService.add(room);
+        }
+
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
         orderTimeline.setAccount(order.getAccount());
@@ -151,6 +160,13 @@ public class OrderController {
         order.setUpdateAt(new Date());
         order.setStatus(3);
         orderService.add(order);
+
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
+        for (OrderDetail orderDetail : orderDetails) {
+            Room room = orderDetail.getRoom();
+            room.setStatus(1);
+            roomService.add(room);
+        }
 
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setOrder(order);
@@ -192,6 +208,13 @@ public class OrderController {
         Order order = orderService.getOrderById(id);
         order.setStatus(0);
         orderService.add(order);
+
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(id);
+        for (OrderDetail orderDetail : orderDetails) {
+            Room room = orderDetail.getRoom();
+            room.setStatus(1);
+            roomService.add(room);
+        }
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 
