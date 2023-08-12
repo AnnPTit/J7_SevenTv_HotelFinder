@@ -28,4 +28,8 @@ public interface AccountService {
 
     Account getAccountByCode();
 
+    String generateAccountCode();
+
+    String generateRandomPassword(int length);
+
 }

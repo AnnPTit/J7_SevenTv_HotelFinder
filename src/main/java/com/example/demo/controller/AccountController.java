@@ -78,10 +78,11 @@ public class AccountController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+        account.setAccountCode(accountService.generateAccountCode());
         account.setCreateAt(new Date());
         account.setUpdateAt(new Date());
         account.setStatus(1);
-        account.setPassword("123");
+        account.setPassword(accountService.generateRandomPassword(3));
         account.setPosition(positionService.getIdPosition());
 
         Mail mail = new Mail();
@@ -117,16 +118,16 @@ public class AccountController {
     public ResponseEntity<Account> update(@PathVariable("id") String id,
                                           @RequestBody Account account,
                                           BindingResult result) {
-//        Account account1 = accountService.findById(id);
-//        if (result.hasErrors()) {
-//            Map<String, String> errorMap = new HashMap<>();
-//            for (FieldError error : result.getFieldErrors()) {
-//                String key = error.getField();
-//                String value = error.getDefaultMessage();
-//                errorMap.put(key, value);
-//            }
-//            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
-//        }
+        Account account1 = accountService.findById(id);
+        if (result.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : result.getFieldErrors()) {
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+                errorMap.put(key, value);
+            }
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
         account.setId(id);
         account.setUpdateAt(new Date());
         accountService.add(account);

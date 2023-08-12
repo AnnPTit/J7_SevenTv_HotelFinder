@@ -9,8 +9,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
+import java.util.Random;
 
 @Service
 public class AccountServiceImpl implements AccountService {
@@ -50,9 +52,9 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Boolean add(Account account) {
         try {
-            if (accountRepository.findByEmail(account.getEmail()) != null || accountRepository.findByCitizenId(account.getCitizenId()) != null){
-                return false;
-            }
+//            if (accountRepository.findByEmail(account.getEmail()) != null || accountRepository.findByCitizenId(account.getCitizenId()) != null){
+//                return false;
+//            }
             account.setPassword(passwordEncoder.encode(account.getPassword()));
             accountRepository.save(account);
             return true;
@@ -87,6 +89,34 @@ public class AccountServiceImpl implements AccountService {
 
     public Account getAccountByCode() {
         return accountRepository.getAccountByCode();
+    }
+
+    public String generateAccountCode() {
+        int CODE_LENGTH = 8;
+        String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+
+        SecureRandom random = new SecureRandom();
+        StringBuilder code = new StringBuilder(CODE_LENGTH);
+
+        for (int i = 0; i < CODE_LENGTH; i++) {
+            int randomIndex = random.nextInt(CHARACTERS.length());
+            char randomChar = CHARACTERS.charAt(randomIndex);
+            code.append(randomChar);
+        }
+
+        return code.toString();
+    }
+
+    public String generateRandomPassword(int length) {
+        Random random = new Random();
+        StringBuilder password = new StringBuilder();
+
+        for (int i = 0; i < length; i++) {
+            int digit = random.nextInt(10); // Generate a random digit from 0 to 9
+            password.append(digit);
+        }
+
+        return password.toString();
     }
 
 }
