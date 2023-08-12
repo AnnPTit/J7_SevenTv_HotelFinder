@@ -1,7 +1,9 @@
 package com.example.demo.controller;
 
 import com.example.demo.entity.Account;
+import com.example.demo.model.Mail;
 import com.example.demo.service.AccountService;
+import com.example.demo.service.MailService;
 import com.example.demo.service.PositionService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,6 +43,9 @@ public class AccountController {
     @Autowired
     private PositionService positionService;
 
+    @Autowired
+    private MailService mailService;
+
     @GetMapping("/load")
     public Page<Account> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
@@ -73,14 +78,27 @@ public class AccountController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+        account.setAccountCode(accountService.generateAccountCode());
         account.setCreateAt(new Date());
         account.setUpdateAt(new Date());
         account.setStatus(1);
-        account.setPassword("123");
+        account.setPassword(accountService.generateRandomPassword(3));
         account.setPosition(positionService.getIdPosition());
+
+        Mail mail = new Mail();
+        mail.setMailFrom("phamthanhanzwz@gmail.com");
+        mail.setMailTo(account.getEmail());
+        mail.setMailSubject("Thông tin tài khoản website");
+        mail.setMailContent(
+                        "Dear: " + account.getFullname() + "\n" +
+                        "Email của bạn là: " + account.getEmail() + "\n" +
+                        "password: " + account.getPassword() + "\n"+ "\n" +
+                        "Đây là email tự động xin vui lòng không trả lời <3");
         accountService.add(account);
+        mailService.sendEmail(mail);
         return new ResponseEntity<Account>(account, HttpStatus.OK);
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Account> delete(@PathVariable("id") String id) {
@@ -100,16 +118,16 @@ public class AccountController {
     public ResponseEntity<Account> update(@PathVariable("id") String id,
                                           @RequestBody Account account,
                                           BindingResult result) {
-//        Account account1 = accountService.findById(id);
-//        if (result.hasErrors()) {
-//            Map<String, String> errorMap = new HashMap<>();
-//            for (FieldError error : result.getFieldErrors()) {
-//                String key = error.getField();
-//                String value = error.getDefaultMessage();
-//                errorMap.put(key, value);
-//            }
-//            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
-//        }
+        Account account1 = accountService.findById(id);
+        if (result.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : result.getFieldErrors()) {
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+                errorMap.put(key, value);
+            }
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
         account.setId(id);
         account.setUpdateAt(new Date());
         accountService.add(account);

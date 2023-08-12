@@ -28,6 +28,8 @@ public class WebSocketController {
 
     private final OrderDetailService orderDetailService;
 
+    private final AccountService accountService;
+
 
     @MessageMapping("/products")
     @SendTo("/topic/product")
@@ -58,7 +60,8 @@ public class WebSocketController {
                 newCustomer.setPhoneNumber(payload.getUser().getSoDienThoai());
                 customerService.add(newCustomer);
             }
-            // B2 : Lấy danh sách phòng
+            // B2 : Lấy account
+            Account account = accountService.getAccountByCode();
 
 
             // B3 : Tạo hóa đơn
@@ -66,6 +69,7 @@ public class WebSocketController {
             Customer customerForOrder = customerService.findCustomerByEmail(payload.getUser().getEmail()).orElse(null);
             String orderCode = "HD" + randomNumber;
             order.setCustomer(customerForOrder);
+            order.setAccount(account);
             order.setOrderCode(orderCode);
             order.setTypeOfOrder(false);
             order.setDeposit(payload.getDeposit());
@@ -80,6 +84,7 @@ public class WebSocketController {
             // B4 tạo Order timeline
             OrderTimeline orderTimeline = new OrderTimeline();
             orderTimeline.setOrder(order);
+            orderTimeline.setAccount(account);
             orderTimeline.setType(1);
             orderTimeline.setNote("Khách hàng tạo hóa đơn" + payload.getUser().getEmail());
             orderTimeline.setCreateAt(new Date());
