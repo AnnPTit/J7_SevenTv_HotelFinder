@@ -16,6 +16,9 @@ public interface RoomService {
 
     Page<Room> loadAndSearch(String roomCode, String roomName, String floorId, String typeRoomId, Pageable pageable);
 
+    Page<Room> loadAndSearchForHome(String roomCode, String roomName, String floorId, String typeRoomId, String id, Pageable pageable);
+
+
     Room getRoomById(String id);
 
     Room add(Room room);

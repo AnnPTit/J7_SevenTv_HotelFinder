@@ -22,12 +22,30 @@ public interface RoomRepository extends JpaRepository<Room, String> {
             "  WHERE ((:roomCode IS NULL OR room_code = :roomCode)\n" +
             "       OR (:roomName IS NULL OR room_name LIKE CONCAT('%', :roomName, '%')))\n" +
             "  AND (:floorId IS NULL OR floor_id = :floorId)\n" +
-            "  AND (:typeRoomId IS NULL OR type_room_id = :typeRoomId) ORDER BY create_at DESC", nativeQuery = true)
+            "  AND (:typeRoomId IS NULL OR type_room_id = :typeRoomId)" +
+            "AND  status = 1 " +
+            "ORDER BY create_at DESC", nativeQuery = true)
     Page<Room> loadAndSearch(@Param("roomCode") String roomCode,
                              @Param("roomName") String roomName,
                              @Param("floorId") String floorId,
                              @Param("typeRoomId") String typeRoomId,
                              Pageable pageable);
+
+    @Query(value = "SELECT *\n" +
+            "FROM room\n" +
+            "WHERE status = 1\n" +
+            "  AND ((:roomCode IS NULL OR room_code = :roomCode)\n" +
+            "       OR (:roomName IS NULL OR room_name LIKE CONCAT('%', :roomName, '%')))\n" +
+            "  AND (:floorId IS NULL OR floor_id = :floorId)\n" +
+            "  AND (:typeRoomId IS NULL OR type_room_id = :typeRoomId) " +
+            "AND id <> :id" +
+            " ORDER BY create_at DESC", nativeQuery = true)
+    Page<Room> loadAndSearchForHome(@Param("roomCode") String roomCode,
+                                    @Param("roomName") String roomName,
+                                    @Param("floorId") String floorId,
+                                    @Param("typeRoomId") String typeRoomId,
+                                    @Param("id") String id,
+                                    Pageable pageable);
 
     boolean existsByRoomCode(String code);
 
