@@ -48,7 +48,7 @@ public class HomeController {
     }
 
     @GetMapping("/room/loadAndSearch1")
-    public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
+    public Page<Room> loadAndSearch1(@RequestParam(name = "key", defaultValue = "") String key,
                                     @RequestParam(name = "floorId", defaultValue = "") String floorId,
                                     @RequestParam(name = "typeRoomId", defaultValue = "") String typeRoomId,
                                     @RequestParam(name = "current_page", defaultValue = "0") int current_page
@@ -63,7 +63,7 @@ public class HomeController {
         return new ResponseEntity<Room>(room, HttpStatus.OK);
     }
 
-    //    Deposit
+    // Deposit
     @GetMapping("/deposit/getByCode")
     public ResponseEntity<Deposit> getByCode(@RequestParam("code") String code) {
 
@@ -75,7 +75,6 @@ public class HomeController {
             return new ResponseEntity("Khong tim thay", HttpStatus.NOT_FOUND);
         }
     }
-
 
     // Service
     @GetMapping("/service/getAll")

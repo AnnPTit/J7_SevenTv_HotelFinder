@@ -35,9 +35,7 @@ public class Order {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-//    @ManyToOne
-//    @JoinColumn(name = "book_room_id", nullable = false)
-//    private BookRoom bookRoom;
+
 
     @ManyToOne
     @JoinColumn(name = "account_id", nullable = false)
