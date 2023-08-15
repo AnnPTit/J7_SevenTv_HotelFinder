@@ -59,7 +59,7 @@ public class Account {
     private Boolean gender;
 
     @Column(name = "birthday")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
     @NotNull(message = "Ngày sinh không được để tróng!!")
     @MinAge(value = 18, message = "Bạn phải ít nhất 18 tuổi!!")
     private Date birthday;
@@ -72,7 +72,7 @@ public class Account {
 
     @Column(name = "phone_number")
     @NotBlank(message = "Số điện thoại không được để trống!!")
-    @Size(min = 10, max = 10, message = "Số điện thoại phải có 10 chữ số!!")
+//    @Size(min = 10, max = 10, message = "Số điện thoại phải có 10 chữ số!!")
     @Pattern(regexp = "^(\\+84|0)[35789][0-9]{8}$", message = "Số điện thoại không đúng định dạng!!")
     private String phoneNumber;
 

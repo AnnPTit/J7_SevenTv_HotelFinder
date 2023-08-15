@@ -52,9 +52,6 @@ public class AccountServiceImpl implements AccountService {
     @Override
     public Boolean add(Account account) {
         try {
-//            if (accountRepository.findByEmail(account.getEmail()) != null || accountRepository.findByCitizenId(account.getCitizenId()) != null){
-//                return false;
-//            }
             account.setPassword(passwordEncoder.encode(account.getPassword()));
             accountRepository.save(account);
             return true;
