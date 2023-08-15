@@ -4,6 +4,7 @@ import com.example.demo.entity.Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 public interface RoomService {
@@ -18,6 +19,7 @@ public interface RoomService {
 
     Page<Room> loadAndSearchForHome(String roomCode, String roomName, String floorId, String typeRoomId, String id, Pageable pageable);
 
+    List<Room> loadAndSearchBookRoom(String roomCode, String roomName, String floorId, String typeRoomId, BigDecimal start, BigDecimal end);
 
     Room getRoomById(String id);
 
