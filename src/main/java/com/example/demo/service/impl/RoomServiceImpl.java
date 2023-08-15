@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -51,6 +53,35 @@ public class RoomServiceImpl implements RoomService {
                 (typeRoomId != null && !typeRoomId.isEmpty()) ? typeRoomId : null,
                 (id != null && !id.isEmpty()) ? id : null,
                 pageable
+        );
+    }
+
+    @Override
+    public List<Room> findRoomsByFilters(
+            String roomName,
+            String typeRoomCode,
+            BigDecimal startPrice,
+            BigDecimal endPrice,
+            Integer capacity,
+            Date dayStart,
+            Date dayEnd
+    ) {
+        // Check for null values and adjust the parameters accordingly
+        String filteredRoomName = (roomName != null && !roomName.isEmpty()) ? roomName : null;
+        String filteredTypeRoomCode = (typeRoomCode != null && !typeRoomCode.isEmpty()) ? typeRoomCode : null;
+        BigDecimal filteredStartPrice = (startPrice != null) ? startPrice : BigDecimal.ZERO;
+        BigDecimal filteredEndPrice = (endPrice != null) ? endPrice : BigDecimal.valueOf(Double.MAX_VALUE);
+        Integer filteredCapacity = (capacity != null) ? capacity : 0;
+
+        // Call the repository method with the filtered parameters
+        return roomRepository.findRoomsByFilters(
+                filteredRoomName,
+                filteredTypeRoomCode,
+                filteredStartPrice,
+                filteredEndPrice,
+                filteredCapacity,
+                dayStart,
+                dayEnd
         );
     }
 

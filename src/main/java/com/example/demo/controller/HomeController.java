@@ -16,6 +16,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @CrossOrigin("*")
@@ -95,5 +97,27 @@ public class HomeController {
         }
     }
 
+    // Filter
+    @GetMapping("/get-room-filter")
+    public List<Room> getRoomsByFilters(
+            @RequestParam(name = "roomName" , defaultValue = "") String roomName,
+            @RequestParam(name = "typeRoomCode" , defaultValue = "") String typeRoomCode,
+            @RequestParam(name = "startPrice" , defaultValue = "0") BigDecimal startPrice,
+            @RequestParam(name = "endPrice" , defaultValue = "20000000000000") BigDecimal endPrice,
+            @RequestParam(name = "capacity" , defaultValue = "1") Integer capacity,
+            @RequestParam(name = "dayStart" , defaultValue = "") Date dayStart,
+            @RequestParam(name = "dayEnd" , defaultValue = "") Date dayEnd
+    ) {
+        List<Room> roomList = roomService.findRoomsByFilters(
+                roomName,
+                typeRoomCode,
+                startPrice,
+                endPrice,
+                capacity,
+                dayStart,
+                dayEnd
+        );
+        return roomList;
+    }
 
 }

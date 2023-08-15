@@ -4,6 +4,8 @@ import com.example.demo.entity.Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 public interface RoomService {
@@ -17,6 +19,16 @@ public interface RoomService {
     Page<Room> loadAndSearch(String roomCode, String roomName, String floorId, String typeRoomId, Pageable pageable);
 
     Page<Room> loadAndSearchForHome(String roomCode, String roomName, String floorId, String typeRoomId, String id, Pageable pageable);
+
+    List<Room> findRoomsByFilters(
+            String roomName,
+            String typeRoomCode,
+            BigDecimal startPrice,
+            BigDecimal endPrice,
+            Integer capacity,
+            Date dayStart,
+            Date dayEnd
+    );
 
     Page<Room> findRoomsOrderByOrderDetailCountDesc(Pageable pageable);
 
