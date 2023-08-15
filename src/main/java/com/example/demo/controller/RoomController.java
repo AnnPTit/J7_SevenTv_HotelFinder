@@ -40,6 +40,7 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
@@ -90,6 +91,15 @@ public class RoomController {
     ) {
         Pageable pageable = PageRequest.of(current_page, 5);
         return roomService.loadAndSearch(key, key, floorId, typeRoomId, pageable);
+    }
+
+    @GetMapping("/loadAndSearchBookRoom")
+    public List<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
+                                    @RequestParam(name = "floorId", defaultValue = "") String floorId,
+                                    @RequestParam(name = "typeRoomId", defaultValue = "") String typeRoomId,
+                                    @RequestParam(name = "start", defaultValue = "0") BigDecimal start,
+                                    @RequestParam(name = "end", defaultValue = "10000000000000000000") BigDecimal end) {
+        return roomService.loadAndSearchBookRoom(key, key, floorId, typeRoomId, start, end);
     }
 
     @PostMapping("upload")

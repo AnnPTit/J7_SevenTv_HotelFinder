@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.util.List;
 
 @Service
@@ -51,6 +52,18 @@ public class RoomServiceImpl implements RoomService {
                 (typeRoomId != null && !typeRoomId.isEmpty()) ? typeRoomId : null,
                 (id != null && !id.isEmpty()) ? id : null,
                 pageable
+        );
+    }
+
+    @Override
+    public List<Room> loadAndSearchBookRoom(String roomCode, String roomName, String floorId, String typeRoomId, BigDecimal start, BigDecimal end) {
+        return roomRepository.loadAndSearchBookRoom(
+                (roomCode != null && !roomCode.isEmpty()) ? roomCode : null,
+                (roomName != null && !roomName.isEmpty()) ? "%" + roomName + "%" : null,
+                (floorId != null && !floorId.isEmpty()) ? floorId : null,
+                (typeRoomId != null && !typeRoomId.isEmpty()) ? typeRoomId : null,
+                start,
+                end
         );
     }
 
