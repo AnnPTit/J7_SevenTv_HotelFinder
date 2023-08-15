@@ -8,6 +8,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Repository
@@ -46,8 +48,32 @@ public interface RoomRepository extends JpaRepository<Room, String> {
                                     @Param("id") String id,
                                     Pageable pageable);
 
+
+    @Query("SELECT DISTINCT r FROM Room r " +
+            "LEFT JOIN r.orderDetailList  od " +
+            "LEFT JOIN od.order o " +
+            "LEFT JOIN r.typeRoom tr " +
+            "WHERE r.roomName LIKE CONCAT('%', :roomName, '%') " +
+            "AND (:typeRoomCode IS NULL OR tr.typeRoomCode = :typeRoomCode) " +
+            "AND tr.pricePerDay BETWEEN :startPrice AND :endPrice " +
+            "AND (:capacity IS NULL OR tr.capacity = :capacity) " +
+            "AND ((" +
+            "    (o.bookingDateStart NOT BETWEEN :dayStart AND :dayEnd) " +
+            "    AND (o.bookingDateEnd NOT BETWEEN :dayStart AND :dayEnd)) " +
+            "    OR (:dayStart IS NULL OR :dayEnd IS NULL))")
+    List<Room> findRoomsByFilters(
+            @Param("roomName") String roomName,
+            @Param("typeRoomCode") String typeRoomCode,
+            @Param("startPrice") BigDecimal startPrice,
+            @Param("endPrice") BigDecimal endPrice,
+            @Param("capacity") Integer capacity,
+            @Param("dayStart") Date dayStart,
+            @Param("dayEnd") Date dayEnd
+    );
+
+
     @Query("SELECT r FROM Room r " +
-            "JOIN FETCH r.orderDetailList od " +
+            "LEFT JOIN FETCH r.orderDetailList od " +
             "GROUP BY r.id " +
             "ORDER BY COUNT(od) DESC")
     Page<Room> findRoomsOrderByOrderDetailCountDesc(Pageable pageable);
