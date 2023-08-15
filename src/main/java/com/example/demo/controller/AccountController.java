@@ -85,17 +85,17 @@ public class AccountController {
         account.setPassword(accountService.generateRandomPassword(3));
         account.setPosition(positionService.getIdPosition());
 
-        Mail mail = new Mail();
-        mail.setMailFrom("phamthanhanzwz@gmail.com");
-        mail.setMailTo(account.getEmail());
-        mail.setMailSubject("Thông tin tài khoản website");
-        mail.setMailContent(
-                        "Dear: " + account.getFullname() + "\n" +
-                        "Email của bạn là: " + account.getEmail() + "\n" +
-                        "password: " + account.getPassword() + "\n"+ "\n" +
-                        "Đây là email tự động xin vui lòng không trả lời <3");
+//        Mail mail = new Mail();
+//        mail.setMailFrom("phamthanhanzwz@gmail.com");
+//        mail.setMailTo(account.getEmail());
+//        mail.setMailSubject("Thông tin tài khoản website");
+//        mail.setMailContent(
+//                        "Dear: " + account.getFullname() + "\n" +
+//                        "Email của bạn là: " + account.getEmail() + "\n" +
+//                        "password: " + account.getPassword() + "\n"+ "\n" +
+//                        "Đây là email tự động xin vui lòng không trả lời <3");
         accountService.add(account);
-        mailService.sendEmail(mail);
+//        mailService.sendEmail(mail);
         return new ResponseEntity<Account>(account, HttpStatus.OK);
     }
 
@@ -109,7 +109,6 @@ public class AccountController {
     }
 
     @GetMapping("/detail/{id}")
-//    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public ResponseEntity<Account> detail(@PathVariable("id") String id) {
         return ResponseEntity.ok(accountService.findById(id));
     }
@@ -118,7 +117,6 @@ public class AccountController {
     public ResponseEntity<Account> update(@PathVariable("id") String id,
                                           @RequestBody Account account,
                                           BindingResult result) {
-        Account account1 = accountService.findById(id);
         if (result.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
             for (FieldError error : result.getFieldErrors()) {
