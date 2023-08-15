@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CustomerServiceImplement implements CustomerService {
@@ -34,6 +35,11 @@ public class CustomerServiceImplement implements CustomerService {
     @Override
     public Customer findByCustomerCode(String code) {
         return customerRepository.findByCustomerCode(code);
+    }
+
+    @Override
+    public Optional<Customer> findCustomerByEmail(String email) {
+        return customerRepository.findCustomerByEmail(email);
     }
 
     @Override
