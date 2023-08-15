@@ -20,9 +20,9 @@ public interface RoomService {
 
     Page<Room> loadAndSearchForHome(String roomCode, String roomName, String floorId, String typeRoomId, String id, Pageable pageable);
 
+
     List<Room> findRoomsByFilters(
-            String roomName,
-            String typeRoomCode,
+            String roomName, String typeRoomCode,
             BigDecimal startPrice,
             BigDecimal endPrice,
             Integer capacity,
@@ -31,6 +31,9 @@ public interface RoomService {
     );
 
     Page<Room> findRoomsOrderByOrderDetailCountDesc(Pageable pageable);
+
+    List<Room> loadAndSearchBookRoom(String roomCode, String roomName, String floorId, String typeRoomId, BigDecimal start, BigDecimal end);
+
 
     Room getRoomById(String id);
 

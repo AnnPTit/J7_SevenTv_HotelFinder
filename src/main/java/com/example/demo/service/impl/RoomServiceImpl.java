@@ -81,7 +81,17 @@ public class RoomServiceImpl implements RoomService {
                 filteredEndPrice,
                 filteredCapacity,
                 dayStart,
-                dayEnd
+                dayEnd);
+    }
+
+    public List<Room> loadAndSearchBookRoom(String roomCode, String roomName, String floorId, String typeRoomId, BigDecimal start, BigDecimal end) {
+        return roomRepository.loadAndSearchBookRoom(
+                (roomCode != null && !roomCode.isEmpty()) ? roomCode : null,
+                (roomName != null && !roomName.isEmpty()) ? "%" + roomName + "%" : null,
+                (floorId != null && !floorId.isEmpty()) ? floorId : null,
+                (typeRoomId != null && !typeRoomId.isEmpty()) ? typeRoomId : null,
+                start,
+                end
         );
     }
 
