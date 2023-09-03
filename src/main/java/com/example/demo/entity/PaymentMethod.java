@@ -28,7 +28,7 @@ import java.util.UUID;
 @Table(name = "payment_method")
 public class PaymentMethod {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;

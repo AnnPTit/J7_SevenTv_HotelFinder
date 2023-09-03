@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -15,7 +16,7 @@ import java.util.Date;
 @AllArgsConstructor
 @NoArgsConstructor
 @ToString
-public class PaymentMethodDTO {
+public class PaymentMethodDTO implements Serializable {
 
     private String id;
     private Order order;
@@ -25,5 +26,6 @@ public class PaymentMethodDTO {
     private Date createAt;
     private Date updateAt;
     private Integer status;
+    private String url;
 
 }
