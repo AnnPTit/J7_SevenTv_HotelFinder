@@ -103,6 +103,7 @@ public class OrderController {
         order.setCreateAt(new Date());
         order.setUpdateAt(new Date());
         order.setStatus(1);
+        order.setNote("Tạo đơn cho khách");
         orderService.add(order);
 
         OrderTimeline orderTimeline = new OrderTimeline();
@@ -135,7 +136,7 @@ public class OrderController {
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
         for (OrderDetail orderDetail : orderDetails) {
             Room room = orderDetail.getRoom();
-            room.setStatus(3);
+            room.setStatus(2);
             roomService.add(room);
         }
 
@@ -203,10 +204,11 @@ public class OrderController {
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         Order order = orderService.getOrderById(id);
         order.setStatus(0);
+        order.setNote("Khách hủy hóa đơn");
         orderService.add(order);
 
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(id);
@@ -215,6 +217,14 @@ public class OrderController {
             room.setStatus(1);
             roomService.add(room);
         }
+
+        OrderTimeline orderTimeline = new OrderTimeline();
+        orderTimeline.setOrder(order);
+        orderTimeline.setAccount(order.getAccount());
+        orderTimeline.setType(0);
+        orderTimeline.setNote(order.getNote());
+        orderTimeline.setCreateAt(new Date());
+        orderTimelineService.add(orderTimeline);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 
