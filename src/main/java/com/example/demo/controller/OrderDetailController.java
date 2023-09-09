@@ -142,7 +142,17 @@ public class OrderDetailController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        orderDetailService.delete(id);
+        OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
+        orderDetail.getRoom().setStatus(1);
+        List<ServiceUsed> serviceUsedList = serviceUsedSerivce.getAllByOrderDetailId(id);
+        for (ServiceUsed serviceUsed : serviceUsedList) {
+            serviceUsedSerivce.delete(serviceUsed);
+        }
+        List<InformationCustomer> informationCustomerList = informationCustomerService.findAllByOrderDetailId(id);
+        for (InformationCustomer informationCustomer : informationCustomerList) {
+            informationCustomerService.delete(informationCustomer);
+        }
+        orderDetailService.delete(orderDetail);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 

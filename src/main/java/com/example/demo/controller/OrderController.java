@@ -24,7 +24,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -128,6 +127,8 @@ public class OrderController {
     @PutMapping("/update-accept/{id}")
     public ResponseEntity<Order> updateStatus(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
         Order order = orderService.getOrderById(id);
+        order.setTotalMoney(orderDTO.getTotalMoney());
+        order.setVat(orderDTO.getVat());
         order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
         order.setStatus(2);

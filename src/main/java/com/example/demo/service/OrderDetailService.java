@@ -22,4 +22,6 @@ public interface OrderDetailService {
 
     void delete(String id);
 
+    void delete(OrderDetail orderDetail);
+
 }
