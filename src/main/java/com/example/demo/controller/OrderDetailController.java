@@ -1,12 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.OrderDetailDTO;
+import com.example.demo.entity.ComboUsed;
 import com.example.demo.entity.InformationCustomer;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.Photo;
 import com.example.demo.entity.Room;
 import com.example.demo.entity.ServiceUsed;
+import com.example.demo.service.ComboUsedService;
 import com.example.demo.service.InformationCustomerService;
 import com.example.demo.service.OrderDetailService;
 import com.example.demo.service.OrderService;
@@ -52,6 +54,8 @@ public class OrderDetailController {
     private ServiceUsedSerivce serviceUsedSerivce;
     @Autowired
     private InformationCustomerService informationCustomerService;
+    @Autowired
+    private ComboUsedService comboUsedService;
 
     @GetMapping("/getList")
     public List<OrderDetail> getList() {
@@ -77,9 +81,11 @@ public class OrderDetailController {
                     .collect(Collectors.toList());
             List<ServiceUsed> serviceUseds = serviceUsedSerivce.getAllByOrderDetailId(orderDetail.getId());
             List<InformationCustomer> informationCustomers = informationCustomerService.findAllByOrderDetailId(orderDetail.getId());
+            List<ComboUsed> comboUseds = comboUsedService.getAllByOrderDetailId(orderDetail.getId());
             orderDetailDTO.setRoomImages(roomImages);
             orderDetailDTO.setServiceUsedList(serviceUseds);
             orderDetailDTO.setInformationCustomerList(informationCustomers);
+            orderDetailDTO.setComboUsedList(comboUseds);
             orderDetailDTOS.add(orderDetailDTO);
         }
         return new ResponseEntity<List<OrderDetailDTO>>(orderDetailDTOS, HttpStatus.OK);

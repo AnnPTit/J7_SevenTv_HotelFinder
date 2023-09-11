@@ -13,6 +13,8 @@ public interface ComboService {
 
     Page<Combo> loadAndSearch(String serviceCode, String serviceName, String serviceTypeId, String unitId, Pageable pageable);
 
+    List<Combo> getAll();
+
     Combo findById(String id);
 
     Combo add(Combo combo);

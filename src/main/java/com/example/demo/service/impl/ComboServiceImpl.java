@@ -29,6 +29,11 @@ public class ComboServiceImpl implements ComboService {
     }
 
     @Override
+    public List<Combo> getAll() {
+        return comboRepository.findAll();
+    }
+
+    @Override
     public Combo findById(String id) {
         return comboRepository.findById(id).orElse(null);
     }
