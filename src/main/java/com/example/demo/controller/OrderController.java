@@ -33,6 +33,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -67,6 +68,13 @@ public class OrderController {
         return orderService.getAll(pageable);
     }
 
+    @GetMapping("/loadAndSearch")
+    public Page<Order> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
+                                     @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return orderService.loadAndSearch(key, pageable);
+    }
+
     @GetMapping("/loadByStatus")
     public Page<Order> getAllByStatus(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
@@ -97,6 +105,7 @@ public class OrderController {
         String orderCode = "HD" + formattedDate + randomDigits;
         order.setOrderCode(orderCode);
         order.setTypeOfOrder(true);
+        order.setTotalMoney(BigDecimal.valueOf(0));
         order.setAccount(account);
         order.setCustomer(customer);
         order.setCreateAt(new Date());
