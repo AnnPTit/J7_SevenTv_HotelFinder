@@ -17,6 +17,7 @@ import com.example.demo.service.OrderService;
 import com.example.demo.service.OrderTimelineService;
 import com.example.demo.service.PaymentMethodService;
 import com.example.demo.service.RoomService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -31,8 +32,10 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -211,6 +214,87 @@ public class OrderController {
         orderTimeline.setNote(order.getNote());
         orderTimeline.setCreateAt(new Date());
         orderTimelineService.add(orderTimeline);
+        return new ResponseEntity<Order>(order, HttpStatus.OK);
+    }
+
+    @PostMapping("/return/{id}")
+    public ResponseEntity<Order> returnRoom(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
+        Account account = accountService.getAccountByCode();
+        Customer customer = customerService.getCustomerByCode();
+
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        String formattedDate = currentDate.format(formatter);
+        Random random = new Random();
+        int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
+        String orderCode = "HD" + formattedDate + randomDigits;
+        Order order = new Order();
+        order.setOrderCode(orderCode);
+        order.setTypeOfOrder(true);
+        order.setTotalMoney(orderDTO.getTotalMoney());
+        order.setVat(orderDTO.getVat());
+        order.setMoneyGivenByCustomer(orderDTO.getMoneyGivenByCustomer());
+        order.setExcessMoney(orderDTO.getExcessMoney());
+        order.setNote(orderDTO.getNote());
+        order.setAccount(account);
+        order.setCustomer(customer);
+        order.setCreateAt(new Date());
+        order.setUpdateAt(new Date());
+        order.setStatus(1);
+        orderService.add(order);
+
+        OrderTimeline orderTimeline = new OrderTimeline();
+        orderTimeline.setOrder(order);
+        orderTimeline.setAccount(order.getAccount());
+        orderTimeline.setType(1);
+        orderTimeline.setNote("Nhân viên tạo hóa đơn");
+        orderTimeline.setCreateAt(new Date());
+        orderTimelineService.add(orderTimeline);
+
+        OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
+        orderDetail.setOrder(order);
+
+        PaymentMethod paymentMethod = new PaymentMethod();
+        paymentMethod.setOrder(order);
+        LocalDate localDate = LocalDate.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        String formatDate = localDate.format(dateTimeFormatter);
+        Random randomPayment = new Random();
+        int randomCode = randomPayment.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
+        String paymentMethodCode = "PT" + formatDate + randomCode;
+        paymentMethod.setPaymentMethodCode(paymentMethodCode);
+        paymentMethod.setMethod(true);
+        paymentMethod.setTotalMoney(order.getTotalMoney());
+        paymentMethod.setCreateAt(new Date());
+        paymentMethod.setUpdateAt(new Date());
+        paymentMethod.setStatus(1);
+        paymentMethodService.add(paymentMethod);
+
+        HistoryTransaction historyTransaction = new HistoryTransaction();
+        historyTransaction.setOrder(order);
+        historyTransaction.setTotalMoney(order.getTotalMoney());
+        historyTransaction.setNote(order.getNote());
+        historyTransaction.setCreateAt(new Date());
+        historyTransaction.setUpdateAt(new Date());
+        historyTransaction.setStatus(1);
+        historyTransactionService.add(historyTransaction);
+
+        OrderTimeline timeline = new OrderTimeline();
+        timeline.setOrder(order);
+        timeline.setAccount(order.getAccount());
+        timeline.setType(4);
+        timeline.setNote(order.getNote());
+        timeline.setCreateAt(new Date());
+        orderTimelineService.add(timeline);
+
+        OrderDetail orderDetailRoom = orderDetailService.getOrderDetailById(id);
+        orderDetailRoom.getRoom().setStatus(1);
+        orderDetailService.add(orderDetailRoom);
+
+        Order orderUpdate = orderService.getOrderById(order.getId());
+        orderUpdate.setStatus(3);
+        orderService.add(orderUpdate);
+
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 
