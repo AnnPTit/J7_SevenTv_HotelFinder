@@ -1,10 +1,14 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.InformationCustomerDTO;
+import com.example.demo.entity.Customer;
 import com.example.demo.entity.InformationCustomer;
+import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
+import com.example.demo.service.CustomerService;
 import com.example.demo.service.InformationCustomerService;
 import com.example.demo.service.OrderDetailService;
+import com.example.demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -19,6 +23,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @CrossOrigin("*")
@@ -29,6 +34,10 @@ public class InformationCustomerController {
     private InformationCustomerService informationCustomerService;
     @Autowired
     private OrderDetailService orderDetailService;
+    @Autowired
+    private OrderService orderService;
+    @Autowired
+    private CustomerService customerService;
 
     @GetMapping("/load/{id}")
     public List<InformationCustomer> loadByOrderId(@PathVariable("id") String id) {
@@ -39,6 +48,7 @@ public class InformationCustomerController {
     public ResponseEntity<InformationCustomer> save(@PathVariable("id") String id,
                                                     @RequestBody InformationCustomerDTO informationCustomerDTO) {
         OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
+//        List<Order> orderList = orderService.getList();
         InformationCustomer informationCustomer = new InformationCustomer();
         informationCustomer.setOrderDetail(orderDetail);
         informationCustomer.setFullname(informationCustomerDTO.getFullname());
@@ -51,6 +61,34 @@ public class InformationCustomerController {
         informationCustomer.setCreateAt(new Date());
         informationCustomer.setUpdateAt(new Date());
         informationCustomer.setStatus(1);
+
+//        for (Order order : orderList) {
+//            if (informationCustomer.getCitizenId().equals(order.getCustomer().getCitizenId())) {
+//                return new ResponseEntity("Thông tin khách hàng đã tồn tại trong hệ thống!", HttpStatus.BAD_REQUEST);
+//            } else {
+//                String customerCode = "KH" + (customerService.getList().size() + 1);
+//                String ten = informationCustomerDTO.getFullname();
+//                String tenThuong = ten.toLowerCase();
+//                String randomTen = tenThuong.replaceAll("[^a-z0-9]", "");
+//                Random rand = new Random();
+//                int randomNum = rand.nextInt(900) + 100;
+//                String username = randomTen + randomNum;
+//                Customer customer = new Customer();
+//                customer.setCustomerCode(customerCode);
+//                customer.setUsername(username);
+//                customer.setPassword("12345");
+//                customer.setFullname(informationCustomerDTO.getFullname());
+//                customer.setGender(informationCustomerDTO.getGender());
+//                customer.setBirthday(informationCustomerDTO.getBirthday());
+//                customer.setPhoneNumber(informationCustomerDTO.getPhoneNumber());
+//                customer.setCitizenId(informationCustomerDTO.getCitizenId());
+//                customer.setCreateAt(new Date());
+//                customer.setUpdateAt(new Date());
+//                customer.setStatus(1);
+//                customerService.add(customer);
+//            }
+//        }
+
         informationCustomerService.add(informationCustomer);
         return new ResponseEntity<InformationCustomer>(informationCustomer, HttpStatus.OK);
     }

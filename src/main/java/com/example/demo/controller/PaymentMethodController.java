@@ -7,8 +7,6 @@ import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.OrderTimeline;
 import com.example.demo.entity.PaymentMethod;
 import com.example.demo.entity.Room;
-import com.example.demo.service.AccountService;
-import com.example.demo.service.CustomerService;
 import com.example.demo.service.HistoryTransactionService;
 import com.example.demo.service.OrderDetailService;
 import com.example.demo.service.OrderService;
@@ -18,13 +16,16 @@ import com.example.demo.service.RoomService;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
@@ -64,6 +65,13 @@ public class PaymentMethodController {
     private HistoryTransactionService historyTransactionService;
     @Autowired
     private OrderTimelineService orderTimelineService;
+
+    @GetMapping("/loadAndSearch")
+    public Page<PaymentMethod> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
+                                             @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return paymentMethodService.loadAndSearch(key, pageable);
+    }
 
     @GetMapping("/load/{id}")
     public List<PaymentMethod> loadByOrderId(@PathVariable("id") String id) {
@@ -195,8 +203,8 @@ public class PaymentMethodController {
                 orderTimeline.setCreateAt(new Date());
                 orderTimelineService.add(orderTimeline);
             }
-                String redirectUrl = "http://localhost:3000/orders?id=" + orderId;
-                response.sendRedirect(redirectUrl);
+            String redirectUrl = "http://localhost:3000/orders?id=" + orderId;
+            response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         } else {
             // Thanh toán không thành công, xử lý theo logic của bạn

@@ -22,10 +22,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     @Query(value = "SELECT * FROM `order` " +
             "WHERE (:orderCode IS NULL OR order_code LIKE CONCAT('%', :orderCode, '%')) " +
             "ORDER BY create_at DESC", nativeQuery = true)
-    Page<Order> loadAndSearch(
-            @Param("orderCode") String orderCode,
-            Pageable pageable
-    );
+    Page<Order> loadAndSearch(@Param("orderCode") String orderCode, Pageable pageable);
 
 
 }
