@@ -27,4 +27,6 @@ public interface CustomerService {
 
     Customer getCustomerByCode();
 
+    Customer getCustomerById(String id);
+
 }

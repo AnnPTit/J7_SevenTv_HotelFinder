@@ -119,6 +119,7 @@ public class OrderDetailController {
         Random random = new Random();
         int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
         String orderDetailCode = "HDCT" + formattedDate + randomDigits;
+
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setOrderDetailCode(orderDetailCode);
         orderDetail.setRoom(orderDetailDTO.getRoom());

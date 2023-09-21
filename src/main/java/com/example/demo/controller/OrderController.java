@@ -138,7 +138,9 @@ public class OrderController {
 
     @PutMapping("/update-accept/{id}")
     public ResponseEntity<Order> updateStatus(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
+        Customer customer = customerService.getCustomerById(orderDTO.getCustomerId());
         Order order = orderService.getOrderById(id);
+        order.setCustomer(customer);
         order.setTotalMoney(orderDTO.getTotalMoney());
         order.setVat(orderDTO.getVat());
         order.setNote(orderDTO.getNote());
@@ -220,7 +222,7 @@ public class OrderController {
     @PostMapping("/return/{id}")
     public ResponseEntity<Order> returnRoom(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
         Account account = accountService.getAccountByCode();
-        Customer customer = customerService.getCustomerByCode();
+        Customer customer = customerService.getCustomerById(orderDTO.getCustomerId());
 
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
