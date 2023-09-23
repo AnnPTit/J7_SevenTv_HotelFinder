@@ -1,13 +1,7 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Customer;
-import com.example.demo.entity.Deposit;
-import com.example.demo.entity.Room;
-import com.example.demo.entity.Service;
-import com.example.demo.service.CustomerService;
-import com.example.demo.service.DepositService;
-import com.example.demo.service.RoomService;
-import com.example.demo.service.ServiceService;
+import com.example.demo.entity.*;
+import com.example.demo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,6 +26,8 @@ public class HomeController {
     private ServiceService serviceService;
     @Autowired
     private CustomerService customerService;
+    @Autowired
+    private TypeRoomService typeRoomService;
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -100,13 +96,13 @@ public class HomeController {
     // Filter
     @GetMapping("/get-room-filter")
     public List<Room> getRoomsByFilters(
-            @RequestParam(name = "roomName" , defaultValue = "") String roomName,
-            @RequestParam(name = "typeRoomCode" , defaultValue = "") String typeRoomCode,
-            @RequestParam(name = "startPrice" , defaultValue = "0") BigDecimal startPrice,
-            @RequestParam(name = "endPrice" , defaultValue = "20000000000000") BigDecimal endPrice,
-            @RequestParam(name = "capacity" , defaultValue = "1") Integer capacity,
-            @RequestParam(name = "dayStart" , defaultValue = "") Date dayStart,
-            @RequestParam(name = "dayEnd" , defaultValue = "") Date dayEnd
+            @RequestParam(name = "roomName", defaultValue = "") String roomName,
+            @RequestParam(name = "typeRoomCode", defaultValue = "") String typeRoomCode,
+            @RequestParam(name = "startPrice", defaultValue = "0") BigDecimal startPrice,
+            @RequestParam(name = "endPrice", defaultValue = "20000000000000") BigDecimal endPrice,
+            @RequestParam(name = "capacity", defaultValue = "1") Integer capacity,
+            @RequestParam(name = "dayStart", defaultValue = "") Date dayStart,
+            @RequestParam(name = "dayEnd", defaultValue = "") Date dayEnd
     ) {
         List<Room> roomList = roomService.findRoomsByFilters(
                 roomName,
@@ -119,5 +115,11 @@ public class HomeController {
         );
         return roomList;
     }
+
+    @GetMapping("/type-room/getList")
+    public List<TypeRoom> getList() {
+        return typeRoomService.getList();
+    }
+
 
 }

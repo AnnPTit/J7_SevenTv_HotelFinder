@@ -60,7 +60,6 @@ public class SecurityConfig {
                 .requestMatchers("/api/access-denied").permitAll()// với endpoint /hello thì sẽ được cho qua
                 .requestMatchers("/api/home/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()
-                .requestMatchers("/swagger-ui/**").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/api/login").permitAll()
                 .and().authorizeHttpRequests().requestMatchers("/api/account/detail/*").hasRole("ADMIN")
