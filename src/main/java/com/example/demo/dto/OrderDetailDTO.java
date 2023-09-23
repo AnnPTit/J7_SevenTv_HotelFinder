@@ -1,5 +1,7 @@
 package com.example.demo.dto;
 
+import com.example.demo.entity.ComboUsed;
+import com.example.demo.entity.InformationCustomer;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.Room;
 import com.example.demo.entity.ServiceUsed;
@@ -39,5 +41,7 @@ public class OrderDetailDTO {
 
     private List<String> roomImages;
     private List<ServiceUsed> serviceUsedList;
+    private List<InformationCustomer> informationCustomerList;
+    private List<ComboUsed> comboUsedList;
 
 }

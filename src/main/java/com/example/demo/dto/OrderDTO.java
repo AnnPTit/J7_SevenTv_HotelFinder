@@ -21,5 +21,6 @@ public class OrderDTO {
     private BigDecimal vat;
     private BigDecimal moneyGivenByCustomer;
     private BigDecimal excessMoney;
+    private String customerId;
 
 }

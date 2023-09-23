@@ -14,7 +14,7 @@ public interface FloorRepository extends JpaRepository<Floor, String> {
     Page<Floor> findAll(Pageable pageable);
 
     @Query(value = "select * from floor where\n" +
-            "(floor_code = ?1 or floor_name like ?2) and status = 1 ", nativeQuery = true)
+            "(floor_code like ?1 or floor_name like ?2) and status = 1 ", nativeQuery = true)
     Page<Floor> findByCodeOrName(String code, String name, Pageable pageable);
 
     boolean existsByFloorCode(String code);

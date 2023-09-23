@@ -1,13 +1,19 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.OrderDetailDTO;
+import com.example.demo.entity.ComboUsed;
+import com.example.demo.entity.InformationCustomer;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.Photo;
 import com.example.demo.entity.Room;
+import com.example.demo.entity.ServiceUsed;
+import com.example.demo.service.ComboUsedService;
+import com.example.demo.service.InformationCustomerService;
 import com.example.demo.service.OrderDetailService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.RoomService;
+import com.example.demo.service.ServiceUsedSerivce;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -44,6 +50,12 @@ public class OrderDetailController {
     private OrderService orderService;
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private ServiceUsedSerivce serviceUsedSerivce;
+    @Autowired
+    private InformationCustomerService informationCustomerService;
+    @Autowired
+    private ComboUsedService comboUsedService;
 
     @GetMapping("/getList")
     public List<OrderDetail> getList() {
@@ -67,7 +79,13 @@ public class OrderDetailController {
                     .stream()
                     .map(Photo::getUrl)
                     .collect(Collectors.toList());
+            List<ServiceUsed> serviceUseds = serviceUsedSerivce.getAllByOrderDetailId(orderDetail.getId());
+            List<InformationCustomer> informationCustomers = informationCustomerService.findAllByOrderDetailId(orderDetail.getId());
+            List<ComboUsed> comboUseds = comboUsedService.getAllByOrderDetailId(orderDetail.getId());
             orderDetailDTO.setRoomImages(roomImages);
+            orderDetailDTO.setServiceUsedList(serviceUseds);
+            orderDetailDTO.setInformationCustomerList(informationCustomers);
+            orderDetailDTO.setComboUsedList(comboUseds);
             orderDetailDTOS.add(orderDetailDTO);
         }
         return new ResponseEntity<List<OrderDetailDTO>>(orderDetailDTOS, HttpStatus.OK);
@@ -101,6 +119,7 @@ public class OrderDetailController {
         Random random = new Random();
         int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
         String orderDetailCode = "HDCT" + formattedDate + randomDigits;
+
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setOrderDetailCode(orderDetailCode);
         orderDetail.setRoom(orderDetailDTO.getRoom());
@@ -130,7 +149,17 @@ public class OrderDetailController {
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
-        orderDetailService.delete(id);
+        OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
+        orderDetail.getRoom().setStatus(1);
+        List<ServiceUsed> serviceUsedList = serviceUsedSerivce.getAllByOrderDetailId(id);
+        for (ServiceUsed serviceUsed : serviceUsedList) {
+            serviceUsedSerivce.delete(serviceUsed);
+        }
+        List<InformationCustomer> informationCustomerList = informationCustomerService.findAllByOrderDetailId(id);
+        for (InformationCustomer informationCustomer : informationCustomerList) {
+            informationCustomerService.delete(informationCustomer);
+        }
+        orderDetailService.delete(orderDetail);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 
