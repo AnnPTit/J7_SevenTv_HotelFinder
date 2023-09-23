@@ -86,7 +86,7 @@ public class HomeController {
     @GetMapping("/customer/{code}")
     public ResponseEntity<Customer> findByCode(@PathVariable("code") String code) {
         try {
-            return new ResponseEntity<>(customerService.findByCustomerCode(code), HttpStatus.OK);
+            return new ResponseEntity<Customer>(customerService.findCustomerByCode(code), HttpStatus.OK);
         } catch (Exception e) {
             e.printStackTrace();
             return new ResponseEntity("Khong tim thay " + code, HttpStatus.NOT_FOUND);

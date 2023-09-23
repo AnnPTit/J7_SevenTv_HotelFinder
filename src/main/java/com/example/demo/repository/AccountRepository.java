@@ -37,10 +37,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
                                 @Param("fullname") String fullname,
                                 @Param("positionId") String positionId, Pageable pageable);
 
-    boolean existsByEmail(String email);
-
-    boolean existsByCitizenId(String citizenId);
-
     @Query(value = "SELECT * FROM account where account_code = 'TK00'", nativeQuery = true)
     Account getAccountByCode();
 }
