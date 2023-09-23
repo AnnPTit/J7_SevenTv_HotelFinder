@@ -47,15 +47,24 @@ public class CustomerServiceImplement implements CustomerService {
         return customerRepository.findById(id).orElse(null);
     }
 
+    public Customer findByCustomerCode(String code) {
+        return customerRepository.findByCustomerCode(code);
+    }
+
     @Override
-    public Boolean add(Customer customer) {
+    public Optional<Customer> findCustomerByEmail(String email) {
+        return customerRepository.findCustomerByEmail(email);
+    }
+
+    @Override
+    public Customer add(Customer customer) {
         try {
 //            customer.setPassword(passwordEncoder.encode(customer.getPassword()));
-            customerRepository.save(customer);
-            return true;
+
+            return customerRepository.save(customer);
         } catch (Exception e) {
             e.printStackTrace();
-            return false;
+            return null;
         }
     }
 
@@ -81,6 +90,11 @@ public class CustomerServiceImplement implements CustomerService {
     }
 
     @Override
+    public Customer findCustomerByCode(String code) {
+        return customerRepository.findByCustomerCode(code);
+    }
+
+    @Override
     public Customer getCustomertByCode() {
         return customerRepository.getCustomerByCode();
     }
@@ -101,4 +115,10 @@ public class CustomerServiceImplement implements CustomerService {
 
         return code.toString();
     }
+
+    public Customer getCustomerById(String id) {
+        return customerRepository.getCustomerById(id);
+    }
+
+
 }

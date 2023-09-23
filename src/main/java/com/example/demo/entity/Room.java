@@ -71,7 +71,6 @@ public class Room {
     @Column(name = "status")
     private Integer status;
 
-
 //    @JsonManagedReference
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<Photo> photoList;

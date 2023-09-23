@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -29,6 +30,11 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public Page<Order> getAllByStatus(Pageable pageable) {
         return orderRepository.findAllByStatus(pageable);
+    }
+
+    @Override
+    public Page<Order> loadAndSearch(String orderCode, Pageable pageable) {
+        return orderRepository.loadAndSearch((orderCode != null && !orderCode.isEmpty()) ? orderCode : null, pageable);
     }
 
     @Override

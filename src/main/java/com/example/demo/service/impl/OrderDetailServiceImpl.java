@@ -59,4 +59,13 @@ public class OrderDetailServiceImpl implements OrderDetailService {
             System.out.println("Delete error!");
         }
     }
+
+    @Override
+    public void delete(OrderDetail orderDetail) {
+        try {
+            orderDetailRepository.delete(orderDetail);
+        } catch (Exception e) {
+            System.out.println("Delete error!");
+        }
+    }
 }

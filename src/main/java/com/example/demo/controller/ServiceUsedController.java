@@ -38,7 +38,7 @@ public class ServiceUsedController {
     }
 
     @GetMapping("/load/{id}")
-    public List<ServiceUsed> loadByOrderId(@PathVariable("id") String id) {
+    public List<ServiceUsed> loadByOrderDetailId(@PathVariable("id") String id) {
         return serviceUsedSerivce.getAllByOrderDetailId(id);
     }
 

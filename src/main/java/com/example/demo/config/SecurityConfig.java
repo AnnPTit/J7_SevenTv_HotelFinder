@@ -56,7 +56,9 @@ public class SecurityConfig {
                 .requestMatchers("/api/order-detail/**").permitAll()
                 .requestMatchers("/api/order-timeline/**").permitAll()
                 .requestMatchers("/api/information-customer/**").permitAll()
+                .requestMatchers("/api/payment-method/**").permitAll()
                 .requestMatchers("/api/service-used/**").permitAll()
+                .requestMatchers("/api/combo-used/**").permitAll()
                 .requestMatchers("/api/access-denied").permitAll()// với endpoint /hello thì sẽ được cho qua
                 .requestMatchers("/api/home/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()
@@ -70,6 +72,7 @@ public class SecurityConfig {
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/type-room/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/photo/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/service-type/**").hasRole("ADMIN")
+                .and().authorizeHttpRequests().requestMatchers("/api/admin/combo/**").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().exceptionHandling().accessDeniedPage("/api/access-denied")
                 .and().formLogin() // trả về page login nếu chưa authenticate

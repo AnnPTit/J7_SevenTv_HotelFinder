@@ -18,7 +18,11 @@ public interface CustomerService {
 
     Customer findById(String id);
 
-    Boolean add(Customer customer);
+
+    Optional<Customer> findCustomerByEmail(String email);
+
+    Customer add(Customer customer);
+
 
     Boolean delete(String id);
 
@@ -26,8 +30,12 @@ public interface CustomerService {
 
     Customer findByCitizenId(String citizenId);
 
+    Customer findCustomerByCode(String code);
+
     Customer getCustomertByCode();
 
     String generateCustomerCode();
+
+    Customer getCustomerById(String id);
 
 }

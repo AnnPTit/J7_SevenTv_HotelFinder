@@ -107,7 +107,7 @@ public class Customer {
     @Column(name = "status")
     private Integer status;
 
-    @JsonIgnore
+     @JsonIgnore
     @OneToMany(mappedBy = "customer", fetch = FetchType.LAZY)
     private List<Order> orderList;
 

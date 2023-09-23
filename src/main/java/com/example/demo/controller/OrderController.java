@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.OrderDTO;
-import com.example.demo.dto.OrderDetailDTO;
 import com.example.demo.entity.Account;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.HistoryTransaction;
@@ -18,6 +17,7 @@ import com.example.demo.service.OrderService;
 import com.example.demo.service.OrderTimelineService;
 import com.example.demo.service.PaymentMethodService;
 import com.example.demo.service.RoomService;
+import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -25,7 +25,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -33,14 +32,16 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
-import java.util.UUID;
 
 @CrossOrigin("*")
 @RestController
@@ -49,6 +50,10 @@ public class OrderController {
 
     @Autowired
     private OrderService orderService;
+    @Autowired
+    private OrderDetailService orderDetailService;
+    @Autowired
+    private RoomService roomService;
     @Autowired
     private AccountService accountService;
     @Autowired
@@ -64,6 +69,13 @@ public class OrderController {
     public Page<Order> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
         return orderService.getAll(pageable);
+    }
+
+    @GetMapping("/loadAndSearch")
+    public Page<Order> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
+                                     @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return orderService.loadAndSearch(key, pageable);
     }
 
     @GetMapping("/loadByStatus")
@@ -96,11 +108,13 @@ public class OrderController {
         String orderCode = "HD" + formattedDate + randomDigits;
         order.setOrderCode(orderCode);
         order.setTypeOfOrder(true);
+        order.setTotalMoney(BigDecimal.valueOf(0));
         order.setAccount(account);
         order.setCustomer(customer);
         order.setCreateAt(new Date());
         order.setUpdateAt(new Date());
         order.setStatus(1);
+        order.setNote("Tạo đơn cho khách");
         orderService.add(order);
 
         OrderTimeline orderTimeline = new OrderTimeline();
@@ -124,11 +138,22 @@ public class OrderController {
 
     @PutMapping("/update-accept/{id}")
     public ResponseEntity<Order> updateStatus(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
+        Customer customer = customerService.getCustomerById(orderDTO.getCustomerId());
         Order order = orderService.getOrderById(id);
+        order.setCustomer(customer);
+        order.setTotalMoney(orderDTO.getTotalMoney());
+        order.setVat(orderDTO.getVat());
         order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
         order.setStatus(2);
         orderService.add(order);
+
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
+        for (OrderDetail orderDetail : orderDetails) {
+            Room room = orderDetail.getRoom();
+            room.setStatus(2);
+            roomService.add(room);
+        }
 
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
@@ -151,6 +176,13 @@ public class OrderController {
         order.setUpdateAt(new Date());
         order.setStatus(3);
         orderService.add(order);
+
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
+        for (OrderDetail orderDetail : orderDetails) {
+            Room room = orderDetail.getRoom();
+            room.setStatus(1);
+            roomService.add(room);
+        }
 
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setOrder(order);
@@ -187,11 +219,108 @@ public class OrderController {
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PostMapping("/return/{id}")
+    public ResponseEntity<Order> returnRoom(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
+        Account account = accountService.getAccountByCode();
+        Customer customer = customerService.getCustomerById(orderDTO.getCustomerId());
+
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        String formattedDate = currentDate.format(formatter);
+        Random random = new Random();
+        int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
+        String orderCode = "HD" + formattedDate + randomDigits;
+        Order order = new Order();
+        order.setOrderCode(orderCode);
+        order.setTypeOfOrder(true);
+        order.setTotalMoney(orderDTO.getTotalMoney());
+        order.setVat(orderDTO.getVat());
+        order.setMoneyGivenByCustomer(orderDTO.getMoneyGivenByCustomer());
+        order.setExcessMoney(orderDTO.getExcessMoney());
+        order.setNote(orderDTO.getNote());
+        order.setAccount(account);
+        order.setCustomer(customer);
+        order.setCreateAt(new Date());
+        order.setUpdateAt(new Date());
+        order.setStatus(1);
+        orderService.add(order);
+
+        OrderTimeline orderTimeline = new OrderTimeline();
+        orderTimeline.setOrder(order);
+        orderTimeline.setAccount(order.getAccount());
+        orderTimeline.setType(1);
+        orderTimeline.setNote("Nhân viên tạo hóa đơn");
+        orderTimeline.setCreateAt(new Date());
+        orderTimelineService.add(orderTimeline);
+
+        OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
+        orderDetail.setOrder(order);
+
+        PaymentMethod paymentMethod = new PaymentMethod();
+        paymentMethod.setOrder(order);
+        LocalDate localDate = LocalDate.now();
+        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        String formatDate = localDate.format(dateTimeFormatter);
+        Random randomPayment = new Random();
+        int randomCode = randomPayment.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
+        String paymentMethodCode = "PT" + formatDate + randomCode;
+        paymentMethod.setPaymentMethodCode(paymentMethodCode);
+        paymentMethod.setMethod(true);
+        paymentMethod.setTotalMoney(order.getTotalMoney());
+        paymentMethod.setCreateAt(new Date());
+        paymentMethod.setUpdateAt(new Date());
+        paymentMethod.setStatus(1);
+        paymentMethodService.add(paymentMethod);
+
+        HistoryTransaction historyTransaction = new HistoryTransaction();
+        historyTransaction.setOrder(order);
+        historyTransaction.setTotalMoney(order.getTotalMoney());
+        historyTransaction.setNote(order.getNote());
+        historyTransaction.setCreateAt(new Date());
+        historyTransaction.setUpdateAt(new Date());
+        historyTransaction.setStatus(1);
+        historyTransactionService.add(historyTransaction);
+
+        OrderTimeline timeline = new OrderTimeline();
+        timeline.setOrder(order);
+        timeline.setAccount(order.getAccount());
+        timeline.setType(4);
+        timeline.setNote(order.getNote());
+        timeline.setCreateAt(new Date());
+        orderTimelineService.add(timeline);
+
+        OrderDetail orderDetailRoom = orderDetailService.getOrderDetailById(id);
+        orderDetailRoom.getRoom().setStatus(1);
+        orderDetailService.add(orderDetailRoom);
+
+        Order orderUpdate = orderService.getOrderById(order.getId());
+        orderUpdate.setStatus(3);
+        orderService.add(orderUpdate);
+
+        return new ResponseEntity<Order>(order, HttpStatus.OK);
+    }
+
+    @PutMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         Order order = orderService.getOrderById(id);
         order.setStatus(0);
+        order.setNote("Khách hủy hóa đơn");
         orderService.add(order);
+
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(id);
+        for (OrderDetail orderDetail : orderDetails) {
+            Room room = orderDetail.getRoom();
+            room.setStatus(1);
+            roomService.add(room);
+        }
+
+        OrderTimeline orderTimeline = new OrderTimeline();
+        orderTimeline.setOrder(order);
+        orderTimeline.setAccount(order.getAccount());
+        orderTimeline.setType(0);
+        orderTimeline.setNote(order.getNote());
+        orderTimeline.setCreateAt(new Date());
+        orderTimelineService.add(orderTimeline);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 

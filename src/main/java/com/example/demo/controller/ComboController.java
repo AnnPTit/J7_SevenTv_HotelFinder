@@ -72,6 +72,10 @@ public class ComboController {
         return comboListDTO;
     }
 
+    @GetMapping("/getAll")
+    public List<Combo> getAll() {
+        return comboService.getAll();
+    }
 
     @GetMapping("/detail/{id}")
     public ResponseEntity<Combo> detail(@PathVariable("id") String id) {

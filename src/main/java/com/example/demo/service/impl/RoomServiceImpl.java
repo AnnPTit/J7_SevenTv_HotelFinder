@@ -8,6 +8,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -53,6 +55,51 @@ public class RoomServiceImpl implements RoomService {
                 pageable
         );
     }
+
+    @Override
+    public List<Room> findRoomsByFilters(
+            String roomName,
+            String typeRoomCode,
+            BigDecimal startPrice,
+            BigDecimal endPrice,
+            Integer capacity,
+            Date dayStart,
+            Date dayEnd
+    ) {
+        // Check for null values and adjust the parameters accordingly
+        String filteredRoomName = (roomName != null && !roomName.isEmpty()) ? roomName : null;
+        String filteredTypeRoomCode = (typeRoomCode != null && !typeRoomCode.isEmpty()) ? typeRoomCode : null;
+        BigDecimal filteredStartPrice = (startPrice != null) ? startPrice : BigDecimal.ZERO;
+        BigDecimal filteredEndPrice = (endPrice != null) ? endPrice : BigDecimal.valueOf(Double.MAX_VALUE);
+        Integer filteredCapacity = (capacity != null) ? capacity : 0;
+
+        // Call the repository method with the filtered parameters
+        return roomRepository.findRoomsByFilters(
+                filteredRoomName,
+                filteredTypeRoomCode,
+                filteredStartPrice,
+                filteredEndPrice,
+                filteredCapacity,
+                dayStart,
+                dayEnd);
+    }
+
+    public List<Room> loadAndSearchBookRoom(String roomCode, String roomName, String floorId, String typeRoomId, BigDecimal start, BigDecimal end) {
+        return roomRepository.loadAndSearchBookRoom(
+                (roomCode != null && !roomCode.isEmpty()) ? roomCode : null,
+                (roomName != null && !roomName.isEmpty()) ? "%" + roomName + "%" : null,
+                (floorId != null && !floorId.isEmpty()) ? floorId : null,
+                (typeRoomId != null && !typeRoomId.isEmpty()) ? typeRoomId : null,
+                start,
+                end
+        );
+    }
+
+    @Override
+    public Page<Room> findRoomsOrderByOrderDetailCountDesc(Pageable pageable) {
+        return roomRepository.findRoomsOrderByOrderDetailCountDesc(pageable);
+    }
+
 
     @Override
     public Room getRoomById(String id) {
