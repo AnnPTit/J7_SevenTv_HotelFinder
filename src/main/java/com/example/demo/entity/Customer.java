@@ -1,6 +1,6 @@
 package com.example.demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonFormat;
+import com.example.demo.validator.MinAge;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -13,6 +13,7 @@ import jakarta.persistence.Table;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
+import jakarta.validation.constraints.Pattern;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -39,20 +40,19 @@ public class Customer {
     private String id;
 
     @Column(name = "customer_code")
-    @NotBlank(message = "Customer code is required")
     private String customerCode;
 
     @Column(name = "username")
-    @NotBlank(message = "Username is required")
+    @NotBlank(message = "Username không được để ")
     private String username;
 
     @Column(name = "password")
-    @Size(min = 5, max = 20, message = "Password must be between 5 and 20 characters")
-    @NotBlank(message = "Password is required")
+    @Size(min = 5, max = 20, message = "Password phải từ 5-20 kí ")
+    @NotBlank(message = "Password không được bỏ trống")
     private String password;
 
     @Column(name = "fullname")
-    @NotBlank(message = "Full name isn't empty")
+    @NotBlank(message = "Full name không được bỏ trống")
     private String fullname;
 
     @Column(name = "gender")
@@ -60,26 +60,34 @@ public class Customer {
 
     @Column(name = "birthday")
     @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "Birthday is required")
+    @NotNull(message = "Ngày sinh không được để tróng!!")
+    @MinAge(value = 18, message = "Bạn phải ít nhất 18 tuổi!!")
     private Date birthday;
 
     @Column(name = "email")
-    @Email(message = "Invalid email")
+    @NotBlank(message = "Email không được để trống!!")
+    @Email(message = "Email không đúng định dạng!!")
     private String email;
 
     @Column(name = "phone_number")
-    @NotBlank(message = "Phone Number isn't empty")
+    @NotBlank(message = "Số điện thoại không được bỏ trống")
+    @Size(min = 10, max = 10, message = "Số điện thoại phải có 10 chữ số!!")
+//    @Pattern(regexp = "^(\\+84|0)[35789][0-9]{8}$", message = "Số điện thoại không đúng định dạng!!")
     private String phoneNumber;
 
-    @Column(name = "address")
-    @NotBlank(message = "Address isn't empty")
-    private String address;
-
-    @Column(name = "nationality")
-    private String nationality;
-
     @Column(name = "citizen_id")
+    @NotBlank(message = "Căn cước công dân không được để trống!!")
+//    @Pattern(regexp = "\\d{12}", message = "Căn cước công dân không đúng định dạng!!")
     private String citizenId;
+
+    @Column(name = "provinces")
+    private String provinces;
+
+    @Column(name = "districts")
+    private String districts;
+
+    @Column(name = "wards")
+    private String wards;
 
     @Column(name = "create_at")
     private Date createAt;

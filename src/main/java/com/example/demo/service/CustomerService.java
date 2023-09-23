@@ -1,27 +1,33 @@
 package com.example.demo.service;
 
+import com.example.demo.entity.Account;
 import com.example.demo.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
 import java.util.List;
+import java.util.Optional;
 
 public interface CustomerService {
 
     Page<Customer> getAll(Pageable pageable);
 
-    List<Customer> getList();
+    List<Customer> findAll();
 
-    Customer getOne(String id);
+    Page<Customer> loadAndSearch(String customerCode, String fullname, String phoneNumber, Pageable pageable);
 
-    Customer findByCustomerCode(String code);
+    Customer findById(String id);
 
-    Customer add(Customer customer);
+    Boolean add(Customer customer);
 
-    Customer update(Customer customer);
+    Boolean delete(String id);
 
-    void remove(String id);
+    Optional<Customer> findByEmail(String email);
 
-    Customer getCustomerByCode();
+    Customer findByCitizenId(String citizenId);
+
+    Customer getCustomertByCode();
+
+    String generateCustomerCode();
 
 }
