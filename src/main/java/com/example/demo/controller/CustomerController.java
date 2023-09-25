@@ -2,6 +2,7 @@ package com.example.demo.controller;
 
 import com.example.demo.entity.Customer;
 import com.example.demo.service.CustomerService;
+import com.example.demo.service.MailService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -22,71 +23,104 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/customers")
+@RequestMapping("/api/admin/customer")
 public class CustomerController {
 
     @Autowired
     CustomerService customerService;
 
+    @Autowired
+    private MailService mailService;
+
     @GetMapping("/load")
-    public List<Customer> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+    public Page<Customer> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        Page<Customer> page = customerService.getAll(pageable);
-        return page.getContent();
+        return customerService.getAll(pageable);
     }
 
-    @GetMapping("/getList")
-    public List<Customer> getList(){
-        return customerService.getList();
+    @GetMapping("getAll")
+    public List<Customer> findAll() {
+        return customerService.findAll();
     }
 
-    @GetMapping("/detail/{id}")
-    public Customer detail(@PathVariable("id") String id)    {
-        return customerService.getOne(id);
+    @GetMapping("/loadAndSearch")
+    public Page<Customer> findByCodeOrName(@RequestParam(name = "key", defaultValue = "") String key,
+                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page
+    ) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return customerService.loadAndSearch(key, key, key, pageable);
     }
 
     @PostMapping("/save")
-    public ResponseEntity save(@Valid @RequestBody Customer customer,
-                               BindingResult result) {
+    public ResponseEntity<Customer> add(@Valid @RequestBody Customer customer,
+                                        BindingResult result) {
         if (result.hasErrors()) {
-            List<String> errorMessages = new ArrayList<>();
+            Map<String, String> errorMap = new HashMap<>();
             for (FieldError error : result.getFieldErrors()) {
-                errorMessages.add(error.getDefaultMessage());
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+                errorMap.put(key, value);
             }
-            return ResponseEntity.badRequest().body(errorMessages);
-        } else {
-            customerService.add(customer);
-            return ResponseEntity.ok("Customer added successfully");
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+        customer.setCustomerCode(customerService.generateCustomerCode());
+        customer.setCreateAt(new Date());
+        customer.setUpdateAt(new Date());
+        customer.setStatus(1);
+
+//        Mail mail = new Mail();
+//        mail.setMailFrom("phamthanhanzwz@gmail.com");
+//        mail.setMailTo(customer.getEmail());
+//        mail.setMailSubject("Thông tin tài khoản website");
+//        mail.setMailContent(
+//                "Dear: " + customer.getFullname() + "\n" +
+//                        "Email của bạn là: " + customer.getEmail() + "\n" +
+//                        "password: " + customer.getPassword() + "\n"+ "\n" +
+//                        "Đây là email tự động xin vui lòng không trả lời <3");
+//        customerService.add(customer);
+//        mailService.sendEmail(mail);
+        customerService.add(customer);
+        return new ResponseEntity<Customer>(customer, HttpStatus.OK);
     }
 
-    @PutMapping("/update/{id}")
-    public ResponseEntity update(@Valid @RequestBody Customer customer, @PathVariable("id") String id,
-                                 BindingResult result) {
-        if (result.hasErrors()) {
-            List<String> errorMessages = new ArrayList<>();
-            for (FieldError error : result.getFieldErrors()) {
-                errorMessages.add(error.getDefaultMessage());
-            }
-            return ResponseEntity.badRequest().body(errorMessages);
-        } else {
-            customer.setId(id);
-            customer.setUpdateAt(new Date());
-            customerService.update(customer);
-            return ResponseEntity.ok("Customer updated successfully");
-        }
-    }
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Customer> delete(@PathVariable("id") String id) {
-        customerService.remove(id);
-        return new ResponseEntity<Customer>(HttpStatus.OK);
+        Customer customer = customerService.findById(id);
+        customer.setStatus(0);
+        customerService.add(customer);
+        return new ResponseEntity("Deleted", HttpStatus.OK);
+    }
+
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<Customer> detail(@PathVariable("id") String id) {
+        return ResponseEntity.ok(customerService.findById(id));
+    }
+
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Customer> update(@PathVariable("id") String id,
+                                           @RequestBody Customer customer,
+                                           BindingResult result) {
+        if (result.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : result.getFieldErrors()) {
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+                errorMap.put(key, value);
+            }
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
+        customer.setId(id);
+        customer.setUpdateAt(new Date());
+        customerService.add(customer);
+        return new ResponseEntity<Customer>(customer, HttpStatus.OK);
     }
 
 }

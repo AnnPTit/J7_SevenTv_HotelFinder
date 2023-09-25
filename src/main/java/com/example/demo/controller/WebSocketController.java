@@ -51,7 +51,7 @@ public class WebSocketController {
                 newCustomer.setCustomerCode(customerCode);
                 newCustomer.setUsername(customerCode);
                 newCustomer.setBirthday(new Date());
-                newCustomer.setAddress("Deo biet");
+                newCustomer.setDistricts("Nam Tu Liem");
                 newCustomer.setStatus(1);
                 newCustomer.setCreateAt(new Date());
                 newCustomer.setEmail(payload.getUser().getEmail());

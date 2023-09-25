@@ -104,7 +104,7 @@ public class OrderController {
     @PostMapping("/save")
     public ResponseEntity<Order> save(@RequestBody Order order) {
         Account account = accountService.getAccountByCode();
-        Customer customer = customerService.getCustomerByCode();
+        Customer customer = customerService.getCustomertByCode();
 
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
