@@ -33,8 +33,15 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<Order> loadAndSearch(String orderCode, Pageable pageable) {
-        return orderRepository.loadAndSearch((orderCode != null && !orderCode.isEmpty()) ? orderCode : null, pageable);
+    public Page<Order> loadAndSearch(String orderCode, Boolean typeOfOrder, Integer status, Pageable pageable) {
+        return orderRepository.loadAndSearch((orderCode != null && !orderCode.isEmpty()) ? orderCode : null,
+                (typeOfOrder != null && !typeOfOrder.toString().isEmpty()) ? typeOfOrder : null,
+                (status != null && !status.toString().isEmpty()) ? status : null, pageable);
+    }
+
+    @Override
+    public Page<Order> loadBookRoomOffline(String orderCode, Pageable pageable) {
+        return orderRepository.loadBookRoomOffline((orderCode != null && !orderCode.isEmpty()) ? orderCode : null, pageable);
     }
 
     @Override
