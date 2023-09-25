@@ -151,6 +151,10 @@ public class OrderDetailController {
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
         orderDetail.getRoom().setStatus(1);
+        List<ComboUsed> comboUsedList = comboUsedService.getAllByOrderDetailId(id);
+        for (ComboUsed comboUsed : comboUsedList) {
+            comboUsedService.delete(comboUsed);
+        }
         List<ServiceUsed> serviceUsedList = serviceUsedSerivce.getAllByOrderDetailId(id);
         for (ServiceUsed serviceUsed : serviceUsedList) {
             serviceUsedSerivce.delete(serviceUsed);

@@ -48,7 +48,6 @@ public class InformationCustomerController {
     public ResponseEntity<InformationCustomer> save(@PathVariable("id") String id,
                                                     @RequestBody InformationCustomerDTO informationCustomerDTO) {
         OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
-//        List<Order> orderList = orderService.getList();
         InformationCustomer informationCustomer = new InformationCustomer();
         informationCustomer.setOrderDetail(orderDetail);
         informationCustomer.setFullname(informationCustomerDTO.getFullname());
@@ -61,11 +60,9 @@ public class InformationCustomerController {
         informationCustomer.setCreateAt(new Date());
         informationCustomer.setUpdateAt(new Date());
         informationCustomer.setStatus(1);
-
+//        List<Order> orderList = orderService.getList();
 //        for (Order order : orderList) {
-//            if (informationCustomer.getCitizenId().equals(order.getCustomer().getCitizenId())) {
-//                return new ResponseEntity("Thông tin khách hàng đã tồn tại trong hệ thống!", HttpStatus.BAD_REQUEST);
-//            } else {
+//            if (!order.getAccount().getCitizenId().equals(informationCustomerDTO.getCitizenId())) {
 //                String customerCode = "KH" + (customerService.getList().size() + 1);
 //                String ten = informationCustomerDTO.getFullname();
 //                String tenThuong = ten.toLowerCase();
@@ -87,8 +84,8 @@ public class InformationCustomerController {
 //                customer.setStatus(1);
 //                customerService.add(customer);
 //            }
+//            informationCustomerService.add(informationCustomer);
 //        }
-
         informationCustomerService.add(informationCustomer);
         return new ResponseEntity<InformationCustomer>(informationCustomer, HttpStatus.OK);
     }
