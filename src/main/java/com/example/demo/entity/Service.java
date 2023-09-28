@@ -58,7 +58,7 @@ public class Service {
     private String serviceName;
 
     @NotNull(message = "Price is not null")
-    @Min(1)
+    @Min(value = 1 , message = "Đơn giá lớn hơn hoặc bằng 1 ")
     @Column(name = "price")
     private BigDecimal price;
 

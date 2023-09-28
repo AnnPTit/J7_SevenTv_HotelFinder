@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface ServiceRepository extends JpaRepository<Service, String> {
 
-    @Query(value = "select * from service where status =1 order by create_at desc", nativeQuery = true)
+    @Query(value = "select * from service where status =1 order by update_at desc", nativeQuery = true)
     Page<Service> findAll(Pageable pageable);
 
 
@@ -27,7 +27,7 @@ public interface ServiceRepository extends JpaRepository<Service, String> {
             "  AND (:serviceTypeId IS NULL OR service_type_id = :serviceTypeId)\n" +
             "  AND (:unitId IS NULL OR unit_id = :unitId)" +
             "  AND price BETWEEN :start AND :end\n" +
-            " order by create_at desc", nativeQuery = true)
+            " order by update_at desc", nativeQuery = true)
     Page<Service> loadAndSearch(@Param("serviceCode") String serviceCode,
                                 @Param("serviceName") String serviceName,
                                 @Param("serviceTypeId") String serviceTypeId,
@@ -36,7 +36,7 @@ public interface ServiceRepository extends JpaRepository<Service, String> {
                                 @Param("end") BigDecimal end,
                                 Pageable pageable);
 
-    @Query(value = "select * from service where status =1 order by create_at desc", nativeQuery = true)
+    @Query(value = "select * from service where status =1 order by update_at desc", nativeQuery = true)
     List<Service> getAll();
 
     boolean existsByServiceCode(String code);
