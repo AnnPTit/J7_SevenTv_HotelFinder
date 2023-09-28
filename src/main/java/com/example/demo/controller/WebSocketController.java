@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.PayloadObject;
 import com.example.demo.dto.RoomData;
 import com.example.demo.entity.*;
@@ -53,10 +54,10 @@ public class WebSocketController {
                 String customerCode = "KH" + randomNumber;
                 newCustomer.setCustomerCode(customerCode);
                 newCustomer.setUsername(customerCode);
-                newCustomer.setCitizenId("0000000000000");
+                newCustomer.setCitizenId("034203007140");
                 newCustomer.setBirthday(birthDate);
                 newCustomer.setDistricts("Nam Tu Liem");
-                newCustomer.setStatus(1);
+                newCustomer.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 newCustomer.setCreateAt(new Date());
                 newCustomer.setEmail(payload.getUser().getEmail());
                 newCustomer.setFullname(payload.getUser().getHoVaTen());
@@ -85,13 +86,13 @@ public class WebSocketController {
             order.setCreateAt(new Date());
             order.setUpdateAt(new Date());
             order.setNote(payload.getNote());
-            order.setStatus(1);
+            order.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
             orderService.add(order);
             // B4 tạo Order timeline
             OrderTimeline orderTimeline = new OrderTimeline();
             orderTimeline.setOrder(order);
             orderTimeline.setAccount(account);
-            orderTimeline.setType(1);
+            orderTimeline.setType(Constant.ORDER_TIMELINE.WAIT_CONFIRM);
             orderTimeline.setNote("Khách hàng tạo hóa đơn" + payload.getUser().getEmail());
             orderTimeline.setCreateAt(new Date());
             orderTimelineService.add(orderTimeline);
@@ -109,9 +110,7 @@ public class WebSocketController {
                 orderDetail.setUpdateAt(new Date());
                 orderDetail.setCheckInDatetime(payload.getDayStart());
                 orderDetail.setCheckOutDatetime(payload.getDayEnd());
-                orderDetail.setStatus(1);
-                // B6 : Sửa lại trạng thái cho phòng
-                room.setStatus(2);
+                orderDetail.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
                 roomService.add(room);
                 // Thêm hóa đơn chi tiết
                 orderDetailService.add(orderDetail);
