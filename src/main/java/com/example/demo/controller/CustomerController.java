@@ -90,7 +90,6 @@ public class CustomerController {
         return new ResponseEntity<Customer>(customer, HttpStatus.OK);
     }
 
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Customer> delete(@PathVariable("id") String id) {
         Customer customer = customerService.findById(id);

@@ -15,8 +15,7 @@ import java.util.Optional;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, String> {
 
-
-    @Query(value = "select * from customer where status =1", nativeQuery = true)
+    @Query(value = "SELECT * FROM customer WHERE status = 1 ORDER BY updateAt DESC ", nativeQuery = true)
     Page<Customer> findAll(Pageable pageable);
 
     @Query(value = "select * from customer where status =1", nativeQuery = true)
@@ -34,9 +33,6 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
                                  @Param("fullname") String fullname,
                                  @Param("phoneNumber") String phoneNumber,
                                  Pageable pageable);
-
-
-
 
     @Query(value = "SELECT * FROM customer where customer_code = 'KH00'", nativeQuery = true)
     Customer getCustomerByCode();
