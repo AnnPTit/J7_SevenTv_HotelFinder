@@ -47,8 +47,8 @@ public class Customer {
     private String username;
 
     @Column(name = "password")
-    @Size(min = 5, max = 20, message = "Password phải từ 5-20 kí ")
-    @NotBlank(message = "Password không được bỏ trống")
+//    @Size(min = 5, max = 20, message = "Password phải từ 5-20 kí ")
+//    @NotBlank(message = "Password không được bỏ trống")
     private String password;
 
     @Column(name = "fullname")
@@ -88,6 +88,9 @@ public class Customer {
 
     @Column(name = "wards")
     private String wards;
+
+    @Column(name = "passport")
+    private String passport;
 
     @Column(name = "create_at")
     private Date createAt;
