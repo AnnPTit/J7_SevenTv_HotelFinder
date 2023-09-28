@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.PayloadObject;
 import com.example.demo.dto.RoomData;
 import com.example.demo.entity.*;
@@ -11,6 +12,7 @@ import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.time.LocalDate;
 import java.util.*;
 
 @CrossOrigin("*")
@@ -41,18 +43,21 @@ public class WebSocketController {
             System.out.println(payload);
             Random random = new Random();
             int randomNumber = random.nextInt(1000);
-            // TODO: Tạo hóa đơn
-            // B1 : Get khách hàng theo email -> Nếu chưa có tạo mới khách hàng
             Customer customer = customerService.findCustomerByEmail(payload.getUser().getEmail()).orElse(null);
+            Customer newCustomer = new Customer();
             if (customer == null) {
-                // TODO : tạo khách hàng
+                Date currentDate = new Date();
+                Calendar calendar = Calendar.getInstance();
+                calendar.setTime(currentDate);
+                calendar.add(Calendar.YEAR, -18);
+                Date birthDate = calendar.getTime();
                 String customerCode = "KH" + randomNumber;
-                Customer newCustomer = new Customer();
                 newCustomer.setCustomerCode(customerCode);
                 newCustomer.setUsername(customerCode);
-                newCustomer.setBirthday(new Date());
+                newCustomer.setCitizenId("034203007140");
+                newCustomer.setBirthday(birthDate);
                 newCustomer.setDistricts("Nam Tu Liem");
-                newCustomer.setStatus(1);
+                newCustomer.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 newCustomer.setCreateAt(new Date());
                 newCustomer.setEmail(payload.getUser().getEmail());
                 newCustomer.setFullname(payload.getUser().getHoVaTen());
@@ -62,13 +67,15 @@ public class WebSocketController {
             }
             // B2 : Lấy account
             Account account = accountService.getAccountByCode();
-
-
             // B3 : Tạo hóa đơn
             Order order = new Order();
             Customer customerForOrder = customerService.findCustomerByEmail(payload.getUser().getEmail()).orElse(null);
+            if (! Objects.isNull(customerForOrder)){
+                order.setCustomer(customerForOrder);
+            }else {
+                order.setCustomer(newCustomer);
+            }
             String orderCode = "HD" + randomNumber;
-            order.setCustomer(customerForOrder);
             order.setAccount(account);
             order.setOrderCode(orderCode);
             order.setTypeOfOrder(false);
@@ -79,13 +86,13 @@ public class WebSocketController {
             order.setCreateAt(new Date());
             order.setUpdateAt(new Date());
             order.setNote(payload.getNote());
-            order.setStatus(1);
+            order.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
             orderService.add(order);
             // B4 tạo Order timeline
             OrderTimeline orderTimeline = new OrderTimeline();
             orderTimeline.setOrder(order);
             orderTimeline.setAccount(account);
-            orderTimeline.setType(1);
+            orderTimeline.setType(Constant.ORDER_TIMELINE.WAIT_CONFIRM);
             orderTimeline.setNote("Khách hàng tạo hóa đơn" + payload.getUser().getEmail());
             orderTimeline.setCreateAt(new Date());
             orderTimelineService.add(orderTimeline);
@@ -101,9 +108,9 @@ public class WebSocketController {
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setCreateAt(new Date());
                 orderDetail.setUpdateAt(new Date());
-                orderDetail.setStatus(1);
-                // B6 : Sửa lại trạng thái cho phòng
-                room.setStatus(2);
+                orderDetail.setCheckInDatetime(payload.getDayStart());
+                orderDetail.setCheckOutDatetime(payload.getDayEnd());
+                orderDetail.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
                 roomService.add(room);
                 // Thêm hóa đơn chi tiết
                 orderDetailService.add(orderDetail);

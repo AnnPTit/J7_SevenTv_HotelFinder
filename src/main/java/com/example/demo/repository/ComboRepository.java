@@ -14,7 +14,7 @@ import java.util.List;
 @Repository
 public interface ComboRepository extends JpaRepository<Combo, String> {
     @Query(value = "select *\n" +
-            "from combo where status =1 order by create_at", nativeQuery = true)
+            "from combo where status =1 order by update_at", nativeQuery = true)
     Page<Combo> findAll(Pageable pageable);
 
     boolean existsByComboCode(String code);
@@ -39,7 +39,7 @@ public interface ComboRepository extends JpaRepository<Combo, String> {
             "    AND (:comboName IS NULL OR c.combo_name LIKE CONCAT('%', :comboName, '%')))\n" +
             "  AND (:serviceId IS NULL OR s.id = :serviceId)\n" +
             "  AND c.price BETWEEN :start AND :end\n" +
-            "ORDER BY c.create_at DESC\n" +
+            " ORDER BY c.update_at DESC\n" +
             "LIMIT :pageSize\n" +
             "    OFFSET :offset", nativeQuery = true)
     List<Combo> searchCombosWithService(String comboCode, String comboName, String serviceId, BigDecimal start, BigDecimal end, int pageSize, int offset);
@@ -51,7 +51,7 @@ public interface ComboRepository extends JpaRepository<Combo, String> {
             "AND ((:comboCode IS NULL OR c.combo_code = :comboCode) " +
             "AND (:comboName IS NULL OR c.combo_name LIKE CONCAT('%', :comboName, '%'))) " +
             "AND (:serviceId IS NULL OR s.id = :serviceId) " +
-            "AND c.price BETWEEN :start AND :end",
+            "AND c.price BETWEEN :start AND :end ORDER BY c.update_at DESC ",
             nativeQuery = true)
     long countSearch(String comboCode, String comboName, String serviceId, BigDecimal start, BigDecimal end);
 

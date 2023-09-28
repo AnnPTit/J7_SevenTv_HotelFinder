@@ -110,7 +110,7 @@ public class ComboController {
                 if (isInvalidNumberValue((Number) value)) {
                     // Xử lý khi giá trị số không hợp lệ
                     Map<String, Object> response = new HashMap<>();
-                    response.put("error", "Invalid number value");
+                    response.put("error", "Số không hợp lệ !");
                     response.put("field", key);
                     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
                 }
@@ -119,17 +119,16 @@ public class ComboController {
                 if (isInvalidListValue((List<?>) value)) {
                     // Xử lý khi giá trị mảng không hợp lệ
                     Map<String, Object> response = new HashMap<>();
-                    response.put("error", "Invalid list value");
+                    response.put("error", "Danh sách dịch vụ không được để trống !");
                     response.put("field", key);
                     return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
                 }
             }
         }
-
         // Nếu có trường trống, trả về lỗi BadRequest và thông báo về các trường trống
         if (!emptyFields.isEmpty()) {
             Map<String, Object> response = new HashMap<>();
-            response.put("error", "Empty fields");
+            response.put("error", "Không được để trống !");
             response.put("fields", emptyFields);
             return new ResponseEntity<>(response, HttpStatus.BAD_REQUEST);
         }
@@ -143,11 +142,11 @@ public class ComboController {
         }
         Combo combo = createComboFromPayload(payload);
         if (combo == null) {
-            return new ResponseEntity<>("Invalid payload data", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Tham số truyền vào không hợp lệ !", HttpStatus.BAD_REQUEST);
         }
 
         if (comboService.existsByCode(combo.getComboCode())) {
-            return new ResponseEntity<>("Combo Code is exists!", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity<>("Mã combo đã tồn tại !", HttpStatus.BAD_REQUEST);
         }
         // Them Combo vao cosoDulieu
         combo.setCreateAt(new Date());

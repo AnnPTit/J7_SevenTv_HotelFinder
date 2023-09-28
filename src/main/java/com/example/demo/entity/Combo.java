@@ -45,7 +45,7 @@ public class Combo {
     private String comboName;
 
     @NotNull(message = "Price is not null")
-    @Min(1)
+    @Min(value = 1 , message = "Đơn giá phải lớn hơn hoặc bằng 1")
     @Column(name = "price")
     private BigDecimal price;
 
