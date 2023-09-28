@@ -17,7 +17,6 @@ import com.example.demo.service.OrderService;
 import com.example.demo.service.OrderTimelineService;
 import com.example.demo.service.PaymentMethodService;
 import com.example.demo.service.RoomService;
-import jakarta.servlet.http.HttpServletResponse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -32,10 +31,8 @@ import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -73,9 +70,18 @@ public class OrderController {
 
     @GetMapping("/loadAndSearch")
     public Page<Order> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
+                                     @RequestParam(name = "typeOfOrder", defaultValue = "") Boolean typeOfOrder,
+                                     @RequestParam(name = "status", defaultValue = "") Integer status,
                                      @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        return orderService.loadAndSearch(key, pageable);
+        return orderService.loadAndSearch(key, typeOfOrder, status, pageable);
+    }
+
+    @GetMapping("/loadBookRoomOffline")
+    public Page<Order> loadBookRoomOffline(@RequestParam(name = "key", defaultValue = "") String key,
+                                     @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return orderService.loadBookRoomOffline(key, pageable);
     }
 
     @GetMapping("/loadByStatus")
@@ -304,7 +310,7 @@ public class OrderController {
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         Order order = orderService.getOrderById(id);
         order.setStatus(0);
-        order.setNote("Khách hủy hóa đơn");
+        order.setNote("Hủy hóa đơn");
         orderService.add(order);
 
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(id);

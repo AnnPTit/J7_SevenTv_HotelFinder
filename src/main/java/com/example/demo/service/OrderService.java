@@ -15,7 +15,9 @@ public interface OrderService {
 
     Page<Order> getAllByStatus(Pageable pageable);
 
-    Page<Order> loadAndSearch(String orderCode, Pageable pageable);
+    Page<Order> loadAndSearch(String orderCode, Boolean typeOfOrder, Integer status, Pageable pageable);
+
+    Page<Order> loadBookRoomOffline(String orderCode, Pageable pageable);
 
     Order getOrderById(String id);
 
