@@ -156,6 +156,7 @@ public class OrderController {
 
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
         for (OrderDetail orderDetail : orderDetails) {
+            orderDetail.setStatus(2);
             Room room = orderDetail.getRoom();
             room.setStatus(2);
             roomService.add(room);
