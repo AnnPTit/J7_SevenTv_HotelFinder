@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.entity.Account;
 import com.example.demo.entity.Customer;
@@ -119,14 +120,14 @@ public class OrderController {
         order.setCustomer(customer);
         order.setCreateAt(new Date());
         order.setUpdateAt(new Date());
-        order.setStatus(1);
-        order.setNote("Tạo đơn cho khách");
+        order.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
+        order.setNote("Tạo hóa đơn");
         orderService.add(order);
 
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
         orderTimeline.setAccount(order.getAccount());
-        orderTimeline.setType(1);
+        orderTimeline.setType(Constant.ORDER_TIMELINE.WAIT_CONFIRM);
         orderTimeline.setNote("Nhân viên tạo hóa đơn");
         orderTimeline.setCreateAt(new Date());
         orderTimelineService.add(orderTimeline);
@@ -151,21 +152,21 @@ public class OrderController {
         order.setVat(orderDTO.getVat());
         order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
-        order.setStatus(2);
+        order.setStatus(Constant.ORDER_STATUS.CHECKED_IN);
         orderService.add(order);
 
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
         for (OrderDetail orderDetail : orderDetails) {
-            orderDetail.setStatus(2);
+            orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_IN);
             Room room = orderDetail.getRoom();
-            room.setStatus(2);
+            room.setStatus(Constant.ROOM.ACTIVE);
             roomService.add(room);
         }
 
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
         orderTimeline.setAccount(order.getAccount());
-        orderTimeline.setType(2);
+        orderTimeline.setType(Constant.ORDER_TIMELINE.CHECKED_IN);
         orderTimeline.setNote(order.getNote());
         orderTimeline.setCreateAt(new Date());
         orderTimelineService.add(orderTimeline);
@@ -181,13 +182,13 @@ public class OrderController {
         order.setExcessMoney(orderDTO.getExcessMoney());
         order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
-        order.setStatus(3);
+        order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
         orderService.add(order);
 
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
         for (OrderDetail orderDetail : orderDetails) {
             Room room = orderDetail.getRoom();
-            room.setStatus(1);
+            room.setStatus(Constant.ROOM.EMPTY);
             roomService.add(room);
         }
 
@@ -204,7 +205,7 @@ public class OrderController {
         paymentMethod.setTotalMoney(order.getTotalMoney());
         paymentMethod.setCreateAt(new Date());
         paymentMethod.setUpdateAt(new Date());
-        paymentMethod.setStatus(1);
+        paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
         paymentMethodService.add(paymentMethod);
 
         HistoryTransaction historyTransaction = new HistoryTransaction();
@@ -213,13 +214,13 @@ public class OrderController {
         historyTransaction.setNote(order.getNote());
         historyTransaction.setCreateAt(new Date());
         historyTransaction.setUpdateAt(new Date());
-        historyTransaction.setStatus(1);
+        historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
         historyTransactionService.add(historyTransaction);
 
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
         orderTimeline.setAccount(order.getAccount());
-        orderTimeline.setType(3);
+        orderTimeline.setType(Constant.ORDER_TIMELINE.CHECKED_OUT);
         orderTimeline.setNote(order.getNote());
         orderTimeline.setCreateAt(new Date());
         orderTimelineService.add(orderTimeline);
@@ -249,13 +250,13 @@ public class OrderController {
         order.setCustomer(customer);
         order.setCreateAt(new Date());
         order.setUpdateAt(new Date());
-        order.setStatus(1);
+        order.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
         orderService.add(order);
 
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
         orderTimeline.setAccount(order.getAccount());
-        orderTimeline.setType(1);
+        orderTimeline.setType(Constant.ORDER_TIMELINE.WAIT_CONFIRM);
         orderTimeline.setNote("Nhân viên tạo hóa đơn");
         orderTimeline.setCreateAt(new Date());
         orderTimelineService.add(orderTimeline);
@@ -276,7 +277,7 @@ public class OrderController {
         paymentMethod.setTotalMoney(order.getTotalMoney());
         paymentMethod.setCreateAt(new Date());
         paymentMethod.setUpdateAt(new Date());
-        paymentMethod.setStatus(1);
+        paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
         paymentMethodService.add(paymentMethod);
 
         HistoryTransaction historyTransaction = new HistoryTransaction();
@@ -285,23 +286,23 @@ public class OrderController {
         historyTransaction.setNote(order.getNote());
         historyTransaction.setCreateAt(new Date());
         historyTransaction.setUpdateAt(new Date());
-        historyTransaction.setStatus(1);
+        historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
         historyTransactionService.add(historyTransaction);
 
         OrderTimeline timeline = new OrderTimeline();
         timeline.setOrder(order);
         timeline.setAccount(order.getAccount());
-        timeline.setType(4);
+        timeline.setType(Constant.ORDER_TIMELINE.WAIT_PAYMENT);
         timeline.setNote(order.getNote());
         timeline.setCreateAt(new Date());
         orderTimelineService.add(timeline);
 
         OrderDetail orderDetailRoom = orderDetailService.getOrderDetailById(id);
-        orderDetailRoom.getRoom().setStatus(1);
+        orderDetailRoom.getRoom().setStatus(Constant.ROOM.EMPTY);
         orderDetailService.add(orderDetailRoom);
 
         Order orderUpdate = orderService.getOrderById(order.getId());
-        orderUpdate.setStatus(3);
+        orderUpdate.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
         orderService.add(orderUpdate);
 
         return new ResponseEntity<Order>(order, HttpStatus.OK);
@@ -310,21 +311,21 @@ public class OrderController {
     @PutMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         Order order = orderService.getOrderById(id);
-        order.setStatus(0);
+        order.setStatus(Constant.ORDER_STATUS.CANCEL);
         order.setNote("Hủy hóa đơn");
         orderService.add(order);
 
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(id);
         for (OrderDetail orderDetail : orderDetails) {
             Room room = orderDetail.getRoom();
-            room.setStatus(1);
+            room.setStatus(Constant.ROOM.EMPTY);
             roomService.add(room);
         }
 
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
         orderTimeline.setAccount(order.getAccount());
-        orderTimeline.setType(0);
+        orderTimeline.setType(Constant.ORDER_TIMELINE.CANCEL);
         orderTimeline.setNote(order.getNote());
         orderTimeline.setCreateAt(new Date());
         orderTimelineService.add(orderTimeline);

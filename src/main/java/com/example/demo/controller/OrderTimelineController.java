@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.OrderTimelineDTO;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderTimeline;
@@ -60,14 +61,14 @@ public class OrderTimelineController {
                 return new ResponseEntity<>(HttpStatus.NOT_FOUND);
             }
             order.setUpdateAt(new Date());
-            order.setStatus(2);
+            order.setStatus(Constant.ORDER_STATUS.CHECKED_IN);
             orderService.add(order);
 
             OrderTimeline orderTimeline = new OrderTimeline();
             orderTimeline.setCreateAt(new Date());
             orderTimeline.setOrder(order);
             orderTimeline.setAccount(order.getAccount());
-            orderTimeline.setType(2);
+            orderTimeline.setType(Constant.ORDER_TIMELINE.CHECKED_IN);
             orderTimeline.setNote(orderTimelineDTO.getNote());
             orderTimelineService.add(orderTimeline);
         } catch (Exception exception) {
@@ -82,14 +83,14 @@ public class OrderTimelineController {
         Order order = orderService.getOrderById(id);
         try {
             order.setUpdateAt(new Date());
-            order.setStatus(0);
+            order.setStatus(Constant.ORDER_STATUS.CANCEL);
             orderService.add(order);
 
             OrderTimeline orderTimeline = new OrderTimeline();
             orderTimeline.setCreateAt(new Date());
             orderTimeline.setOrder(order);
             orderTimeline.setAccount(order.getAccount());
-            orderTimeline.setType(0);
+            orderTimeline.setType(Constant.ORDER_TIMELINE.CANCEL);
             orderTimeline.setNote(orderTimelineDTO.getNote());
             orderTimelineService.add(orderTimeline);
         } catch (Exception exception) {

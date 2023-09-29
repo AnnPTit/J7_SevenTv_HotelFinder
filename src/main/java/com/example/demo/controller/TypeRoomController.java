@@ -1,6 +1,6 @@
 package com.example.demo.controller;
 
-import com.example.demo.entity.Floor;
+import com.example.demo.constant.Constant;
 import com.example.demo.entity.TypeRoom;
 import com.example.demo.service.TypeRoomService;
 import jakarta.validation.Valid;
@@ -76,17 +76,17 @@ public class TypeRoomController {
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
         if (typeRoom.getTypeRoomCode().trim().isEmpty() || typeRoom.getTypeRoomName().trim().isEmpty()) {
-            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Không được để trống", HttpStatus.BAD_REQUEST);
         }
         if (typeRoomService.existsByCode(typeRoom.getTypeRoomCode())) {
-            return new ResponseEntity("Type Room Code is exists !", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Mã đã tồn tại!", HttpStatus.BAD_REQUEST);
         }
         if (typeRoom.getNote().isBlank()) {
             typeRoom.setNote("No note.");
         }
         typeRoom.setCreateAt(new Date());
         typeRoom.setUpdateAt(new Date());
-        typeRoom.setStatus(1);
+        typeRoom.setStatus(Constant.COMMON_STATUS.ACTIVE);
         typeRoomService.add(typeRoom);
         return new ResponseEntity<TypeRoom>(typeRoom, HttpStatus.OK);
     }
@@ -105,7 +105,7 @@ public class TypeRoomController {
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
         if (typeRoom.getTypeRoomName().trim().isEmpty() || typeRoom.getNote().trim().isEmpty()) {
-            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Không được để trống", HttpStatus.BAD_REQUEST);
         }
         typeRoom.setId(id);
         typeRoom.setUpdateAt(new Date());
@@ -116,7 +116,7 @@ public class TypeRoomController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         TypeRoom typeRoom = typeRoomService.getTypeRoomById(id);
-        typeRoom.setStatus(0);
+        typeRoom.setStatus(Constant.COMMON_STATUS.UNACTIVE);
         typeRoomService.add(typeRoom);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }

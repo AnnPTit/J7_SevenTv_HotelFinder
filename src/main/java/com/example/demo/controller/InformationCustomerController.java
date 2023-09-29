@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.InformationCustomerDTO;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.InformationCustomer;
@@ -59,7 +60,7 @@ public class InformationCustomerController {
         informationCustomer.setStayTo(orderDetail.getCheckOutDatetime());
         informationCustomer.setCreateAt(new Date());
         informationCustomer.setUpdateAt(new Date());
-        informationCustomer.setStatus(1);
+        informationCustomer.setStatus(Constant.COMMON_STATUS.ACTIVE);
 //        List<Order> orderList = orderService.getList();
 //        for (Order order : orderList) {
 //            if (!order.getAccount().getCitizenId().equals(informationCustomerDTO.getCitizenId())) {
