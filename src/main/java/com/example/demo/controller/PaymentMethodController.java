@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.config.MomoConfig;
 import com.example.demo.config.VNPayConfig;
 import com.example.demo.config.ZaloPayConfig;
+import com.example.demo.constant.Constant;
 import com.example.demo.entity.HistoryTransaction;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
@@ -182,13 +183,13 @@ public class PaymentMethodController {
                 order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setNote("Khách thanh toán bằng NCB");
                 order.setUpdateAt(new Date());
-                order.setStatus(3);
+                order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
                 orderService.add(order);
 
                 List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
                 for (OrderDetail orderDetail : orderDetails) {
                     Room room = orderDetail.getRoom();
-                    room.setStatus(1);
+                    room.setStatus(Constant.ROOM.EMPTY);
                     roomService.add(room);
                 }
 
@@ -205,7 +206,7 @@ public class PaymentMethodController {
                 paymentMethod.setTotalMoney(order.getTotalMoney());
                 paymentMethod.setCreateAt(new Date());
                 paymentMethod.setUpdateAt(new Date());
-                paymentMethod.setStatus(1);
+                paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 paymentMethodService.add(paymentMethod);
 
                 HistoryTransaction historyTransaction = new HistoryTransaction();
@@ -214,13 +215,13 @@ public class PaymentMethodController {
                 historyTransaction.setNote(order.getNote());
                 historyTransaction.setCreateAt(new Date());
                 historyTransaction.setUpdateAt(new Date());
-                historyTransaction.setStatus(1);
+                historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 historyTransactionService.add(historyTransaction);
 
                 OrderTimeline orderTimeline = new OrderTimeline();
                 orderTimeline.setOrder(order);
                 orderTimeline.setAccount(order.getAccount());
-                orderTimeline.setType(3);
+                orderTimeline.setType(Constant.ORDER_TIMELINE.CHECKED_OUT);
                 orderTimeline.setNote("Khách chuyển khoản để thanh toán");
                 orderTimeline.setCreateAt(new Date());
                 orderTimelineService.add(orderTimeline);
@@ -320,13 +321,13 @@ public class PaymentMethodController {
                 order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setNote("Khách thanh toán bằng Momo");
                 order.setUpdateAt(new Date());
-                order.setStatus(3);
+                order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
                 orderService.add(order);
 
                 List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
                 for (OrderDetail orderDetail : orderDetails) {
                     Room room = orderDetail.getRoom();
-                    room.setStatus(1);
+                    room.setStatus(Constant.ROOM.EMPTY);
                     roomService.add(room);
                 }
 
@@ -343,7 +344,7 @@ public class PaymentMethodController {
                 paymentMethod.setTotalMoney(order.getTotalMoney());
                 paymentMethod.setCreateAt(new Date());
                 paymentMethod.setUpdateAt(new Date());
-                paymentMethod.setStatus(1);
+                paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 paymentMethodService.add(paymentMethod);
 
                 HistoryTransaction historyTransaction = new HistoryTransaction();
@@ -352,13 +353,13 @@ public class PaymentMethodController {
                 historyTransaction.setNote(order.getNote());
                 historyTransaction.setCreateAt(new Date());
                 historyTransaction.setUpdateAt(new Date());
-                historyTransaction.setStatus(1);
+                historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 historyTransactionService.add(historyTransaction);
 
                 OrderTimeline orderTimeline = new OrderTimeline();
                 orderTimeline.setOrder(order);
                 orderTimeline.setAccount(order.getAccount());
-                orderTimeline.setType(3);
+                orderTimeline.setType(Constant.ORDER_TIMELINE.CHECKED_OUT);
                 orderTimeline.setNote("Khách chuyển khoản để thanh toán");
                 orderTimeline.setCreateAt(new Date());
                 orderTimelineService.add(orderTimeline);
@@ -459,9 +460,9 @@ public class PaymentMethodController {
                 + zalopay_Params.get("item");
         System.out.println(data);
         zalopay_Params.put("mac", HMACUtil.HMacHexStringEncode(HMACUtil.HMACSHA256, ZaloPayConfig.KEY1, data));
-		zalopay_Params.put("phone", order.getAccount().getPhoneNumber());
-		zalopay_Params.put("email", order.getAccount().getEmail());
-		zalopay_Params.put("address", order.getAccount().getProvinces());
+        zalopay_Params.put("phone", order.getAccount().getPhoneNumber());
+        zalopay_Params.put("email", order.getAccount().getEmail());
+        zalopay_Params.put("address", order.getAccount().getProvinces());
         System.out.println(zalopay_Params);
         CloseableHttpClient client = HttpClients.createDefault();
         HttpPost post = new HttpPost(ZaloPayConfig.CREATE_ORDER_URL);
@@ -504,13 +505,13 @@ public class PaymentMethodController {
                 order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setNote("Khách thanh toán bằng ZaloPay");
                 order.setUpdateAt(new Date());
-                order.setStatus(3);
+                order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
                 orderService.add(order);
 
                 List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
                 for (OrderDetail orderDetail : orderDetails) {
                     Room room = orderDetail.getRoom();
-                    room.setStatus(1);
+                    room.setStatus(Constant.ROOM.EMPTY);
                     roomService.add(room);
                 }
 
@@ -527,7 +528,7 @@ public class PaymentMethodController {
                 paymentMethod.setTotalMoney(order.getTotalMoney());
                 paymentMethod.setCreateAt(new Date());
                 paymentMethod.setUpdateAt(new Date());
-                paymentMethod.setStatus(1);
+                paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 paymentMethodService.add(paymentMethod);
 
                 HistoryTransaction historyTransaction = new HistoryTransaction();
@@ -536,17 +537,18 @@ public class PaymentMethodController {
                 historyTransaction.setNote(order.getNote());
                 historyTransaction.setCreateAt(new Date());
                 historyTransaction.setUpdateAt(new Date());
-                historyTransaction.setStatus(1);
+                historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 historyTransactionService.add(historyTransaction);
 
                 OrderTimeline orderTimeline = new OrderTimeline();
                 orderTimeline.setOrder(order);
                 orderTimeline.setAccount(order.getAccount());
-                orderTimeline.setType(3);
+                orderTimeline.setType(Constant.ORDER_TIMELINE.CHECKED_OUT);
                 orderTimeline.setNote("Khách chuyển khoản để thanh toán");
                 orderTimeline.setCreateAt(new Date());
                 orderTimelineService.add(orderTimeline);
             }
+
             String redirectUrl = "http://localhost:3000/orders?id=" + orderId;
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");

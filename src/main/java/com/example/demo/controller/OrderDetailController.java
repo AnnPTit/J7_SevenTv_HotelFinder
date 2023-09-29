@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.OrderDetailDTO;
 import com.example.demo.entity.ComboUsed;
 import com.example.demo.entity.InformationCustomer;
@@ -131,11 +132,11 @@ public class OrderDetailController {
         orderDetail.setCustomerQuantity(orderDetailDTO.getCustomerQuantity());
         orderDetail.setCreateAt(new Date());
         orderDetail.setUpdateAt(new Date());
-        orderDetail.setStatus(1);
+        orderDetail.setStatus(Constant.ORDER_DETAIL.WAIT_CONFIRM);
         orderDetailService.add(orderDetail);
 
         Room room = orderDetailDTO.getRoom();
-        room.setStatus(2);
+        room.setStatus(Constant.ROOM.ACTIVE);
         roomService.add(room);
         return new ResponseEntity<OrderDetail>(orderDetail, HttpStatus.OK);
     }
@@ -151,7 +152,7 @@ public class OrderDetailController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
-        orderDetail.getRoom().setStatus(1);
+        orderDetail.getRoom().setStatus(Constant.ROOM.EMPTY);
         List<ComboUsed> comboUsedList = comboUsedService.getAllByOrderDetailId(id);
         for (ComboUsed comboUsed : comboUsedList) {
             comboUsedService.delete(comboUsed);

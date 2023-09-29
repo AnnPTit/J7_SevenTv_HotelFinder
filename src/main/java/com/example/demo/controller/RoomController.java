@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.AmazonS3;
 import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.demo.config.S3Util;
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.PhotoDTO;
 import com.example.demo.entity.Floor;
 import com.example.demo.entity.Photo;
@@ -160,7 +161,7 @@ public class RoomController {
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
         if (room.getRoomName().trim().isEmpty() || room.getNote().trim().isEmpty()) {
-            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Không được để trống", HttpStatus.BAD_REQUEST);
         }
         if (roomService.existsByRoomCode(room.getRoomCode())) {
             return new ResponseEntity("Mã phòng đã tồn tại.", HttpStatus.BAD_REQUEST);
@@ -174,7 +175,7 @@ public class RoomController {
             room.setRoomCode(ma);
             room.setCreateAt(new Date());
             room.setUpdateAt(new Date());
-            room.setStatus(1);
+            room.setStatus(Constant.ROOM.EMPTY);
             roomService.add(room);
             for (MultipartFile file : photos) {
                 File fileObj = convertMultiPartToFile(file);
@@ -204,11 +205,11 @@ public class RoomController {
                 photo.setRoom(room);
                 photo.setCreateAt(new Date());
                 photo.setUpdateAt(new Date());
-                photo.setStatus(1);
+                photo.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 photoService.add(photo);
 
             }
-            System.out.println("Them Thanh cong ");
+            System.out.println("Thêm thành công");
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -244,13 +245,12 @@ public class RoomController {
         }
         if (room.getRoomCode().trim().isEmpty() || room.getRoomName().trim().isEmpty()
                 || room.getNote().trim().isEmpty()) {
-            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Không được để trống", HttpStatus.BAD_REQUEST);
         }
 
         try {
             room.setId(id);
             room.setUpdateAt(new Date());
-            room.setStatus(1);
             roomService.add(room);
             if (photos != null) {
                 for (MultipartFile file : photos) {
@@ -281,7 +281,7 @@ public class RoomController {
                     photo.setRoom(room);
                     photo.setCreateAt(new Date());
                     photo.setUpdateAt(new Date());
-                    photo.setStatus(1);
+                    photo.setStatus(Constant.COMMON_STATUS.ACTIVE);
                     photoService.add(photo);
 
                 }
@@ -298,7 +298,7 @@ public class RoomController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         Room room = roomService.getRoomById(id);
-        room.setStatus(0);
+        room.setStatus(Constant.ROOM.UNACTIVE);
         roomService.add(room);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }

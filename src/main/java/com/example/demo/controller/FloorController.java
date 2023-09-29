@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.entity.Floor;
 import com.example.demo.entity.ServiceType;
 import com.example.demo.service.FloorService;
@@ -76,18 +77,18 @@ public class FloorController {
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
         if (floor.getFloorCode().trim().isEmpty() || floor.getFloorName().trim().isEmpty()) {
-            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Không được để trống", HttpStatus.BAD_REQUEST);
         }
 
         if (floorService.existsByCode(floor.getFloorCode())) {
-            return new ResponseEntity("Floor Code is exists !", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Mã đã tồn tại!", HttpStatus.BAD_REQUEST);
         }
         if (floor.getNote().trim().isEmpty()) {
             floor.setNote("No note.");
         }
         floor.setCreateAt(new Date());
         floor.setUpdateAt(new Date());
-        floor.setStatus(1);
+        floor.setStatus(Constant.COMMON_STATUS.ACTIVE);
         floorService.add(floor);
         return new ResponseEntity<Floor>(floor, HttpStatus.OK);
     }
@@ -107,7 +108,7 @@ public class FloorController {
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
         if (floor.getFloorName().trim().isEmpty() || floor.getNote().trim().isEmpty()) {
-            return new ResponseEntity("Not Empty", HttpStatus.BAD_REQUEST);
+            return new ResponseEntity("Không được để trống", HttpStatus.BAD_REQUEST);
         }
 
         fl.setFloorCode(floor.getFloorCode());
@@ -121,7 +122,7 @@ public class FloorController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Floor> delete(@PathVariable("id") String id) {
         Floor floor = floorService.getFloorById(id);
-        floor.setStatus(0);
+        floor.setStatus(Constant.COMMON_STATUS.UNACTIVE);
         floorService.add(floor);
         return new ResponseEntity("Deleted", HttpStatus.OK);
     }
