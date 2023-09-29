@@ -54,6 +54,9 @@ public class InformationCustomer {
     @Column(name = "passport")
     private String passport;
 
+    @Column(name = "nationality")
+    private String nationality;
+
     @Column(name = "stay_from")
     private Date stayFrom;
 

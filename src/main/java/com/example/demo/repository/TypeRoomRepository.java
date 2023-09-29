@@ -11,11 +11,11 @@ import org.springframework.stereotype.Repository;
 @Repository
 public interface TypeRoomRepository extends JpaRepository<TypeRoom, String> {
 
-    @Query(value = "select * from type_room where status = 1", nativeQuery = true)
+    @Query(value = "select * from type_room where status = 1 ORDER BY update_at", nativeQuery = true)
     Page<TypeRoom> findAll(Pageable pageable);
 
     @Query(value = "select * from type_room where\n" +
-            "(type_room_code = ?1 or type_room_name like ?2) and status = 1 ", nativeQuery = true)
+            "(type_room_code = ?1 or type_room_name like ?2) and status = 1 ORDER BY update_at", nativeQuery = true)
     Page<TypeRoom> findByCodeOrName(String code, String name, Pageable pageable);
 
     boolean existsByTypeRoomCode(String code);

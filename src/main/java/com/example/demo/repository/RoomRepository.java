@@ -15,7 +15,7 @@ import java.util.List;
 @Repository
 public interface RoomRepository extends JpaRepository<Room, String> {
 
-    @Query(value = "select * from room order by create_at DESC", nativeQuery = true)
+    @Query(value = "select * from room order by update_at DESC", nativeQuery = true)
     Page<Room> findAll(Pageable pageable);
 
     @Query(value = "SELECT *\n" +
@@ -25,7 +25,7 @@ public interface RoomRepository extends JpaRepository<Room, String> {
             "  AND (:floorId IS NULL OR floor_id = :floorId)\n" +
             "  AND (:typeRoomId IS NULL OR type_room_id = :typeRoomId) " +
             " AND status =1" +
-            " ORDER BY create_at DESC", nativeQuery = true)
+            " ORDER BY update_at DESC", nativeQuery = true)
     Page<Room> loadAndSearch(@Param("roomCode") String roomCode,
                              @Param("roomName") String roomName,
                              @Param("floorId") String floorId,
@@ -40,7 +40,7 @@ public interface RoomRepository extends JpaRepository<Room, String> {
             "  AND (:floorId IS NULL OR floor_id = :floorId)\n" +
             "  AND (:typeRoomId IS NULL OR type_room_id = :typeRoomId) " +
             "AND id <> :id" +
-            " ORDER BY create_at DESC", nativeQuery = true)
+            " ORDER BY update_at DESC", nativeQuery = true)
     Page<Room> loadAndSearchForHome(@Param("roomCode") String roomCode,
                                     @Param("roomName") String roomName,
                                     @Param("floorId") String floorId,
@@ -86,7 +86,7 @@ public interface RoomRepository extends JpaRepository<Room, String> {
             "  AND (:floorId IS NULL OR r.floor_id = :floorId)\n" +
             "  AND (:typeRoomId IS NULL OR r.type_room_id = :typeRoomId)" +
             "  AND tr.price_per_day BETWEEN :start AND :end\n" +
-            "ORDER BY create_at DESC", nativeQuery = true)
+            "ORDER BY update_at DESC", nativeQuery = true)
     List<Room> loadAndSearchBookRoom(@Param("roomCode") String roomCode,
                                      @Param("roomName") String roomName,
                                      @Param("floorId") String floorId,
@@ -98,7 +98,7 @@ public interface RoomRepository extends JpaRepository<Room, String> {
 
     boolean existsByRoomName(String name);
 
-    @Query(value = "select * from room order by create_at DESC", nativeQuery = true)
+    @Query(value = "select * from room order by update_at DESC", nativeQuery = true)
     List<Room> findAllByStatus();
 
 }

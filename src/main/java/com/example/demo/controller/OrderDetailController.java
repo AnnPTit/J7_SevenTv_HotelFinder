@@ -74,6 +74,7 @@ public class OrderDetailController {
             orderDetailDTO.setRoom(orderDetail.getRoom());
             orderDetailDTO.setCheckIn(orderDetail.getCheckInDatetime());
             orderDetailDTO.setCheckOut(orderDetail.getCheckOutDatetime());
+            orderDetailDTO.setCustomerQuantity(orderDetail.getCustomerQuantity());
             orderDetailDTO.setRoomPrice(orderDetail.getRoomPrice());
             List<String> roomImages = orderDetail.getRoom().getPhotoList()
                     .stream()
