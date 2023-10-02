@@ -33,10 +33,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<Order> loadAndSearch(String orderCode, Boolean typeOfOrder, Integer status, Pageable pageable) {
+    public Page<Order> loadAndSearch(String orderCode, Boolean typeOfOrder, Integer status, String customerFullname, Date startDate, Date endDate, Pageable pageable) {
         return orderRepository.loadAndSearch((orderCode != null && !orderCode.isEmpty()) ? orderCode : null,
                 (typeOfOrder != null && !typeOfOrder.toString().isEmpty()) ? typeOfOrder : null,
-                (status != null && !status.toString().isEmpty()) ? status : null, pageable);
+                (status != null && !status.toString().isEmpty()) ? status : null,
+                (customerFullname != null && !customerFullname.isEmpty()) ? customerFullname : null,
+                startDate,
+                endDate,
+                pageable);
     }
 
     @Override

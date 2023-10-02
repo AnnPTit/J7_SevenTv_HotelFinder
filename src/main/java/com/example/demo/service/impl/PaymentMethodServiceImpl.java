@@ -27,7 +27,10 @@ public class PaymentMethodServiceImpl implements PaymentMethodService {
     }
 
     @Override
-    public Page<PaymentMethod> loadAndSearch(String orderCode, Pageable pageable) {
-        return paymentMethodRepository.loadAndSearch((orderCode != null && !orderCode.isEmpty()) ? orderCode : null, pageable);
+    public Page<PaymentMethod> loadAndSearch(String orderCode, Boolean method, String customerFullname, Pageable pageable) {
+        return paymentMethodRepository.loadAndSearch((orderCode != null && !orderCode.isEmpty()) ? orderCode : null,
+                (method != null && !method.toString().isEmpty()) ? method : null,
+                (customerFullname != null && !customerFullname.isEmpty() ? customerFullname : null),
+                pageable);
     }
 }

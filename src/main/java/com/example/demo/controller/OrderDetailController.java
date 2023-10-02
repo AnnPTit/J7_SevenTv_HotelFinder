@@ -149,7 +149,7 @@ public class OrderDetailController {
         return new ResponseEntity<OrderDetail>(orderDetail, HttpStatus.OK);
     }
 
-    @DeleteMapping("/delete/{id}")
+    @PutMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
         orderDetail.getRoom().setStatus(Constant.ROOM.EMPTY);
@@ -165,7 +165,8 @@ public class OrderDetailController {
         for (InformationCustomer informationCustomer : informationCustomerList) {
             informationCustomerService.delete(informationCustomer);
         }
-        orderDetailService.delete(orderDetail);
+        orderDetail.setStatus(Constant.ORDER_DETAIL.CANCEL);
+        orderDetailService.add(orderDetail);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 
