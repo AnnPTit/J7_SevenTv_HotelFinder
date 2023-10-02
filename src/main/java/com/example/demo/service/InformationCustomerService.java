@@ -6,6 +6,8 @@ import java.util.List;
 
 public interface InformationCustomerService {
 
+    List<InformationCustomer> getAll();
+
     List<InformationCustomer> findAllByOrderDetailId(String id);
 
     InformationCustomer add(InformationCustomer informationCustomer);

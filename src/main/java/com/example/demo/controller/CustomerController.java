@@ -45,9 +45,19 @@ public class CustomerController {
         return customerService.getAll(pageable);
     }
 
-    @GetMapping("getAll")
+    @GetMapping("/getAll")
     public List<Customer> findAll() {
         return customerService.findAll();
+    }
+
+    @GetMapping("/getAllByOrderId/{id}")
+    public List<Customer> findAll(@PathVariable("id") String id) {
+        return customerService.getAllCustomer(id);
+    }
+
+    @GetMapping("/getAllByOrderDetailId/{id}")
+    public List<Customer> findAllByOrderDetail(@PathVariable("id") String id) {
+        return customerService.getAllCustomerByOrderDetailId(id);
     }
 
     @GetMapping("/loadAndSearch")

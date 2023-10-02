@@ -91,9 +91,10 @@ public class PaymentMethodController {
 
     @GetMapping("/loadAndSearch")
     public Page<PaymentMethod> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
+                                             @RequestParam(name = "method", defaultValue = "") Boolean method,
                                              @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        return paymentMethodService.loadAndSearch(key, pageable);
+        return paymentMethodService.loadAndSearch(key, method, key, pageable);
     }
 
     @GetMapping("/load/{id}")

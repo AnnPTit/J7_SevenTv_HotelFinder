@@ -24,6 +24,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.util.StringUtils;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -35,6 +36,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Date;
@@ -70,17 +73,38 @@ public class OrderController {
     }
 
     @GetMapping("/loadAndSearch")
-    public Page<Order> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
-                                     @RequestParam(name = "typeOfOrder", defaultValue = "") Boolean typeOfOrder,
-                                     @RequestParam(name = "status", defaultValue = "") Integer status,
-                                     @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+    public Page<Order> loadAndSearch(
+            @RequestParam(name = "key", defaultValue = "") String key,
+            @RequestParam(name = "typeOfOrder", defaultValue = "") Boolean typeOfOrder,
+            @RequestParam(name = "status", defaultValue = "") Integer status,
+            @RequestParam(name = "startDate", defaultValue = "") String startDateStr,
+            @RequestParam(name = "endDate", defaultValue = "") String endDateStr,
+            @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+
+        Date startDate = null;
+        Date endDate = null;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            if (!startDateStr.isEmpty()) {
+                startDate = dateFormat.parse(startDateStr);
+            }
+
+            if (!endDateStr.isEmpty()) {
+                endDate = dateFormat.parse(endDateStr);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         Pageable pageable = PageRequest.of(current_page, 5);
-        return orderService.loadAndSearch(key, typeOfOrder, status, pageable);
+        return orderService.loadAndSearch(key, typeOfOrder, status, key, startDate, endDate, pageable);
     }
 
     @GetMapping("/loadBookRoomOffline")
     public Page<Order> loadBookRoomOffline(@RequestParam(name = "key", defaultValue = "") String key,
-                                     @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
         return orderService.loadBookRoomOffline(key, pageable);
     }
@@ -158,6 +182,7 @@ public class OrderController {
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
         for (OrderDetail orderDetail : orderDetails) {
             orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_IN);
+            orderDetailService.add(orderDetail);
             Room room = orderDetail.getRoom();
             room.setStatus(Constant.ROOM.ACTIVE);
             roomService.add(room);
@@ -187,6 +212,8 @@ public class OrderController {
 
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
         for (OrderDetail orderDetail : orderDetails) {
+            orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_OUT);
+            orderDetailService.add(orderDetail);
             Room room = orderDetail.getRoom();
             room.setStatus(Constant.ROOM.EMPTY);
             roomService.add(room);

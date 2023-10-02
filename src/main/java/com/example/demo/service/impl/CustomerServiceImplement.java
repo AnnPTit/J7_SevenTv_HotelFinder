@@ -119,4 +119,14 @@ public class CustomerServiceImplement implements CustomerService {
         return customerRepository.getCustomerById(id);
     }
 
+    @Override
+    public List<Customer> getAllCustomer(String id) {
+        return customerRepository.getAllCustomer(id);
+    }
+
+    @Override
+    public List<Customer> getAllCustomerByOrderDetailId(String id) {
+        return customerRepository.getAllCustomerByOrderDetailId(id);
+    }
+
 }

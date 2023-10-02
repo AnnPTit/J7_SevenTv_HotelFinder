@@ -46,5 +46,20 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
     @Query(value = "select * from  customer where email =?1 and status = 1", nativeQuery = true)
     Optional<Customer> findCustomerByEmail(String email);
 
+    @Query(value = "SELECT c.*\n" +
+            "FROM customer c\n" +
+            "INNER JOIN information_customer ic ON c.citizen_id = ic.citizen_id\n" +
+            "INNER JOIN order_detail od ON ic.order_detail_id = od.id\n" +
+            "INNER JOIN `order` o ON od.order_id = o.id\n" +
+            "WHERE o.id = ?1 AND ic.citizen_id IS NOT NULL;", nativeQuery = true)
+    List<Customer> getAllCustomer(String id);
+
+    @Query(value = "SELECT c.*\n" +
+            "FROM customer c\n" +
+            "INNER JOIN information_customer ic ON c.citizen_id = ic.citizen_id\n" +
+            "INNER JOIN order_detail od ON ic.order_detail_id = od.id\n" +
+            "INNER JOIN `order` o ON od.order_id = o.id\n" +
+            "WHERE od.id = ?1 AND ic.citizen_id IS NOT NULL;", nativeQuery = true)
+    List<Customer> getAllCustomerByOrderDetailId(String id);
 
 }

@@ -12,6 +12,6 @@ public interface PaymentMethodService {
 
     PaymentMethod add(PaymentMethod paymentMethod);
 
-    Page<PaymentMethod> loadAndSearch(String orderCode, Pageable pageable);
+    Page<PaymentMethod> loadAndSearch(String orderCode, Boolean method, String customerFullname, Pageable pageable);
 
 }

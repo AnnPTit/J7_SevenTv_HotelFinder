@@ -15,6 +15,11 @@ public class InformationCustomerServiceImpl implements InformationCustomerServic
     private InformationCustomerRepository informationCustomerRepository;
 
     @Override
+    public List<InformationCustomer> getAll() {
+        return informationCustomerRepository.findAll();
+    }
+
+    @Override
     public List<InformationCustomer> findAllByOrderDetailId(String id) {
         return informationCustomerRepository.findAllByOrderDetailId(id);
     }

@@ -24,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
-import java.util.Random;
 
 @RestController
 @CrossOrigin("*")
@@ -39,6 +38,11 @@ public class InformationCustomerController {
     private OrderService orderService;
     @Autowired
     private CustomerService customerService;
+
+    @GetMapping("/load")
+    public List<InformationCustomer> load() {
+        return informationCustomerService.getAll();
+    }
 
     @GetMapping("/load/{id}")
     public List<InformationCustomer> loadByOrderId(@PathVariable("id") String id) {

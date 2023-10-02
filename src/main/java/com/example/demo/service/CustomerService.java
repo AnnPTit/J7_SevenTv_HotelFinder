@@ -38,4 +38,8 @@ public interface CustomerService {
 
     Customer getCustomerById(String id);
 
+    List<Customer> getAllCustomer(String id);
+
+    List<Customer> getAllCustomerByOrderDetailId(String id);
+
 }

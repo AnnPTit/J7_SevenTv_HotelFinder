@@ -14,8 +14,10 @@ public class Constant {
     }
 
     public static final class ORDER_DETAIL {
+        public static Integer CANCEL = 0;
         public static Integer WAIT_CONFIRM = 1;
         public static Integer CHECKED_IN = 2;
+        public static Integer CHECKED_OUT = 3;
     }
 
     public static final class ROOM {
