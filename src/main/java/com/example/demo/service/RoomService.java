@@ -1,6 +1,9 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.RoomRequestDTO;
+import com.example.demo.dto.RoomResponeDTO;
 import com.example.demo.entity.Room;
+import io.swagger.models.auth.In;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -10,7 +13,9 @@ import java.util.List;
 
 public interface RoomService {
 
-    List<Room> getAllByStatus();
+    List<Room> getAllByStatus(Integer status);
+
+    Page<Room> getAllByStatus(Integer status, Pageable pageable);
 
     List<Room> getList();
 
@@ -44,5 +49,7 @@ public interface RoomService {
     boolean existsByRoomCode(String code);
 
     boolean existsByRoomName(String name);
+
+    Page<RoomResponeDTO> search(RoomRequestDTO roomRequestDTO , Pageable pageable);
 
 }

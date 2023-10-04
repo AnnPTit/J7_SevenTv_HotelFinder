@@ -4,6 +4,7 @@ import com.example.demo.entity.OrderDetail;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 
 public interface OrderDetailService {
@@ -11,6 +12,8 @@ public interface OrderDetailService {
     List<OrderDetail> getList();
 
     List<OrderDetail> getOrderDetailByOrderId(String id);
+
+    List<String> checkRoomIsBooked(Date dayStart, Date dayEnd, List<String> idsRoom);
 
     OrderDetail getOrderDetailByIdOrder(String id);
 
