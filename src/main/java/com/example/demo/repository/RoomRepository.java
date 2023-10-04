@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.Room;
+import com.example.demo.repository.custom.RoomRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -13,7 +14,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface RoomRepository extends JpaRepository<Room, String> {
+public interface RoomRepository extends JpaRepository<Room, String>  , RoomRepositoryCustom {
 
     @Query(value = "select * from room order by update_at DESC", nativeQuery = true)
     Page<Room> findAll(Pageable pageable);
@@ -98,7 +99,10 @@ public interface RoomRepository extends JpaRepository<Room, String> {
 
     boolean existsByRoomName(String name);
 
-    @Query(value = "select * from room order by update_at DESC", nativeQuery = true)
-    List<Room> findAllByStatus();
+    @Query(value = "select * from room where  status = :status order by update_at  DESC", nativeQuery = true)
+    List<Room> findAllByStatus(@Param("status") Integer status);
+
+    @Query(value = "select * from room where  status = :status order by update_at  DESC", nativeQuery = true)
+    Page<Room> findAllByStatus(@Param("status") Integer status , Pageable pageable);
 
 }

@@ -1,5 +1,7 @@
 package com.example.demo.constant;
 
+import java.net.URI;
+
 public class Constant {
 
     public static final class ORDER_STATUS {
@@ -37,7 +39,9 @@ public class Constant {
         public static Integer WAIT_PAYMENT = 4;
         public static Integer WAIT_CHECKIN = 5;
         public static Integer REFUSE= 6;
-        public static Integer EXPIRED = 7;
     }
+    public static final String PROBLEM_BASE_URL = "https://www.jhipster.tech/problem";
+    public static final URI DEFAULT_TYPE = URI.create(PROBLEM_BASE_URL + "/problem-with-message");
+
 
 }
