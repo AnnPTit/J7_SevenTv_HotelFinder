@@ -120,7 +120,7 @@ public class PaymentMethodController {
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
         vnp_Params.put("vnp_Amount", String.valueOf(amount));
         vnp_Params.put("vnp_CurrCode", "VND");
-        vnp_Params.put("vnp_BankCode", "NCB");
+        vnp_Params.put("vnp_BankCode", "");
         vnp_Params.put("vnp_TxnRef", order.getId());
         vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + order.getOrderCode());
         vnp_Params.put("vnp_OrderType", "billpayment1231");
@@ -182,7 +182,7 @@ public class PaymentMethodController {
             if (order != null) {
                 order.setMoneyGivenByCustomer(order.getTotalMoney());
                 order.setExcessMoney(BigDecimal.valueOf(0));
-                order.setNote("Khách thanh toán bằng NCB");
+                order.setNote("Khách thanh toán bằng tài khoản ngân hàng");
                 order.setUpdateAt(new Date());
                 order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
                 orderService.add(order);
@@ -231,7 +231,6 @@ public class PaymentMethodController {
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         } else {
-            // Thanh toán không thành công, xử lý theo logic của bạn
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         }
     }
@@ -432,11 +431,13 @@ public class PaymentMethodController {
     public Map<String, Object> createPaymentZaloPay(HttpServletResponse response, @PathVariable("id") String id) throws Exception {
         Order order = orderService.getOrderById(id);
         long amount = order.getTotalMoney().longValue();
+        System.out.println(id);
 
         Map<String, Object> zalopay_Params = new HashMap<>();
         zalopay_Params.put("appid", ZaloPayConfig.APP_ID);
         zalopay_Params.put("apptransid", getCurrentTimeString("yyMMdd") + "_" + new Date().getTime());
         zalopay_Params.put("apptime", System.currentTimeMillis());
+        zalopay_Params.put("pmcid", id); // Use the 'id' parameter from the path as pmcid
         zalopay_Params.put("appuser", "abc");
         zalopay_Params.put("amount", amount);
         zalopay_Params.put("description", "Thanh toan don hang #" + order.getOrderCode());

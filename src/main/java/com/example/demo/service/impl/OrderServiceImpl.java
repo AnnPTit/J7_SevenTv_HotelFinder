@@ -49,6 +49,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Page<Order> loadBookRoomOnline(String orderCode, Pageable pageable) {
+        return orderRepository.loadBookRoomOnline(orderCode, pageable);
+    }
+
+    @Override
     public Order getOrderById(String id) {
         return orderRepository.findById(id).orElse(null);
     }
