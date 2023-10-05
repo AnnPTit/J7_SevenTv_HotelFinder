@@ -42,4 +42,9 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             " AND type_of_order = 1 ORDER BY update_at DESC", nativeQuery = true)
     Page<Order> loadBookRoomOffline(@Param("orderCode") String orderCode, Pageable pageable);
 
+    @Query(value = "SELECT * FROM `order` " +
+            "WHERE (:orderCode IS NULL OR order_code LIKE CONCAT('%', :orderCode, '%'))" +
+            " AND type_of_order = 0 ORDER BY update_at DESC", nativeQuery = true)
+    Page<Order> loadBookRoomOnline(@Param("orderCode") String orderCode, Pageable pageable);
+
 }

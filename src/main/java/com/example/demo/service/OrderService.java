@@ -19,6 +19,8 @@ public interface OrderService {
 
     Page<Order> loadBookRoomOffline(String orderCode, Pageable pageable);
 
+    Page<Order> loadBookRoomOnline(String orderCode, Pageable pageable);
+
     Order getOrderById(String id);
 
     Order add(Order order);
