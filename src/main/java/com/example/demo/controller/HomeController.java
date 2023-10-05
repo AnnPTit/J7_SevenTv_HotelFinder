@@ -1,5 +1,8 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
+import com.example.demo.dto.RoomRequestDTO;
+import com.example.demo.dto.RoomResponeDTO;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +11,7 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
@@ -28,6 +32,8 @@ public class HomeController {
     private CustomerService customerService;
     @Autowired
     private TypeRoomService typeRoomService;
+    @Autowired
+    private OrderDetailService orderDetailService;
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -53,8 +59,7 @@ public class HomeController {
     @GetMapping("/room/loadByBook")
     public Page<Room> getRoomByVBooking(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        return roomService.findRoomsOrderByOrderDetailCountDesc(pageable);
-
+        return roomService.getAllByStatus(Constant.COMMON_STATUS.ACTIVE, pageable);
     }
 
     @GetMapping("/room/detail/{id}")
@@ -121,5 +126,13 @@ public class HomeController {
         return typeRoomService.getList();
     }
 
+
+    @PostMapping("/room/search")
+    public Page<RoomResponeDTO> testSearch(@RequestBody RoomRequestDTO roomRequestDTO,
+                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page ,
+                                           @RequestParam(name = "total_page", defaultValue = "1000") int total_page) {
+        Pageable pageable = PageRequest.of(current_page, total_page);
+        return roomService.search(roomRequestDTO, pageable);
+    }
 
 }

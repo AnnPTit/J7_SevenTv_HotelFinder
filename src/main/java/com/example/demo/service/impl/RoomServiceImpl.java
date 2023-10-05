@@ -1,7 +1,11 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.RoomRequestDTO;
+import com.example.demo.dto.RoomResponeDTO;
 import com.example.demo.entity.Room;
+import com.example.demo.repository.PhotoRepository;
 import com.example.demo.repository.RoomRepository;
+import com.example.demo.service.PhotoService;
 import com.example.demo.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -17,10 +21,17 @@ public class RoomServiceImpl implements RoomService {
 
     @Autowired
     private RoomRepository roomRepository;
+    @Autowired
+    private PhotoRepository photoRepository;
 
     @Override
-    public List<Room> getAllByStatus() {
-        return roomRepository.findAllByStatus();
+    public List<Room> getAllByStatus(Integer status) {
+        return roomRepository.findAllByStatus(status);
+    }
+
+    @Override
+    public Page<Room> getAllByStatus(Integer status, Pageable pageable) {
+        return roomRepository.findAllByStatus(status, pageable);
     }
 
     @Override
@@ -134,5 +145,16 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public boolean existsByRoomName(String name) {
         return roomRepository.existsByRoomName(name);
+    }
+
+    @Override
+    public Page<RoomResponeDTO> search(RoomRequestDTO roomRequestDTO, Pageable pageable) {
+        Page<RoomResponeDTO> page = roomRepository.search(roomRequestDTO, pageable);
+        for (RoomResponeDTO roomResponeDTO1 : page.getContent()
+        ) {
+            List<String> url = photoRepository.getUrlByIdRoom(roomResponeDTO1.getId());
+            roomResponeDTO1.setUrls(url);
+        }
+        return page;
     }
 }

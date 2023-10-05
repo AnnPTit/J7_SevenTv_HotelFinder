@@ -6,6 +6,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @AllArgsConstructor
 @NoArgsConstructor
@@ -14,8 +15,7 @@ public class RoomRequestDTO {
     private String roomName;
     private String typeRoom;
     private int numberCustom;
-    private BigDecimal pricePerHours;
-    private BigDecimal pricePerDay;
+    private List<BigDecimal> pricePerDays;
     private Date checkIn;
     private Date checkOut;
 }

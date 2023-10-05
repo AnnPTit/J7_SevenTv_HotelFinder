@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.Date;
 import java.util.List;
 
 @Service
@@ -24,6 +25,11 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     @Override
     public List<OrderDetail> getOrderDetailByOrderId(String id) {
         return orderDetailRepository.getAllByOrderId(id);
+    }
+
+    @Override
+    public List<String> checkRoomIsBooked(Date dayStart, Date dayEnd, List<String> idsRoom) {
+        return orderDetailRepository.checkRoomIsBooked(dayStart, dayEnd, idsRoom);
     }
 
     @Override

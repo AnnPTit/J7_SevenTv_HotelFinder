@@ -6,14 +6,18 @@ import com.example.demo.dto.RoomData;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
-import java.time.LocalDate;
+import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @RestController
@@ -32,15 +36,35 @@ public class WebSocketController {
 
     private final AccountService accountService;
 
+    @AllArgsConstructor
+    @NoArgsConstructor
+    @Data
+    private static class Response {
+        private String message;
+        private int status;
+        private List<String> ids;
+    }
 
     @MessageMapping("/products")
     @SendTo("/topic/product")
-    public String broadcastNews(String message) {
+    public Response broadcastNews(String message) {
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             PayloadObject payload = objectMapper.readValue(message, PayloadObject.class);
-
             System.out.println(payload);
+            // Kiểm tra ngày đặt đã trùng
+            List<String> idsRoom = payload.getRooms().stream()
+                    .map(RoomData::getId)
+                    .collect(Collectors.toList());
+            List<String> orderDetailIds = orderDetailService.checkRoomIsBooked(payload.getDayStart(), payload.getDayEnd(), idsRoom);
+            if (!orderDetailIds.isEmpty()) {
+                SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+                String startDate = sdf.format(payload.getDayStart());
+                String endDate = sdf.format(payload.getDayEnd());
+                return new Response("Phòng đã được đặt từ ngày :  "
+                        + startDate + "   đến ngày :    " + endDate + "  !" + ". Vui lòng chọn ngày khác !",
+                        Constant.COMMON_STATUS.UNACTIVE, idsRoom);
+            }
             Random random = new Random();
             int randomNumber = random.nextInt(1000);
             Customer customer = customerService.findCustomerByEmail(payload.getUser().getEmail()).orElse(null);
@@ -70,9 +94,9 @@ public class WebSocketController {
             // B3 : Tạo hóa đơn
             Order order = new Order();
             Customer customerForOrder = customerService.findCustomerByEmail(payload.getUser().getEmail()).orElse(null);
-            if (! Objects.isNull(customerForOrder)){
+            if (!Objects.isNull(customerForOrder)) {
                 order.setCustomer(customerForOrder);
-            }else {
+            } else {
                 order.setCustomer(newCustomer);
             }
             String orderCode = "HD" + randomNumber;
@@ -115,10 +139,11 @@ public class WebSocketController {
                 // Thêm hóa đơn chi tiết
                 orderDetailService.add(orderDetail);
             }
-            return "1";
+
+            return new Response("Đặt phòng thành công !", Constant.COMMON_STATUS.ACTIVE, idsRoom);
         } catch (Exception e) {
             e.printStackTrace();
-            return "";
+            return null;
         }
     }
 }
