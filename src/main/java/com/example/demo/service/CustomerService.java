@@ -12,17 +12,15 @@ public interface CustomerService {
 
     Page<Customer> getAll(Pageable pageable);
 
-    List<Customer> findAll();
+    List<Customer> findAllByStatus();
 
     Page<Customer> loadAndSearch(String customerCode, String fullname, String phoneNumber, Pageable pageable);
 
     Customer findById(String id);
 
-
     Optional<Customer> findCustomerByEmail(String email);
 
     Customer add(Customer customer);
-
 
     Boolean delete(String id);
 

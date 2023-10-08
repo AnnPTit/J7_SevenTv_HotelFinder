@@ -47,7 +47,7 @@ public class CustomerController {
 
     @GetMapping("/getAll")
     public List<Customer> findAll() {
-        return customerService.findAll();
+        return customerService.findAllByStatus();
     }
 
     @GetMapping("/getAllByOrderId/{id}")
