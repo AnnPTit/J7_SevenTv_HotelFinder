@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 @Service
 public class CustomerServiceImplement implements CustomerService {
@@ -28,8 +29,8 @@ public class CustomerServiceImplement implements CustomerService {
     }
 
     @Override
-    public List<Customer> findAll() {
-        return customerRepository.getAll();
+    public List<Customer> findAllByStatus() {
+        return customerRepository.getAllByStatus();
     }
 
     @Override
@@ -100,19 +101,9 @@ public class CustomerServiceImplement implements CustomerService {
 
     @Override
     public String generateCustomerCode() {
-        int CODE_LENGTH = 8;
-        String CHARACTERS = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
-
-        SecureRandom random = new SecureRandom();
-        StringBuilder code = new StringBuilder(CODE_LENGTH);
-
-        for (int i = 0; i < CODE_LENGTH; i++) {
-            int randomIndex = random.nextInt(CHARACTERS.length());
-            char randomChar = CHARACTERS.charAt(randomIndex);
-            code.append(randomChar);
-        }
-
-        return code.toString();
+        String kh = "KH";
+        kh += String.format("%2d", customerRepository.getAllCustomer().size() + 1);
+        return kh;
     }
 
     public Customer getCustomerById(String id) {
