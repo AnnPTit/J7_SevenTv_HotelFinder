@@ -1,24 +1,19 @@
 package com.example.demo.entity;
 
+import com.example.demo.dto.RoomRequestDTO;
+import com.example.demo.dto.RoomResponeDTO;
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.Date;
 import java.util.List;
 
@@ -29,6 +24,29 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "room")
+@SqlResultSetMappings(
+        value = {
+                @SqlResultSetMapping(
+                        name = "roomResult",
+                        classes = {
+                                @ConstructorResult(
+                                        targetClass = RoomResponeDTO.class,
+                                        columns = {
+                                                @ColumnResult(name = "id", type = String.class),
+                                                @ColumnResult(name = "roomCode", type = String.class),
+                                                @ColumnResult(name = "roomName", type = String.class),
+                                                @ColumnResult(name = "note", type = String.class),
+                                                @ColumnResult(name = "typeRoom", type = String.class),
+                                                @ColumnResult(name = "capacity", type = Integer.class),
+                                                @ColumnResult(name = "pricePerHours", type = BigDecimal.class),
+                                                @ColumnResult(name = "pricePerDay", type = BigDecimal.class),
+                                        }
+                                ),
+                        }
+                ),
+        }
+)
+
 public class Room {
 
     @Id
@@ -71,7 +89,7 @@ public class Room {
     @Column(name = "status")
     private Integer status;
 
-//    @JsonManagedReference
+    //    @JsonManagedReference
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<Photo> photoList;
 

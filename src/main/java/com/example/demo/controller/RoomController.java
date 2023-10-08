@@ -70,7 +70,7 @@ public class RoomController {
 
     @GetMapping("/getAllByStatus")
     public List<Room> getAllByStatus() {
-        return roomService.getAllByStatus();
+        return roomService.getAllByStatus(Constant.COMMON_STATUS.ACTIVE);
     }
 
     @GetMapping("/getList")
@@ -251,6 +251,7 @@ public class RoomController {
         try {
             room.setId(id);
             room.setUpdateAt(new Date());
+            room.setStatus(1);
             roomService.add(room);
             if (photos != null) {
                 for (MultipartFile file : photos) {
