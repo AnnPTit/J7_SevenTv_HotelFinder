@@ -19,6 +19,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 import java.util.Date;
 import java.util.UUID;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Getter
@@ -28,7 +29,7 @@ import java.util.UUID;
 @Table(name = "photo")
 public class Photo {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;

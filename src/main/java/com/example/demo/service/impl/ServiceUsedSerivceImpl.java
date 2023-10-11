@@ -38,4 +38,15 @@ public class ServiceUsedSerivceImpl implements ServiceUsedSerivce {
     public void delete(ServiceUsed serviceUsed) {
         serviceUsedRepository.delete(serviceUsed);
     }
+
+    @Override
+    public ServiceUsed getByService(String service, String orderDetail) {
+        return serviceUsedRepository.getByService(service, orderDetail);
+    }
+
+    @Override
+    public void updateQuantityServiceUsed(Integer quantity, String serviceId) {
+        serviceUsedRepository.updateQuantityServiceUsed(quantity, serviceId);
+    }
+
 }

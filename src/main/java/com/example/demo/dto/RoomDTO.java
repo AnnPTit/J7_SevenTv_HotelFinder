@@ -1,26 +1,28 @@
 package com.example.demo.dto;
 
-import com.example.demo.entity.Combo;
+import com.example.demo.entity.Floor;
 import com.example.demo.entity.OrderDetail;
+import com.example.demo.entity.Photo;
+import com.example.demo.entity.TypeRoom;
 import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 import java.util.Date;
+import java.util.List;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @Getter
 @Setter
-@ToString
-public class ComboUsedDTO {
+@AllArgsConstructor
+@NoArgsConstructor
+public class RoomDTO {
 
     private String id;
-    private String combo;
-    private String orderDetail;
-    private Integer quantity;
+    private TypeRoom typeRoom;
+    private Floor floor;
+    private String roomCode;
+    private String roomName;
     private String note;
     private Date createAt;
     private String createBy;
@@ -28,5 +30,7 @@ public class ComboUsedDTO {
     private String updatedBy;
     private String deleted;
     private Integer status;
+    private List<String> photoList;
+    private List<OrderDetail> orderDetailList;
 
 }

@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import com.example.demo.dto.RoomDTO;
 import com.example.demo.entity.Room;
 import com.example.demo.repository.custom.RoomRepositoryCustom;
 import org.springframework.data.domain.Page;
@@ -49,7 +50,6 @@ public interface RoomRepository extends JpaRepository<Room, String>  , RoomRepos
                                     @Param("id") String id,
                                     Pageable pageable);
 
-
     @Query("SELECT DISTINCT r FROM Room r " +
             "LEFT JOIN r.orderDetailList  od " +
             "LEFT JOIN od.order o " +
@@ -71,7 +71,6 @@ public interface RoomRepository extends JpaRepository<Room, String>  , RoomRepos
             @Param("dayStart") Date dayStart,
             @Param("dayEnd") Date dayEnd
     );
-
 
     @Query("SELECT r FROM Room r " +
             "LEFT JOIN FETCH r.orderDetailList od " +
@@ -104,5 +103,8 @@ public interface RoomRepository extends JpaRepository<Room, String>  , RoomRepos
 
     @Query(value = "select * from room where  status = :status order by update_at  DESC", nativeQuery = true)
     Page<Room> findAllByStatus(@Param("status") Integer status , Pageable pageable);
+
+    @Query("SELECT r FROM Room r WHERE r.floor.id = :floorId")
+    List<Room> getRoomsByFloorId(String floorId);
 
 }

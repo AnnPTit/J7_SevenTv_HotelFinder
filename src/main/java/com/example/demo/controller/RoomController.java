@@ -8,8 +8,11 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.demo.config.S3Util;
 import com.example.demo.constant.Constant;
+import com.example.demo.dto.OrderDetailDTO;
 import com.example.demo.dto.PhotoDTO;
+import com.example.demo.dto.RoomDTO;
 import com.example.demo.entity.Floor;
+import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.Photo;
 import com.example.demo.entity.Room;
 import com.example.demo.service.PhotoService;
@@ -48,6 +51,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @RestController
@@ -82,6 +86,41 @@ public class RoomController {
     public Page<Room> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
         return roomService.getAll(pageable);
+    }
+
+    @GetMapping("/room-plan")
+    public List<List<RoomDTO>> getRoomsByFloorsAscendingOrder() {
+        List<List<RoomDTO>> roomDTOS = new ArrayList<>();
+        List<List<Room>> list = roomService.getRoomsByAllFloors();
+        for (List<Room> roomList : list) {
+            List<RoomDTO> roomDTOList = new ArrayList<>();
+            for (Room room : roomList) {
+                RoomDTO roomDTO = new RoomDTO();
+                roomDTO.setId(room.getId());
+                roomDTO.setFloor(room.getFloor());
+                roomDTO.setTypeRoom(room.getTypeRoom());
+                roomDTO.setRoomCode(room.getRoomCode());
+                roomDTO.setRoomName(room.getRoomName());
+                roomDTO.setNote(room.getNote());
+                roomDTO.setCreateAt(room.getCreateAt());
+                roomDTO.setCreateBy(room.getCreateBy());
+                roomDTO.setUpdateAt(room.getUpdateAt());
+                roomDTO.setUpdatedBy(room.getUpdatedBy());
+                roomDTO.setDeleted(room.getDeleted());
+                List<String> roomImages = room.getPhotoList()
+                        .stream()
+                        .map(Photo::getUrl)
+                        .collect(Collectors.toList());
+                List<OrderDetail> orderDetailList = room.getOrderDetailList();
+                roomDTO.setPhotoList(roomImages);
+                roomDTO.setOrderDetailList(orderDetailList);
+                roomDTO.setStatus(room.getStatus());
+                roomDTOList.add(roomDTO);
+            }
+            roomDTOS.add(roomDTOList);
+        }
+//        Collections.reverse(roomsByAllFloors);
+        return roomDTOS;
     }
 
     @GetMapping("/loadAndSearch")

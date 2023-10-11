@@ -1,6 +1,8 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.entity.Combo;
 import com.example.demo.entity.ComboUsed;
+import com.example.demo.entity.OrderDetail;
 import com.example.demo.repository.ComboUsedRepository;
 import com.example.demo.service.ComboUsedService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,5 +39,15 @@ public class ComboUsedServiceImpl implements ComboUsedService {
     @Override
     public void delete(ComboUsed comboUsed) {
         comboUsedRepository.delete(comboUsed);
+    }
+
+    @Override
+    public ComboUsed getByCombo(String combo, String orderDetail) {
+        return comboUsedRepository.getByCombo(combo, orderDetail);
+    }
+
+    @Override
+    public void updateQuantityComboUsed(Integer quantity, String comboId) {
+        comboUsedRepository.updateQuantityComboUsed(quantity, comboId);
     }
 }

@@ -1,11 +1,13 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.RoomDTO;
 import com.example.demo.dto.RoomRequestDTO;
 import com.example.demo.dto.RoomResponeDTO;
+import com.example.demo.entity.Floor;
 import com.example.demo.entity.Room;
+import com.example.demo.repository.FloorRepository;
 import com.example.demo.repository.PhotoRepository;
 import com.example.demo.repository.RoomRepository;
-import com.example.demo.service.PhotoService;
 import com.example.demo.service.RoomService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -13,12 +15,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
 @Service
 public class RoomServiceImpl implements RoomService {
 
+    @Autowired
+    private FloorRepository floorRepository;
     @Autowired
     private RoomRepository roomRepository;
     @Autowired
@@ -157,4 +162,18 @@ public class RoomServiceImpl implements RoomService {
         }
         return page;
     }
+
+    @Override
+    public List<List<Room>> getRoomsByAllFloors() {
+        List<Floor> allFloors = floorRepository.findAll();
+        List<List<Room>> roomsByAllFloors = new ArrayList<>();
+
+        for (Floor floor : allFloors) {
+            List<Room> roomsInFloor = roomRepository.getRoomsByFloorId(floor.getId());
+            roomsByAllFloors.add(roomsInFloor);
+        }
+
+        return roomsByAllFloors;
+    }
+
 }
