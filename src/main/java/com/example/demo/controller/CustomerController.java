@@ -47,7 +47,7 @@ public class CustomerController {
 
     @GetMapping("/getAll")
     public List<Customer> findAll() {
-        return customerService.findAll();
+        return customerService.findAllByStatus();
     }
 
     @GetMapping("/getAllByOrderId/{id}")
@@ -114,9 +114,11 @@ public class CustomerController {
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<Customer> update(@PathVariable("id") String id,
-                                           @RequestBody Customer customer,
-                                           BindingResult result) {
+    public ResponseEntity<Customer> update(
+            @PathVariable("id") String id,
+            @Valid @RequestBody Customer customer,
+            BindingResult result) {
+        customer.setId(id);
         if (result.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
             for (FieldError error : result.getFieldErrors()) {
@@ -126,7 +128,6 @@ public class CustomerController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
-        customer.setId(id);
         customer.setUpdateAt(new Date());
         customerService.add(customer);
         return new ResponseEntity<Customer>(customer, HttpStatus.OK);

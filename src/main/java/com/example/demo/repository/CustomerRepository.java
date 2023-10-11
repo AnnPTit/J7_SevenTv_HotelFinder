@@ -14,11 +14,14 @@ import java.util.Optional;
 @Repository
 public interface CustomerRepository extends JpaRepository<Customer, String> {
 
-    @Query(value = "SELECT * FROM customer WHERE status = 1 ORDER BY updateAt DESC ", nativeQuery = true)
+    @Query(value = "SELECT * FROM customer WHERE status = 1 ORDER BY update_at DESC ", nativeQuery = true)
     Page<Customer> findAll(Pageable pageable);
 
     @Query(value = "select * from customer where status =1", nativeQuery = true)
-    List<Customer> getAll();
+    List<Customer> getAllByStatus();
+
+    @Query(value = "select * from customer ", nativeQuery = true)
+    List<Customer> getAllCustomer();
 
     Optional<Customer> findByEmail(String email);
 
