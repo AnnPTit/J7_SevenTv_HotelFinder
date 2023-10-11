@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.RoomDTO;
 import com.example.demo.dto.RoomRequestDTO;
 import com.example.demo.dto.RoomResponeDTO;
 import com.example.demo.entity.Room;
@@ -51,5 +52,7 @@ public interface RoomService {
     boolean existsByRoomName(String name);
 
     Page<RoomResponeDTO> search(RoomRequestDTO roomRequestDTO , Pageable pageable);
+
+    List<List<Room>> getRoomsByAllFloors();
 
 }

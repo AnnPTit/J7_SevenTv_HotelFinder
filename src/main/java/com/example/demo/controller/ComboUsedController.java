@@ -1,8 +1,13 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.ComboUsedDTO;
+import com.example.demo.entity.Combo;
 import com.example.demo.entity.ComboUsed;
+import com.example.demo.entity.OrderDetail;
+import com.example.demo.service.ComboService;
 import com.example.demo.service.ComboUsedService;
+import com.example.demo.service.OrderDetailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -25,6 +30,10 @@ public class ComboUsedController {
 
     @Autowired
     private ComboUsedService comboUsedService;
+    @Autowired
+    private ComboService comboService;
+    @Autowired
+    private OrderDetailService orderDetailService;
 
     @GetMapping("/load")
     public List<ComboUsed> getAll() {
@@ -38,16 +47,26 @@ public class ComboUsedController {
 
     @PostMapping("/save")
     public ResponseEntity<ComboUsed> add(@RequestBody ComboUsedDTO comboUsedDTO) {
-        ComboUsed comboUsed = new ComboUsed();
-        comboUsed.setCombo(comboUsedDTO.getCombo());
-        comboUsed.setOrderDetail(comboUsedDTO.getOrderDetail());
-        comboUsed.setQuantity(comboUsedDTO.getQuantity());
-        comboUsed.setNote(comboUsedDTO.getNote());
-        comboUsed.setCreateAt(new Date());
-        comboUsed.setUpdateAt(new Date());
-        comboUsed.setStatus(1);
-        comboUsedService.add(comboUsed);
-        return new ResponseEntity<ComboUsed>(comboUsed, HttpStatus.OK);
+        Combo combo = comboService.findById(comboUsedDTO.getCombo());
+        OrderDetail orderDetail = orderDetailService.getOrderDetailById(comboUsedDTO.getOrderDetail());
+        ComboUsed existingComboUsed = comboUsedService.getByCombo(comboUsedDTO.getCombo(), comboUsedDTO.getOrderDetail());
+
+        if (existingComboUsed != null) {
+            existingComboUsed.setQuantity(existingComboUsed.getQuantity() + comboUsedDTO.getQuantity());
+            comboUsedService.updateQuantityComboUsed(existingComboUsed.getQuantity(), existingComboUsed.getCombo().getId());
+            return new ResponseEntity<ComboUsed>(existingComboUsed, HttpStatus.OK);
+        } else {
+            ComboUsed comboUsed = new ComboUsed();
+            comboUsed.setCombo(combo);
+            comboUsed.setOrderDetail(orderDetail);
+            comboUsed.setQuantity(comboUsedDTO.getQuantity());
+            comboUsed.setNote(comboUsedDTO.getNote());
+            comboUsed.setCreateAt(new Date());
+            comboUsed.setUpdateAt(new Date());
+            comboUsed.setStatus(Constant.COMMON_STATUS.ACTIVE);
+            comboUsedService.add(comboUsed);
+            return new ResponseEntity<ComboUsed>(comboUsed, HttpStatus.OK);
+        }
     }
 
     @DeleteMapping("/delete/{id}")

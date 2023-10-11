@@ -1,8 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.ServiceUsedDTO;
-import com.example.demo.entity.InformationCustomer;
-import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.Service;
 import com.example.demo.entity.ServiceUsed;
@@ -31,6 +30,10 @@ public class ServiceUsedController {
 
     @Autowired
     private ServiceUsedSerivce serviceUsedSerivce;
+    @Autowired
+    private ServiceService serviceService;
+    @Autowired
+    private OrderDetailService orderDetailService;
 
     @GetMapping("/load")
     public List<ServiceUsed> load() {
@@ -44,16 +47,26 @@ public class ServiceUsedController {
 
     @PostMapping("/save")
     public ResponseEntity<ServiceUsed> add(@RequestBody ServiceUsedDTO serviceUsedDTO) {
-        ServiceUsed serviceUsed = new ServiceUsed();
-        serviceUsed.setService(serviceUsedDTO.getService());
-        serviceUsed.setOrderDetail(serviceUsedDTO.getOrderDetail());
-        serviceUsed.setQuantity(serviceUsedDTO.getQuantity());
-        serviceUsed.setNote(serviceUsedDTO.getNote());
-        serviceUsed.setCreateAt(new Date());
-        serviceUsed.setUpdateAt(new Date());
-        serviceUsed.setStatus(1);
-        serviceUsedSerivce.add(serviceUsed);
-        return new ResponseEntity<ServiceUsed>(serviceUsed, HttpStatus.OK);
+        Service service = serviceService.findById(serviceUsedDTO.getServiceId());
+        OrderDetail orderDetail = orderDetailService.getOrderDetailById(serviceUsedDTO.getOrderDetailId());
+        ServiceUsed existingServiceUsed = serviceUsedSerivce.getByService(serviceUsedDTO.getServiceId(), serviceUsedDTO.getOrderDetailId());
+
+        if (existingServiceUsed != null) {
+            existingServiceUsed.setQuantity(existingServiceUsed.getQuantity() + serviceUsedDTO.getQuantity());
+            serviceUsedSerivce.updateQuantityServiceUsed(existingServiceUsed.getQuantity(), serviceUsedDTO.getServiceId());
+            return new ResponseEntity<ServiceUsed>(existingServiceUsed, HttpStatus.OK);
+        } else {
+            ServiceUsed serviceUsed = new ServiceUsed();
+            serviceUsed.setService(service);
+            serviceUsed.setOrderDetail(orderDetail);
+            serviceUsed.setQuantity(serviceUsedDTO.getQuantity());
+            serviceUsed.setNote(serviceUsedDTO.getNote());
+            serviceUsed.setCreateAt(new Date());
+            serviceUsed.setUpdateAt(new Date());
+            serviceUsed.setStatus(Constant.COMMON_STATUS.ACTIVE);
+            serviceUsedSerivce.add(serviceUsed);
+            return new ResponseEntity<ServiceUsed>(serviceUsed, HttpStatus.OK);
+        }
     }
 
     @DeleteMapping("/delete/{id}")
