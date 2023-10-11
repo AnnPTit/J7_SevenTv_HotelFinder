@@ -64,7 +64,7 @@ public class SecurityConfig {
                 .requestMatchers("/ws/**").permitAll()
                 .and()
                 .authorizeHttpRequests().requestMatchers("/api/login").permitAll()
-                .and().authorizeHttpRequests().requestMatchers("/api/customers/load").hasRole("ADMIN")
+                .and().authorizeHttpRequests().requestMatchers("/api/admin/customer/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/account/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/floor/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/room/**").hasRole("ADMIN")
