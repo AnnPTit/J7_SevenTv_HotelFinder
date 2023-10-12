@@ -1,10 +1,13 @@
 package com.example.demo.controller;
 
 import com.example.demo.config.UserInfoUserDetails;
+import com.example.demo.constant.Constant;
+import com.example.demo.entity.Account;
 import com.example.demo.jwt.JwtTokenProvider;
 import com.example.demo.payload.LoginRequest;
 import com.example.demo.payload.LoginResponse;
 import com.example.demo.payload.RandomStuff;
+import com.example.demo.repository.AccountRepository;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -20,10 +23,12 @@ import org.springframework.web.bind.annotation.RestController;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping ("/api")
+@RequestMapping("/api")
 public class LoginRestController {
     @Autowired
     AuthenticationManager authenticationManager;
+    @Autowired
+    private AccountRepository accountRepository;
 
     @Autowired
     private JwtTokenProvider tokenProvider;
@@ -39,6 +44,10 @@ public class LoginRestController {
 
                 )
         );
+        Account account = accountRepository.findByEmailAndStatus(loginRequest.getUsername(), Constant.COMMON_STATUS.ACTIVE);
+        if (account == null || account.getStatus() == Constant.COMMON_STATUS.UNACTIVE) {
+            return null;
+        }
         System.out.println("Hello");
         System.out.println(authentication.getPrincipal());
 
@@ -53,12 +62,12 @@ public class LoginRestController {
 
     // Api /api/random yêu cầu phải xác thực mới có thể request
     @GetMapping("/random")
-    public RandomStuff randomStuff(){
+    public RandomStuff randomStuff() {
         return new RandomStuff("JWT Hợp lệ mới có thể thấy được message này");
     }
 
     @GetMapping("/access-denied")
-    public String accessDenied(){
+    public String accessDenied() {
         return "Bạn Không có thẩm quyền truy cập vào trang này ";
     }
 

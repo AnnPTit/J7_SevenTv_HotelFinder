@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 
+import com.example.demo.dto.ComboDTO;
 import com.example.demo.entity.Combo;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +14,7 @@ public interface ComboService {
 
     Page<Combo> loadAndSearch(String serviceCode, String serviceName, String serviceTypeId, String unitId, Pageable pageable);
 
-    List<Combo> getAll();
+    List<ComboDTO> getAll();
 
     Combo findById(String id);
 

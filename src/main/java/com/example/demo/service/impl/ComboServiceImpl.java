@@ -1,6 +1,8 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.ComboDTO;
 import com.example.demo.entity.Combo;
+import com.example.demo.mapper.impl.ComboMapperImpl;
 import com.example.demo.repository.ComboRepository;
 import com.example.demo.service.ComboService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -9,6 +11,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 @Service
@@ -17,6 +20,8 @@ public class ComboServiceImpl implements ComboService {
     @Autowired
     private ComboRepository comboRepository;
 
+    @Autowired
+    private ComboMapperImpl comboMapper;
 
     @Override
     public Page<Combo> getAll(Pageable pageable) {
@@ -29,8 +34,8 @@ public class ComboServiceImpl implements ComboService {
     }
 
     @Override
-    public List<Combo> getAll() {
-        return comboRepository.findAll();
+    public List<ComboDTO> getAll() {
+        return comboMapper.toDto(comboRepository.getAll());
     }
 
     @Override

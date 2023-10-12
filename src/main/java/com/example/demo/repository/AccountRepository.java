@@ -19,10 +19,14 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     Optional<Account> findByEmail(String email);
 
+    Account findByEmailAndStatus(String email, Integer status);
+
     Account findByCitizenId(String citizenId);
 
     @Query(value = "select * from account where status =1", nativeQuery = true)
     Page<Account> findAll(Pageable pageable);
+
+    Account findAccountByIdAndStatus(String id, Integer status);
 
     @Query(value = "select * from account where status =1", nativeQuery = true)
     List<Account> getAll();
