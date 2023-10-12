@@ -1,10 +1,12 @@
 package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
+import com.example.demo.dto.ComboDTO;
 import com.example.demo.dto.RoomRequestDTO;
 import com.example.demo.dto.RoomResponeDTO;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
+import com.example.demo.service.ComboService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -33,7 +35,7 @@ public class HomeController {
     @Autowired
     private TypeRoomService typeRoomService;
     @Autowired
-    private OrderDetailService orderDetailService;
+    private ComboService comboService;
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -129,10 +131,15 @@ public class HomeController {
 
     @PostMapping("/room/search")
     public Page<RoomResponeDTO> testSearch(@RequestBody RoomRequestDTO roomRequestDTO,
-                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page ,
+                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page,
                                            @RequestParam(name = "total_page", defaultValue = "1000") int total_page) {
         Pageable pageable = PageRequest.of(current_page, total_page);
         return roomService.search(roomRequestDTO, pageable);
+    }
+
+    @GetMapping("/combo/getall")
+    public List<ComboDTO> getAllCombo() {
+        return comboService.getAll();
     }
 
 }
