@@ -17,6 +17,10 @@ public interface ComboRepository extends JpaRepository<Combo, String> {
             "from combo where status =1 order by update_at", nativeQuery = true)
     Page<Combo> findAll(Pageable pageable);
 
+    @Query(value = "select *\n" +
+            "from combo where status =1 order by update_at", nativeQuery = true)
+    List<Combo> getAll();
+
     boolean existsByComboCode(String code);
 
     @Query(value = "SELECT DISTINCT\n" +

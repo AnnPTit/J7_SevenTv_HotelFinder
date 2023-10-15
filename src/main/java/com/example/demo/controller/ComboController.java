@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.dto.ComboListDTO;
 import com.example.demo.entity.Combo;
 import com.example.demo.entity.Service;
+import com.example.demo.repository.ComboRepository;
 import com.example.demo.service.ComboService;
 import com.example.demo.service.ComboServiceService;
 import com.example.demo.service.ServiceService;
@@ -43,6 +44,8 @@ public class ComboController {
     private ServiceService serviceService;
     @Autowired
     private ComboServiceService comboServiceService;
+    @Autowired
+    private ComboRepository comboRepository;
 
     @GetMapping("/load")
     public Page<Combo> load(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
@@ -74,7 +77,7 @@ public class ComboController {
 
     @GetMapping("/getAll")
     public List<Combo> getAll() {
-        return comboService.getAll();
+        return comboRepository.getAll();
     }
 
     @GetMapping("/detail/{id}")
