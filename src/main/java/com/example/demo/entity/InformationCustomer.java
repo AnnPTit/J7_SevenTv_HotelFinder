@@ -54,6 +54,12 @@ public class InformationCustomer {
     @Column(name = "passport")
     private String passport;
 
+    @Column(name = "email")
+    private String email;
+
+    @Column(name = "address")
+    private String address;
+
     @Column(name = "nationality")
     private String nationality;
 
