@@ -1,6 +1,5 @@
 package com.example.demo.service;
 
-import com.example.demo.entity.Account;
 import com.example.demo.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -12,7 +11,7 @@ public interface CustomerService {
 
     Page<Customer> getAll(Pageable pageable);
 
-    List<Customer> findAllByStatus();
+    List<Customer> findAllByStatus(String citizenId, String fullname, String phoneNumber);
 
     Page<Customer> loadAndSearch(String customerCode, String fullname, String phoneNumber, Pageable pageable);
 
@@ -39,5 +38,7 @@ public interface CustomerService {
     List<Customer> getAllCustomer(String id);
 
     List<Customer> getAllCustomerByOrderDetailId(String id);
+
+    List<Customer> getCustomer();
 
 }

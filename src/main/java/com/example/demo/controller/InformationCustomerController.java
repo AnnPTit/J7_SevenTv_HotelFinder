@@ -1,10 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
-import com.example.demo.dto.InformationCustomerDTO;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.InformationCustomer;
-import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
 import com.example.demo.service.CustomerService;
 import com.example.demo.service.InformationCustomerService;
@@ -24,6 +22,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.Date;
 import java.util.List;
+import java.util.Random;
 
 @RestController
 @CrossOrigin("*")
@@ -34,8 +33,6 @@ public class InformationCustomerController {
     private InformationCustomerService informationCustomerService;
     @Autowired
     private OrderDetailService orderDetailService;
-    @Autowired
-    private OrderService orderService;
     @Autowired
     private CustomerService customerService;
 
@@ -51,49 +48,46 @@ public class InformationCustomerController {
 
     @PostMapping("/save/{id}")
     public ResponseEntity<InformationCustomer> save(@PathVariable("id") String id,
-                                                    @RequestBody InformationCustomerDTO informationCustomerDTO) {
+                                                    @RequestBody InformationCustomer informationCustomer) {
+        Customer existingCustomer = customerService.findByCitizenId(informationCustomer.getCitizenId());
         OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
-        InformationCustomer informationCustomer = new InformationCustomer();
         informationCustomer.setOrderDetail(orderDetail);
-        informationCustomer.setFullname(informationCustomerDTO.getFullname());
-        informationCustomer.setGender(informationCustomerDTO.getGender());
-        informationCustomer.setBirthday(informationCustomerDTO.getBirthday());
-        informationCustomer.setPhoneNumber(informationCustomerDTO.getPhoneNumber());
-        informationCustomer.setCitizenId(informationCustomerDTO.getCitizenId());
         informationCustomer.setStayFrom(orderDetail.getCheckInDatetime());
         informationCustomer.setStayTo(orderDetail.getCheckOutDatetime());
         informationCustomer.setCreateAt(new Date());
         informationCustomer.setUpdateAt(new Date());
         informationCustomer.setStatus(Constant.COMMON_STATUS.ACTIVE);
-//        List<Order> orderList = orderService.getList();
-//        for (Order order : orderList) {
-//            if (!order.getAccount().getCitizenId().equals(informationCustomerDTO.getCitizenId())) {
-//                String customerCode = "KH" + (customerService.getList().size() + 1);
-//                String ten = informationCustomerDTO.getFullname();
-//                String tenThuong = ten.toLowerCase();
-//                String randomTen = tenThuong.replaceAll("[^a-z0-9]", "");
-//                Random rand = new Random();
-//                int randomNum = rand.nextInt(900) + 100;
-//                String username = randomTen + randomNum;
-//                Customer customer = new Customer();
-//                customer.setCustomerCode(customerCode);
-//                customer.setUsername(username);
-//                customer.setPassword("12345");
-//                customer.setFullname(informationCustomerDTO.getFullname());
-//                customer.setGender(informationCustomerDTO.getGender());
-//                customer.setBirthday(informationCustomerDTO.getBirthday());
-//                customer.setPhoneNumber(informationCustomerDTO.getPhoneNumber());
-//                customer.setCitizenId(informationCustomerDTO.getCitizenId());
-//                customer.setCreateAt(new Date());
-//                customer.setUpdateAt(new Date());
-//                customer.setStatus(1);
-//                customerService.add(customer);
-//            }
-//            informationCustomerService.add(informationCustomer);
-//        }
+
+        if (existingCustomer == null) {
+            Customer customer = new Customer();
+            String customerCode = "KH" + (customerService.getCustomer().size());
+            String ten = informationCustomer.getFullname();
+            String tenThuong = ten.toLowerCase();
+            String randomTen = tenThuong.replaceAll("[^a-z0-9]", "");
+            Random rand = new Random();
+            int randomNum = rand.nextInt(900) + 100;
+            String username = randomTen + randomNum;
+            customer.setCustomerCode(customerCode);
+            customer.setUsername(username);
+            customer.setPassword("123");
+            customer.setFullname(informationCustomer.getFullname());
+            customer.setGender(informationCustomer.getGender());
+            customer.setBirthday(informationCustomer.getBirthday());
+            customer.setPhoneNumber(informationCustomer.getPhoneNumber());
+            customer.setCitizenId(informationCustomer.getCitizenId());
+            customer.setEmail(informationCustomer.getEmail());
+            customer.setAddress(informationCustomer.getAddress());
+            customer.setNationality(informationCustomer.getNationality());
+            customer.setCreateAt(new Date());
+            customer.setUpdateAt(new Date());
+            customer.setStatus(1);
+            customerService.add(customer);
+        }
+
         informationCustomerService.add(informationCustomer);
         return new ResponseEntity<InformationCustomer>(informationCustomer, HttpStatus.OK);
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {

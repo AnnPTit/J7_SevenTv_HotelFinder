@@ -46,8 +46,8 @@ public class CustomerController {
     }
 
     @GetMapping("/getAll")
-    public List<Customer> findAll() {
-        return customerService.findAllByStatus();
+    public List<Customer> findAllWithSearch(@RequestParam(name = "key", defaultValue = "") String key) {
+        return customerService.findAllByStatus(key, key, key);
     }
 
     @GetMapping("/getAllByOrderId/{id}")
@@ -62,8 +62,7 @@ public class CustomerController {
 
     @GetMapping("/loadAndSearch")
     public Page<Customer> findByCodeOrName(@RequestParam(name = "key", defaultValue = "") String key,
-                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page
-    ) {
+                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
         return customerService.loadAndSearch(key, key, key, pageable);
     }

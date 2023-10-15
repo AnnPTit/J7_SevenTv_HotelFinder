@@ -92,6 +92,12 @@ public class Customer {
     @Column(name = "passport")
     private String passport;
 
+    @Column(name = "address")
+    private String address;
+
+    @Column(name = "nationality")
+    private String nationality;
+
     @Column(name = "create_at")
     private Date createAt;
 

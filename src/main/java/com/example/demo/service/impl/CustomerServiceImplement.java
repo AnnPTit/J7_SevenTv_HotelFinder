@@ -9,10 +9,8 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
-import java.security.SecureRandom;
 import java.util.List;
 import java.util.Optional;
-import java.util.UUID;
 
 @Service
 public class CustomerServiceImplement implements CustomerService {
@@ -29,8 +27,11 @@ public class CustomerServiceImplement implements CustomerService {
     }
 
     @Override
-    public List<Customer> findAllByStatus() {
-        return customerRepository.getAllByStatus();
+    public List<Customer> findAllByStatus(String citizenId, String fullname, String phoneNumber) {
+        return customerRepository.getAllByStatus(
+                (citizenId != null && !citizenId.isEmpty()) ? "%" + citizenId + "%" : null,
+                (fullname != null && !fullname.isEmpty()) ? "%" + fullname + "%" : null,
+                (phoneNumber != null && !phoneNumber.isEmpty()) ? "%" + phoneNumber + "%" : null);
     }
 
     @Override
@@ -118,6 +119,11 @@ public class CustomerServiceImplement implements CustomerService {
     @Override
     public List<Customer> getAllCustomerByOrderDetailId(String id) {
         return customerRepository.getAllCustomerByOrderDetailId(id);
+    }
+
+    @Override
+    public List<Customer> getCustomer() {
+        return customerRepository.getAllCustomer();
     }
 
 }
