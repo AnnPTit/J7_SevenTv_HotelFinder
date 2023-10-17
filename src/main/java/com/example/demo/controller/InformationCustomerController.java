@@ -7,7 +7,6 @@ import com.example.demo.entity.OrderDetail;
 import com.example.demo.service.CustomerService;
 import com.example.demo.service.InformationCustomerService;
 import com.example.demo.service.OrderDetailService;
-import com.example.demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -80,7 +79,7 @@ public class InformationCustomerController {
             customer.setNationality(informationCustomer.getNationality());
             customer.setCreateAt(new Date());
             customer.setUpdateAt(new Date());
-            customer.setStatus(1);
+            customer.setStatus(Constant.COMMON_STATUS.ACTIVE);
             customerService.add(customer);
         }
 
