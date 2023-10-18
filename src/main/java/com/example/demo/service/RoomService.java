@@ -38,7 +38,7 @@ public interface RoomService {
 
     Page<Room> findRoomsOrderByOrderDetailCountDesc(Pageable pageable);
 
-    List<Room> loadAndSearchBookRoom(String roomCode, String roomName, String floorId, String typeRoomId, BigDecimal start, BigDecimal end);
+    List<Room> loadAndSearchBookRoom(String roomCode, String roomName, String floorId, String typeRoomId, BigDecimal start, BigDecimal end, Date dayStart, Date dayEnd);
 
 
     Room getRoomById(String id);

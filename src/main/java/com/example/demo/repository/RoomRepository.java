@@ -15,7 +15,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface RoomRepository extends JpaRepository<Room, String>  , RoomRepositoryCustom {
+public interface RoomRepository extends JpaRepository<Room, String>, RoomRepositoryCustom {
 
     @Query(value = "select * from room order by update_at DESC", nativeQuery = true)
     Page<Room> findAll(Pageable pageable);
@@ -78,21 +78,52 @@ public interface RoomRepository extends JpaRepository<Room, String>  , RoomRepos
             "ORDER BY COUNT(od) DESC")
     Page<Room> findRoomsOrderByOrderDetailCountDesc(Pageable pageable);
 
-    @Query(value = "SELECT r.id, r.floor_id, r.type_room_id, r.room_code, r.room_name, r.note, r.create_at, r.create_by," +
-            " r.update_at, r.updated_by, r.deleted, r.status, tr.price_per_day \n" +
-            "FROM room r JOIN type_room tr ON r.type_room_id = tr.id\n" +
-            "  WHERE ((:roomCode IS NULL OR r.room_code = :roomCode)\n" +
-            "       OR (:roomName IS NULL OR r.room_name LIKE CONCAT('%', :roomName, '%')))\n" +
-            "  AND (:floorId IS NULL OR r.floor_id = :floorId)\n" +
-            "  AND (:typeRoomId IS NULL OR r.type_room_id = :typeRoomId)" +
-            "  AND tr.price_per_day BETWEEN :start AND :end\n" +
-            "ORDER BY update_at DESC", nativeQuery = true)
+    @Query("SELECT DISTINCT r FROM Room r " +
+            "LEFT JOIN r.orderDetailList od " +
+            "LEFT JOIN r.floor fl " +
+            "LEFT JOIN r.typeRoom tr " +
+            "WHERE ((:roomCode IS NULL OR r.roomCode =: roomCode)" +
+            " OR (:roomName IS NULL OR r.roomName LIKE CONCAT('%', :roomName, '%')))" +
+            "AND (:typeRoomId IS NULL OR tr.id = :typeRoomId) " +
+            "AND (:floorId IS NULL OR fl.id = :floorId) " +
+            "AND tr.pricePerDay BETWEEN :start AND :end " +
+            "AND ((" +
+            "    (od.checkInDatetime NOT BETWEEN :dayStart AND :dayEnd) " +
+            "    AND (od.checkOutDatetime NOT BETWEEN :dayStart AND :dayEnd)" +
+            "    OR (:dayStart IS NULL OR :dayEnd IS NULL)))" +
+            "ORDER BY r.updateAt DESC")
     List<Room> loadAndSearchBookRoom(@Param("roomCode") String roomCode,
                                      @Param("roomName") String roomName,
                                      @Param("floorId") String floorId,
                                      @Param("typeRoomId") String typeRoomId,
                                      @Param("start") BigDecimal start,
-                                     @Param("end") BigDecimal end);
+                                     @Param("end") BigDecimal end,
+                                     @Param("dayStart") Date dayStart,
+                                     @Param("dayEnd") Date dayEnd
+    );
+
+//    @Query(value = "SELECT DISTINCT r.id, r.floor_id, r.type_room_id, r.room_code, r.room_name, r.note, r.create_at, r.create_by," +
+//            " r.update_at, r.updated_by, r.deleted, r.status, tr.price_per_day \n" +
+//            "FROM room r JOIN type_room tr ON r.type_room_id = tr.id\n" +
+//            "LEFT JOIN order_detail od ON r.id = od.room_id" +
+//            "  WHERE ((:roomCode IS NULL OR r.room_code = :roomCode)\n" +
+//            "       OR (:roomName IS NULL OR r.room_name LIKE CONCAT('%', :roomName, '%')))\n" +
+//            "  AND (:floorId IS NULL OR r.floor_id = :floorId)\n" +
+//            "  AND (:typeRoomId IS NULL OR r.type_room_id = :typeRoomId)" +
+//            "  AND tr.price_per_day BETWEEN :start AND :end\n" +
+//            "AND ((" +
+//            "    (od.check_in_datetime NOT BETWEEN :dayStart AND :dayEnd) " +
+//            "    AND (od.check_out_datetime NOT BETWEEN :dayStart AND :dayEnd)) " +
+//            "    OR (:dayStart IS NULL OR :dayEnd IS NULL))" +
+//            "ORDER BY update_at DESC", nativeQuery = true)
+//    List<Room> loadAndSearchBookRoom(@Param("roomCode") String roomCode,
+//                                     @Param("roomName") String roomName,
+//                                     @Param("floorId") String floorId,
+//                                     @Param("typeRoomId") String typeRoomId,
+//                                     @Param("start") BigDecimal start,
+//                                     @Param("end") BigDecimal end,
+//                                     @Param("dayStart") Date dayStart,
+//                                     @Param("dayEnd") Date dayEnd);
 
     boolean existsByRoomCode(String code);
 
@@ -102,7 +133,7 @@ public interface RoomRepository extends JpaRepository<Room, String>  , RoomRepos
     List<Room> findAllByStatus(@Param("status") Integer status);
 
     @Query(value = "select * from room where  status = :status order by update_at  DESC", nativeQuery = true)
-    Page<Room> findAllByStatus(@Param("status") Integer status , Pageable pageable);
+    Page<Room> findAllByStatus(@Param("status") Integer status, Pageable pageable);
 
     @Query("SELECT r FROM Room r WHERE r.floor.id = :floorId")
     List<Room> getRoomsByFloorId(String floorId);

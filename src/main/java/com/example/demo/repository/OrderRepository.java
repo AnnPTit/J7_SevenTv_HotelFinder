@@ -27,7 +27,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             "AND (:status IS NULL OR o.status = :status)\n" +
             "AND ((o.create_at >= :startDate OR :startDate IS NULL)\n" +
             "AND (o.create_at <= :endDate OR :endDate IS NULL\n" +
-            "  OR (o.create_at >= :startDate AND o.create_at <= :endDate))) -- Sử dụng OR để bao gồm cả hai trường hợp\n" +
+            "  OR (o.create_at >= :startDate AND o.create_at <= :endDate)))" +
             "ORDER BY o.update_at DESC\n", nativeQuery = true)
     Page<Order> loadAndSearch(@Param("orderCode") String orderCode,
                               @Param("typeOfOrder") Boolean typeOfOrder,

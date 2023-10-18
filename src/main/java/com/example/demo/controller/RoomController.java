@@ -8,16 +8,13 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.amazonaws.services.s3.model.GeneratePresignedUrlRequest;
 import com.example.demo.config.S3Util;
 import com.example.demo.constant.Constant;
-import com.example.demo.dto.OrderDetailDTO;
 import com.example.demo.dto.PhotoDTO;
 import com.example.demo.dto.RoomDTO;
-import com.example.demo.entity.Floor;
 import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.Photo;
 import com.example.demo.entity.Room;
 import com.example.demo.service.PhotoService;
 import com.example.demo.service.RoomService;
-import jakarta.persistence.EntityNotFoundException;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,7 +23,6 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.core.parameters.P;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -46,6 +42,8 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -138,8 +136,27 @@ public class RoomController {
                                     @RequestParam(name = "floorId", defaultValue = "") String floorId,
                                     @RequestParam(name = "typeRoomId", defaultValue = "") String typeRoomId,
                                     @RequestParam(name = "start", defaultValue = "0") BigDecimal start,
-                                    @RequestParam(name = "end", defaultValue = "10000000000000000000") BigDecimal end) {
-        return roomService.loadAndSearchBookRoom(key, key, floorId, typeRoomId, start, end);
+                                    @RequestParam(name = "end", defaultValue = "100000000") BigDecimal end,
+                                    @RequestParam(name = "dayStart", defaultValue = "") String dayStart,
+                                    @RequestParam(name = "dayEnd", defaultValue = "") String dayEnd) {
+        Date startDay = null;
+        Date endDay = null;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            if (!dayStart.isEmpty()) {
+                startDay = dateFormat.parse(dayStart);
+            }
+
+            if (!dayEnd.isEmpty()) {
+                endDay = dateFormat.parse(dayEnd);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return roomService.loadAndSearchBookRoom(key, key, floorId, typeRoomId, start, end, startDay, endDay);
     }
 
     @PostMapping("upload")
