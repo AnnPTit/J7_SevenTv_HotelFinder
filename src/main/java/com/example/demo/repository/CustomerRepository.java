@@ -59,7 +59,7 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
             "INNER JOIN information_customer ic ON c.citizen_id = ic.citizen_id\n" +
             "INNER JOIN order_detail od ON ic.order_detail_id = od.id\n" +
             "INNER JOIN `order` o ON od.order_id = o.id\n" +
-            "WHERE o.id = ?1 AND ic.citizen_id IS NOT NULL", nativeQuery = true)
+            "WHERE o.id = ?1 AND ic.citizen_id IS NOT NULL ORDER BY c.update_at DESC", nativeQuery = true)
     List<Customer> getAllCustomer(String id);
 
     @Query(value = "SELECT c.*\n" +
@@ -67,7 +67,7 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
             "INNER JOIN information_customer ic ON c.citizen_id = ic.citizen_id\n" +
             "INNER JOIN order_detail od ON ic.order_detail_id = od.id\n" +
             "INNER JOIN `order` o ON od.order_id = o.id\n" +
-            "WHERE od.id = ?1 AND ic.citizen_id IS NOT NULL", nativeQuery = true)
+            "WHERE od.id = ?1 AND ic.citizen_id IS NOT NULL ORDER BY c.update_at DESC", nativeQuery = true)
     List<Customer> getAllCustomerByOrderDetailId(String id);
 
 }

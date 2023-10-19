@@ -287,6 +287,10 @@ public class OrderController {
         order.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
         orderService.add(order);
 
+        Order or = orderService.getOrderById(orderDTO.getIdReturn());
+        or.setTotalMoney(or.getTotalMoney().subtract(orderDTO.getTotalMoney()));
+        orderService.add(or);
+
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
         orderTimeline.setAccount(order.getAccount());
