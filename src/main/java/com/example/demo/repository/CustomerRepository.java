@@ -70,4 +70,7 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
             "WHERE od.id = ?1 AND ic.citizen_id IS NOT NULL ORDER BY c.update_at DESC", nativeQuery = true)
     List<Customer> getAllCustomerByOrderDetailId(String id);
 
+    @Query(value = "SELECT COUNT(cus.id) FROM Customer cus WHERE cus.status = 1")
+    Long countCustomerByStatus();
+
 }

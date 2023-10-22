@@ -59,6 +59,26 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Long countOrderCancel() {
+        return orderRepository.countOrderCancel();
+    }
+
+    @Override
+    public Long countOrderWait() {
+        return orderRepository.countOrderWait();
+    }
+
+    @Override
+    public Long countOrderConfirm() {
+        return orderRepository.countOrderConfirm();
+    }
+
+    @Override
+    public Long countOrderAccept() {
+        return orderRepository.countOrderAccept();
+    }
+
+    @Override
     public Order add(Order order) {
         try {
             return orderRepository.save(order);

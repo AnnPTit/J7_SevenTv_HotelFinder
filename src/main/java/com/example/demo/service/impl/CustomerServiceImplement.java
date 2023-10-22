@@ -126,4 +126,9 @@ public class CustomerServiceImplement implements CustomerService {
         return customerRepository.getAllCustomer();
     }
 
+    @Override
+    public Long countCustomerByStatus() {
+        return customerRepository.countCustomerByStatus();
+    }
+
 }

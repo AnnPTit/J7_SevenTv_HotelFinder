@@ -41,4 +41,6 @@ public interface CustomerService {
 
     List<Customer> getCustomer();
 
+    Long countCustomerByStatus();
+
 }

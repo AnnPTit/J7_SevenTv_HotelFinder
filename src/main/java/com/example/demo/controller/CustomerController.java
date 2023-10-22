@@ -55,6 +55,11 @@ public class CustomerController {
         return customerService.getAllCustomer(id);
     }
 
+    @GetMapping("/countByStatus")
+    public Long countByStatus() {
+        return customerService.countCustomerByStatus();
+    }
+
     @GetMapping("/getAllByOrderDetailId/{id}")
     public List<Customer> findAllByOrderDetail(@PathVariable("id") String id) {
         return customerService.getAllCustomerByOrderDetailId(id);
