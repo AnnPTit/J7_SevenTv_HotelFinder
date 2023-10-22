@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.CustomerLoginDTO;
 import com.example.demo.entity.Customer;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -42,5 +43,7 @@ public interface CustomerService {
     List<Customer> getCustomer();
 
     Long countCustomerByStatus();
+
+    Customer login(CustomerLoginDTO customerLoginDTO);
 
 }

@@ -1,5 +1,7 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.constant.Constant;
+import com.example.demo.dto.CartDTO;
 import com.example.demo.dto.RoomDTO;
 import com.example.demo.dto.RoomRequestDTO;
 import com.example.demo.dto.RoomResponeDTO;
@@ -176,6 +178,30 @@ public class RoomServiceImpl implements RoomService {
         }
 
         return roomsByAllFloors;
+    }
+
+    @Override
+    public List<CartDTO> getCart(String customId, Integer odStt) {
+        List<CartDTO> cartDTOS = new ArrayList<>();
+        if (odStt == 7) {
+            // lọc ra hóa đơn hết hạn phê duyệt
+            for (CartDTO cartDTO : roomRepository.getCart(customId, Constant.ORDER_DETAIL.WAIT_CONFIRM)) {
+                Date dateCheckIn = cartDTO.getBookingStart();
+                if (dateCheckIn != null && dateCheckIn.before(new Date())) {
+                    cartDTOS.add(cartDTO);
+                }
+            }
+        } else if (odStt.equals(Constant.ORDER_DETAIL.WAIT_CONFIRM)) {
+            for (CartDTO cartDTO : roomRepository.getCart(customId, Constant.ORDER_DETAIL.WAIT_CONFIRM)) {
+                Date dateCheckIn = cartDTO.getBookingStart();
+                if (dateCheckIn != null && dateCheckIn.after(new Date())) {
+                    cartDTOS.add(cartDTO);
+                }
+            }
+        } else {
+            cartDTOS = roomRepository.getCart(customId, odStt);
+        }
+        return cartDTOS;
     }
 
 }

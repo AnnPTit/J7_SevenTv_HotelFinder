@@ -1,6 +1,8 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.CustomerLoginDTO;
 import com.example.demo.entity.Customer;
+import com.example.demo.exception.CustomerNotFondException;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.service.CustomerService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,6 +12,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -129,6 +132,19 @@ public class CustomerServiceImplement implements CustomerService {
     @Override
     public Long countCustomerByStatus() {
         return customerRepository.countCustomerByStatus();
+    }
+
+    @Override
+    public Customer login(CustomerLoginDTO customerLoginDTO) {
+        Customer customer = customerRepository.findCustomerByEmail(customerLoginDTO.getEmail()).orElse(null);
+        if (Objects.isNull(customer)) {
+            throw new CustomerNotFondException();
+        }
+        if (!customer.getPassword().equals(customerLoginDTO.getPassword())) {
+            throw new CustomerNotFondException();
+        }
+        return customer;
+
     }
 
 }
