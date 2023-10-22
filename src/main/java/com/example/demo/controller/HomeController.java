@@ -1,9 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
-import com.example.demo.dto.ComboDTO;
-import com.example.demo.dto.RoomRequestDTO;
-import com.example.demo.dto.RoomResponeDTO;
+import com.example.demo.dto.*;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
 import com.example.demo.service.ComboService;
@@ -140,6 +138,16 @@ public class HomeController {
     @GetMapping("/combo/getall")
     public List<ComboDTO> getAllCombo() {
         return comboService.getAll();
+    }
+
+    @GetMapping("/cart/{customId}/{odStt}")
+    public List<CartDTO> getCart(@PathVariable("customId") String customId, @PathVariable("odStt") Integer odStt) {
+        return roomService.getCart(customId, odStt);
+    }
+
+    @PostMapping("/login")
+    public ResponseEntity<Customer> login(@RequestBody CustomerLoginDTO customerLoginDTO) {
+        return new ResponseEntity<>(customerService.login(customerLoginDTO), HttpStatus.OK);
     }
 
 }

@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.example.demo.dto.CartDTO;
 import com.example.demo.dto.RoomResponeDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
@@ -49,6 +50,26 @@ import java.util.List;
                                                 @ColumnResult(name = "capacity", type = Integer.class),
                                                 @ColumnResult(name = "pricePerHours", type = BigDecimal.class),
                                                 @ColumnResult(name = "pricePerDay", type = BigDecimal.class),
+                                        }
+                                ),
+                        }
+                ),
+                @SqlResultSetMapping(
+                        name = "cartResult",
+                        classes = {
+                                @ConstructorResult(
+                                        targetClass = CartDTO.class,
+                                        columns = {
+                                                @ColumnResult(name = "roomId", type = String.class),
+                                                @ColumnResult(name = "roomName", type = String.class),
+                                                @ColumnResult(name = "typeRoom", type = String.class),
+                                                @ColumnResult(name = "bookingStart", type = Date.class),
+                                                @ColumnResult(name = "bookingEnd", type = Date.class),
+                                                @ColumnResult(name = "price", type = BigDecimal.class),
+                                                @ColumnResult(name = "numberCustom", type = Integer.class),
+                                                @ColumnResult(name = "orderStatus", type = Integer.class),
+                                                @ColumnResult(name = "bookingDay", type = Date.class),
+                                                @ColumnResult(name = "url", type = String.class),
                                         }
                                 ),
                         }

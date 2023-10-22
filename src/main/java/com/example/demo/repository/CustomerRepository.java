@@ -45,8 +45,11 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
     @Query(value = "SELECT * FROM customer where customer_code = 'KH00'", nativeQuery = true)
     Customer getCustomerByCode();
 
-    @Query(value = "SELECT * FROM customer where customer_code = ?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM customer where customer_code = ?1 and status =1 ", nativeQuery = true)
     Customer findByCustomerCode(String customerCode);
+
+    @Query(value = "SELECT * FROM customer where username = ?1 and status=1", nativeQuery = true)
+    Customer findByUsername(String userName);
 
     @Query(value = "SELECT * FROM customer where id = ?1 and status = 1", nativeQuery = true)
     Customer getCustomerById(String id);
