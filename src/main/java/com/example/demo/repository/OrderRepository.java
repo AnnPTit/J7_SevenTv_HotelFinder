@@ -47,4 +47,16 @@ public interface OrderRepository extends JpaRepository<Order, String> {
             " AND type_of_order = 0 ORDER BY update_at DESC", nativeQuery = true)
     Page<Order> loadBookRoomOnline(@Param("orderCode") String orderCode, Pageable pageable);
 
+    @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 0")
+    Long countOrderCancel();
+
+    @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 1")
+    Long countOrderWait();
+
+    @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 2")
+    Long countOrderConfirm();
+
+    @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 3")
+    Long countOrderAccept();
+
 }

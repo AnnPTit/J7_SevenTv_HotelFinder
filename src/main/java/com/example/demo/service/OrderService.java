@@ -3,6 +3,7 @@ package com.example.demo.service;
 import com.example.demo.entity.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 
 import java.util.Date;
 import java.util.List;
@@ -22,6 +23,14 @@ public interface OrderService {
     Page<Order> loadBookRoomOnline(String orderCode, Pageable pageable);
 
     Order getOrderById(String id);
+
+    Long countOrderCancel();
+
+    Long countOrderWait();
+
+    Long countOrderConfirm();
+
+    Long countOrderAccept();
 
     Order add(Order order);
 

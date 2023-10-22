@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.OrderDTO;
-import com.example.demo.dto.OrderDetailSearchReq;
 import com.example.demo.entity.Account;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.HistoryTransaction;
@@ -111,7 +110,7 @@ public class OrderController {
 
     @GetMapping("/loadBookRoomOnline")
     public Page<Order> loadBookRoomOnline(@RequestParam(name = "key", defaultValue = "") String key,
-                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+                                          @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
         return orderService.loadBookRoomOnline(key, pageable);
     }
@@ -125,6 +124,26 @@ public class OrderController {
     @GetMapping("/getList")
     public List<Order> getList() {
         return orderService.getList();
+    }
+
+    @GetMapping("/countByCancel")
+    public Long countByCancel() {
+        return orderService.countOrderCancel();
+    }
+
+    @GetMapping("/countByWait")
+    public Long countByWait() {
+        return orderService.countOrderWait();
+    }
+
+    @GetMapping("/countByConfirm")
+    public Long countByConfirm() {
+        return orderService.countOrderConfirm();
+    }
+
+    @GetMapping("/countByAccept")
+    public Long countByAccept() {
+        return orderService.countOrderAccept();
     }
 
     @GetMapping("/detail/{id}")
