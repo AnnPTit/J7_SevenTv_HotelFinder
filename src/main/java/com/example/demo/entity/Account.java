@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.example.demo.validator.MinAge;
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
@@ -59,8 +60,8 @@ public class Account {
     private Boolean gender;
 
     @Column(name = "birthday")
-//    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "Ngày sinh không được để tróng!!")
+    @JsonFormat(pattern = "dd/MM/yyyy")
+    @NotNull(message = "Ngày sinh không được để trống!!")
     @MinAge(value = 18, message = "Bạn phải ít nhất 18 tuổi!!")
     private Date birthday;
 
@@ -72,23 +73,24 @@ public class Account {
 
     @Column(name = "phone_number")
     @NotBlank(message = "Số điện thoại không được để trống!!")
-//    @Size(min = 10, max = 10, message = "Số điện thoại phải có 10 chữ số!!")
     @Pattern(regexp = "^(\\+84|0)[35789][0-9]{8}$", message = "Số điện thoại không đúng định dạng!!")
     private String phoneNumber;
 
     @Column(name = "citizen_id")
     @NotBlank(message = "Căn cước công dân không được để trống!!")
     @Pattern(regexp = "\\d{12}", message = "Căn cước công dân không đúng định dạng!!")
-
     private String citizenId;
 
     @Column(name = "provinces")
+    @NotBlank(message = "Địa chỉ  không được để trống!!")
     private String provinces;
 
     @Column(name = "districts")
+    @NotBlank(message = "Địa chỉ  không được để trống!!")
     private String districts;
 
     @Column(name = "wards")
+    @NotBlank(message = "Địa chỉ  không được để trống!!")
     private String wards;
 
     @Column(name = "create_at")

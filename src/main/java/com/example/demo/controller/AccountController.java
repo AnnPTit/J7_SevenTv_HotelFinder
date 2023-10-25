@@ -78,6 +78,12 @@ public class AccountController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+        if (accountService.existsByEmail(account.getEmail())) {
+            return new ResponseEntity("Email này đã tồn tại!", HttpStatus.BAD_REQUEST);
+        }
+        if (accountService.existsByCitizenId(account.getCitizenId())) {
+            return new ResponseEntity("Số căn cước công dân này đã tồn tại!", HttpStatus.BAD_REQUEST);
+        }
         account.setAccountCode(accountService.generateAccountCode());
         account.setCreateAt(new Date());
         account.setUpdateAt(new Date());
@@ -101,8 +107,11 @@ public class AccountController {
 
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<Account> delete(@PathVariable("id") String id) {
+    public ResponseEntity<?> delete(@PathVariable("id") String id) {
         Account account = accountService.findById(id);
+        if (positionService.getIdPosition() == account.getPosition()) {
+            return new ResponseEntity("Bạn không thể xóa chính bạn!", HttpStatus.BAD_REQUEST);
+        }
         account.setStatus(0);
         accountService.add(account);
         return new ResponseEntity("Deleted", HttpStatus.OK);
@@ -115,7 +124,7 @@ public class AccountController {
 
     @PutMapping("/update/{id}")
     public ResponseEntity<Account> update(@PathVariable("id") String id,
-                                          @RequestBody Account account,
+                                          @Valid @RequestBody Account account,
                                           BindingResult result) {
         if (result.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
