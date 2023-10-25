@@ -24,12 +24,14 @@ public interface AccountService {
 
     Optional<Account> findByEmail(String email);
 
-    Account findByCitizenId(String citizenId);
-
     Account getAccountByCode();
 
     String generateAccountCode();
 
     String generateRandomPassword(int length);
+
+    boolean existsByEmail(String email);
+
+    boolean existsByCitizenId(String citizenId);
 
 }

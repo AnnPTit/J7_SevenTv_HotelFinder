@@ -78,12 +78,6 @@ public class AccountServiceImpl implements AccountService {
         return accountRepository.findByEmail(email);
     }
 
-    @Override
-    public Account findByCitizenId(String citizenId) {
-        return accountRepository.findByCitizenId(citizenId);
-    }
-
-
     public Account getAccountByCode() {
         return accountRepository.getAccountByCode();
     }
@@ -114,6 +108,16 @@ public class AccountServiceImpl implements AccountService {
         }
 
         return password.toString();
+    }
+
+    @Override
+    public boolean existsByEmail(String email) {
+        return accountRepository.existsByEmail(email);
+    }
+
+    @Override
+    public boolean existsByCitizenId(String citizenId) {
+        return accountRepository.existsByCitizenId(citizenId);
     }
 
 }
