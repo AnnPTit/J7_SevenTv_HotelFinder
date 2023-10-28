@@ -21,8 +21,6 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     Account findByEmailAndStatus(String email, Integer status);
 
-    Account findByCitizenId(String citizenId);
-
     @Query(value = "select * from account where status =1", nativeQuery = true)
     Page<Account> findAll(Pageable pageable);
 
@@ -43,4 +41,8 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     @Query(value = "SELECT * FROM account where account_code = 'TK00'", nativeQuery = true)
     Account getAccountByCode();
+
+    boolean existsByEmail(String email);
+
+    boolean existsByCitizenId(String citizenId);
 }
