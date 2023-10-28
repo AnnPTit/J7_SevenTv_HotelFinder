@@ -57,6 +57,7 @@ public class WebSocketController {
                     .map(RoomData::getId)
                     .collect(Collectors.toList());
             List<String> orderDetailIds = orderDetailService.checkRoomIsBooked(payload.getDayStart(), payload.getDayEnd(), idsRoom);
+            System.out.println(orderDetailIds.toString());
             if (!orderDetailIds.isEmpty()) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String startDate = sdf.format(payload.getDayStart());

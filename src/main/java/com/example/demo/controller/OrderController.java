@@ -45,7 +45,7 @@ import java.util.Random;
 
 @CrossOrigin("*")
 @RestController
-@RequestMapping("/api/admin/order")
+@RequestMapping("/api/order")
 public class OrderController {
 
     @Autowired
@@ -146,6 +146,25 @@ public class OrderController {
         return orderService.countOrderAccept();
     }
 
+    @GetMapping("/detail-info/{id}")
+    public ResponseEntity<?> detailInfo(@PathVariable("id") String id) {
+        Order order = orderService.getOrderById(id);
+        OrderDTO orderDTO = new OrderDTO();
+        orderDTO.setId(order.getId());
+        orderDTO.setTotalMoney(order.getTotalMoney());
+        orderDTO.setDeposit(order.getDeposit());
+        orderDTO.setVat(order.getVat());
+        orderDTO.setMoneyGivenByCustomer(order.getMoneyGivenByCustomer());
+        orderDTO.setNote(order.getNote());
+        orderDTO.setBookingDateStart(order.getBookingDateStart());
+        orderDTO.setBookingEndStart(order.getBookingDateEnd());
+        orderDTO.setCustomer(order.getCustomer());
+        orderDTO.setAccount(order.getAccount());
+        orderDTO.setOrderDetailList(order.getOrderDetailList());
+        orderDTO.setStatus(order.getStatus());
+        return new ResponseEntity<OrderDTO>(orderDTO, HttpStatus.OK);
+    }
+
     @GetMapping("/detail/{id}")
     public ResponseEntity<Order> detail(@PathVariable("id") String id) {
         Order order = orderService.getOrderById(id);
@@ -166,6 +185,9 @@ public class OrderController {
         order.setOrderCode(orderCode);
         order.setTypeOfOrder(true);
         order.setTotalMoney(BigDecimal.valueOf(0));
+        order.setDeposit(BigDecimal.valueOf(0));
+        order.setSurcharge(BigDecimal.valueOf(0));
+        order.setDiscount(BigDecimal.valueOf(0));
         order.setAccount(account);
         order.setCustomer(customer);
         order.setCreateAt(new Date());

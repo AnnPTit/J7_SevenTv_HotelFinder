@@ -59,4 +59,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 3")
     Long countOrderAccept();
 
+    @Query(value = "SELECT * FROM `order` WHERE id = :id", nativeQuery = true)
+    Order getById(String id);
+
 }

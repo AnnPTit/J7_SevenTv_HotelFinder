@@ -87,11 +87,10 @@ public interface RoomRepository extends JpaRepository<Room, String>, RoomReposit
             "AND (:typeRoomId IS NULL OR tr.id = :typeRoomId) " +
             "AND (:floorId IS NULL OR fl.id = :floorId) " +
             "AND tr.pricePerDay BETWEEN :start AND :end " +
-            "AND ((" +
-            "    (od.checkInDatetime NOT BETWEEN :dayStart AND :dayEnd) " +
+            "AND ((od.checkInDatetime NOT BETWEEN :dayStart AND :dayEnd) " +
             "    AND (od.checkOutDatetime NOT BETWEEN :dayStart AND :dayEnd)" +
-            "    OR (:dayStart IS NULL OR :dayEnd IS NULL)))" +
-            "ORDER BY r.updateAt DESC")
+            "    OR (:dayStart IS NULL OR :dayEnd IS NULL))" +
+            "AND r.status IN (1, 2) ORDER BY r.updateAt DESC")
     List<Room> loadAndSearchBookRoom(@Param("roomCode") String roomCode,
                                      @Param("roomName") String roomName,
                                      @Param("floorId") String floorId,
@@ -99,8 +98,7 @@ public interface RoomRepository extends JpaRepository<Room, String>, RoomReposit
                                      @Param("start") BigDecimal start,
                                      @Param("end") BigDecimal end,
                                      @Param("dayStart") Date dayStart,
-                                     @Param("dayEnd") Date dayEnd
-    );
+                                     @Param("dayEnd") Date dayEnd);
 
 //    @Query(value = "SELECT DISTINCT r.id, r.floor_id, r.type_room_id, r.room_code, r.room_name, r.note, r.create_at, r.create_by," +
 //            " r.update_at, r.updated_by, r.deleted, r.status, tr.price_per_day \n" +
