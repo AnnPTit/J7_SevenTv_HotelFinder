@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.ConfirmOrderDTO;
 import com.example.demo.entity.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -35,5 +36,7 @@ public interface OrderService {
     Order add(Order order);
 
     void delete(String id);
+
+    ConfirmOrderDTO confirmOrder(ConfirmOrderDTO confirmOrderDTO);
 
 }

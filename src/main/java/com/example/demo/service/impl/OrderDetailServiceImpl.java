@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -55,6 +56,15 @@ public class OrderDetailServiceImpl implements OrderDetailService {
             System.out.println("Add error!");
             return null;
         }
+    }
+
+    @Override
+    public List<OrderDetail> addAll(List<OrderDetail> orderDetails) {
+        List<OrderDetail> list = new ArrayList<>();
+        for (OrderDetail orderDetail : orderDetails) {
+            list.add(this.add(orderDetail));
+        }
+        return list;
     }
 
     @Override
