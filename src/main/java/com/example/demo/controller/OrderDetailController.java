@@ -32,6 +32,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -113,14 +115,30 @@ public class OrderDetailController {
     }
 
     @PostMapping("/save")
-    public ResponseEntity<OrderDetail> save(
-            @RequestBody OrderDetailDTO orderDetailDTO) {
+    public ResponseEntity<?> save(
+            @RequestBody OrderDetailDTO orderDetailDTO) throws ParseException {
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
         String formattedDate = currentDate.format(formatter);
         Random random = new Random();
         int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
         String orderDetailCode = "HDCT" + formattedDate + randomDigits;
+
+        Date dayStart = orderDetailDTO.getCheckIn();
+        Date dayEnd = orderDetailDTO.getCheckOut();
+        System.out.println(dayStart);
+        System.out.println(dayEnd);
+        String id = orderDetailDTO.getRoom().getId();
+        System.out.println(id);
+        List<String> list = orderDetailService.checkRoomExist(dayStart, dayEnd, id);
+        System.out.println(list.toString());
+        if (!list.isEmpty()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            String startDate = sdf.format(dayStart);
+            String endDate = sdf.format(dayEnd);
+            String errorMessage = "Phòng không khả dụng từ ngày " + startDate + " đến ngày " + endDate;
+            return new ResponseEntity<String>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
 
         OrderDetail orderDetail = new OrderDetail();
         orderDetail.setOrderDetailCode(orderDetailCode);
@@ -136,8 +154,9 @@ public class OrderDetailController {
         orderDetailService.add(orderDetail);
 
         Room room = orderDetailDTO.getRoom();
-        room.setStatus(Constant.ROOM.ACTIVE);
+        room.setStatus(Constant.ROOM.EMPTY);
         roomService.add(room);
+
         return new ResponseEntity<OrderDetail>(orderDetail, HttpStatus.OK);
     }
 

@@ -33,8 +33,8 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public OrderDetail getOrderDetailByIdOrder(String id) {
-        return orderDetailRepository.getOrderDetailByIdOrder(id);
+    public List<String> checkRoomExist(Date dayStart, Date dayEnd, String id) {
+        return orderDetailRepository.checkRoomExist(dayStart, dayEnd, id);
     }
 
     @Override
