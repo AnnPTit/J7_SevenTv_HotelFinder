@@ -279,6 +279,7 @@ public class OrderController {
         paymentMethod.setPaymentMethodCode(paymentMethodCode);
         paymentMethod.setMethod(true);
         paymentMethod.setTotalMoney(order.getTotalMoney());
+        paymentMethod.setNote(order.getNote());
         paymentMethod.setCreateAt(new Date());
         paymentMethod.setUpdateAt(new Date());
         paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
@@ -355,6 +356,7 @@ public class OrderController {
         paymentMethod.setPaymentMethodCode(paymentMethodCode);
         paymentMethod.setMethod(true);
         paymentMethod.setTotalMoney(order.getTotalMoney());
+        paymentMethod.setNote(order.getNote());
         paymentMethod.setCreateAt(new Date());
         paymentMethod.setUpdateAt(new Date());
         paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
@@ -372,7 +374,7 @@ public class OrderController {
         OrderTimeline timeline = new OrderTimeline();
         timeline.setOrder(order);
         timeline.setAccount(order.getAccount());
-        timeline.setType(Constant.ORDER_TIMELINE.WAIT_PAYMENT);
+        timeline.setType(Constant.ORDER_TIMELINE.LEAVE_EARLY);
         timeline.setNote(order.getNote());
         timeline.setCreateAt(new Date());
         orderTimelineService.add(timeline);

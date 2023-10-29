@@ -41,6 +41,7 @@ public class Constant {
         public static Integer WAIT_PAYMENT = 4;
         public static Integer WAIT_CHECKIN = 5;
         public static Integer REFUSE = 6;
+        public static Integer LEAVE_EARLY = 7;
     }
 
     public static final String PROBLEM_BASE_URL = "https://www.jhipster.tech/problem";

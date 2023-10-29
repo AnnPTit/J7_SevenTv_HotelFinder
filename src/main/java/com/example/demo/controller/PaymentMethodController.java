@@ -416,6 +416,7 @@ public class PaymentMethodController {
                 paymentMethod.setPaymentMethodCode(paymentMethodCode);
                 paymentMethod.setMethod(false);
                 paymentMethod.setTotalMoney(order.getTotalMoney());
+                paymentMethod.setNote(order.getNote());
                 paymentMethod.setCreateAt(new Date());
                 paymentMethod.setUpdateAt(new Date());
                 paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
@@ -474,6 +475,7 @@ public class PaymentMethodController {
                 paymentMethod.setPaymentMethodCode(paymentMethodCode);
                 paymentMethod.setMethod(false);
                 paymentMethod.setTotalMoney(order.getDeposit());
+                paymentMethod.setNote(order.getNote());
                 paymentMethod.setCreateAt(new Date());
                 paymentMethod.setUpdateAt(new Date());
                 paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
