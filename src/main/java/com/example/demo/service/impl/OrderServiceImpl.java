@@ -68,6 +68,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order getOrderByCode(String code) {
+        return orderRepository.getByCode(code);
+    }
+
+    @Override
     public Long countOrderCancel() {
         return orderRepository.countOrderCancel();
     }

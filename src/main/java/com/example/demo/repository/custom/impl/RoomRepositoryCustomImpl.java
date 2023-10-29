@@ -42,7 +42,7 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
     @Override
     public List<CartDTO> getCart(String customId, Integer odStt) {
         String sql =
-                "                       select\n" +
+                "select\n" +
                         "\tr.id as roomId,\n" +
                         "\tr.room_name as roomName,\n" +
                         "\ttr.type_room_name as typeRoom,\n" +
@@ -53,7 +53,8 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
                         "\to.status as orderStatus,\n" +
                         "\to.create_at as bookingDay,\n" +
                         "\tMAX(p.url) as url,\n" +
-                        "\to.order_code\n" +
+                        "\to.order_code as orderCode,\n" +
+                        "\to.deposit \n" +
                         "from\n" +
                         "\t`order` o\n" +
                         "inner join order_detail od on\n" +

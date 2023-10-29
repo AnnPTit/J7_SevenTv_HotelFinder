@@ -20,5 +20,7 @@ public class CartDTO {
     private Integer numberCustom;
     private Integer orderStatus;
     private Date bookingDay;
-    private String url ;
+    private String url;
+    private String orderCode;
+    private BigDecimal deposit ;
 }

@@ -25,6 +25,9 @@ public interface OrderService {
 
     Order getOrderById(String id);
 
+
+    Order getOrderByCode(String code);
+
     Long countOrderCancel();
 
     Long countOrderWait();

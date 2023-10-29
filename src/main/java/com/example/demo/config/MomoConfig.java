@@ -11,4 +11,5 @@ public class MomoConfig {
 	public static String IPN_URL = "https://fcf6-123-24-233-164.ngrok.io";
 	public static String CREATE_ORDER_URL = "https://test-payment.momo.vn/gw_payment/transactionProcessor";
 	public static String REDIRECT_URL = "http://localhost:2003/api/payment-method/payment-momo/success";
+	public static String REDIRECT_URL_ONLINE = "http://localhost:2003/api/payment-method/payment-momo/success/online";
 }
