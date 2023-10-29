@@ -22,6 +22,7 @@ public interface OrderDetailService {
     OrderDetail getOrderDetailById(String id);
 
     OrderDetail add(OrderDetail orderDetail);
+    List<OrderDetail> addAll(List<OrderDetail> orderDetails);
 
     void delete(String id);
 

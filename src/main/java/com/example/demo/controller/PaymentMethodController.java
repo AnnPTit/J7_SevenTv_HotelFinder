@@ -309,6 +309,80 @@ public class PaymentMethodController {
         return kq;
     }
 
+    @PostMapping("/payment-momo/online/{code}")
+    public Map<String, Object> createPaymentMomoOnline(@PathVariable("code") String code) throws InvalidKeyException, NoSuchAlgorithmException, IOException {
+        Order order = orderService.getOrderByCode(code);
+        Long amount = order.getDeposit().longValue();
+        JSONObject json = new JSONObject();
+        String partnerCode = MomoConfig.PARTNER_CODE;
+        String accessKey = MomoConfig.ACCESS_KEY;
+        String secretKey = MomoConfig.SECRET_KEY;
+        String returnUrl = MomoConfig.REDIRECT_URL_ONLINE;
+        String notifyUrl = MomoConfig.NOTIFY_URL;
+        json.put("partnerCode", partnerCode);
+        json.put("accessKey", accessKey);
+        json.put("requestId", String.valueOf(System.currentTimeMillis()));
+        json.put("amount", amount.toString());
+        json.put("orderId", order.getId() + generateRandomNumber(1, 100));
+        json.put("orderInfo", "Thanh toan don hang #" + order.getOrderCode());
+        json.put("returnUrl", returnUrl);
+        json.put("notifyUrl", notifyUrl);
+        json.put("requestType", "captureMoMoWallet");
+
+        System.out.println(json.toString());
+        String data = "partnerCode=" + partnerCode
+                + "&accessKey=" + accessKey
+                + "&requestId=" + json.get("requestId")
+                + "&amount=" + amount.toString()
+                + "&orderId=" + json.get("orderId")
+                + "&orderInfo=" + json.get("orderInfo")
+                + "&returnUrl=" + returnUrl
+                + "&notifyUrl=" + notifyUrl
+                + "&extraData=";
+        System.out.println(data);
+        String signature = MomoEncoderUtils.signHmacSHA256(data, secretKey);
+        json.put("signature", signature);
+        CloseableHttpClient client = HttpClients.createDefault();
+        HttpPost post = new HttpPost(MomoConfig.CREATE_ORDER_URL);
+        StringEntity stringEntity = new StringEntity(json.toString());
+        post.setHeader("content-type", "application/json");
+        post.setEntity(stringEntity);
+
+        CloseableHttpResponse res = client.execute(post);
+        BufferedReader rd = new BufferedReader(new InputStreamReader(res.getEntity().getContent()));
+        StringBuilder resultJsonStr = new StringBuilder();
+        String line;
+        while ((line = rd.readLine()) != null) {
+            System.out.println(line);
+            resultJsonStr.append(line);
+            System.out.println(resultJsonStr);
+        }
+        JSONObject result = new JSONObject(resultJsonStr.toString());
+        for (String key : result.keySet()) {
+            System.out.format("%s = %s\n", key, result.get(key));
+        }
+        Map<String, Object> kq = new HashMap<String, Object>();
+        if (result.get("errorCode").toString().equalsIgnoreCase("0")) {
+            kq.put("requestType", result.get("requestType"));
+            kq.put("orderId", result.get("orderId"));
+            kq.put("payUrl", result.get("payUrl"));
+            kq.put("signature", result.get("signature"));
+            kq.put("requestId", result.get("requestId"));
+            kq.put("errorCode", result.get("errorCode"));
+            kq.put("message", result.get("message"));
+            kq.put("localMessage", result.get("localMessage"));
+        } else {
+            kq.put("requestType", result.get("requestType"));
+            kq.put("orderId", result.get("orderId"));
+            kq.put("signature", result.get("signature"));
+            kq.put("requestId", result.get("requestId"));
+            kq.put("errorCode", result.get("errorCode"));
+            kq.put("message", result.get("message"));
+            kq.put("localMessage", result.get("localMessage"));
+        }
+        return kq;
+    }
+
     @GetMapping("/payment-momo/success")
     public ResponseEntity<String> paymentMomoSuccess(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String errorCode = request.getParameter("errorCode");
@@ -373,6 +447,65 @@ public class PaymentMethodController {
         }
     }
 
+    @GetMapping("/payment-momo/success/online")
+    public ResponseEntity<String> paymentMomoSuccessOnline(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String errorCode = request.getParameter("errorCode");
+        if (errorCode != null && errorCode.equals("0")) { // Mã 00 thường tượng trưng cho thanh toán thành công
+            // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
+            String orderId = request.getParameter("orderId"); // Lấy mã đơn hàng từ VNPay
+            if (orderId.length() > 36) {
+                orderId = orderId.substring(0, 36);
+            }
+            Order order = orderService.getOrderById(orderId);
+            if (order != null) {
+                order.setNote("Khách thanh toán tiền cọc bằng Momo");
+                order.setUpdateAt(new Date());
+                order.setStatus(Constant.ORDER_STATUS.WAIT_CHECKIN);
+                orderService.add(order);
+
+                PaymentMethod paymentMethod = new PaymentMethod();
+                paymentMethod.setOrder(order);
+                LocalDate currentDate = LocalDate.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+                String formattedDate = currentDate.format(formatter);
+                Random random = new Random();
+                int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
+                String paymentMethodCode = "PT" + formattedDate + randomDigits;
+                paymentMethod.setPaymentMethodCode(paymentMethodCode);
+                paymentMethod.setMethod(false);
+                paymentMethod.setTotalMoney(order.getDeposit());
+                paymentMethod.setCreateAt(new Date());
+                paymentMethod.setUpdateAt(new Date());
+                paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
+                paymentMethodService.add(paymentMethod);
+
+                HistoryTransaction historyTransaction = new HistoryTransaction();
+                historyTransaction.setOrder(order);
+                historyTransaction.setTotalMoney(order.getDeposit());
+                historyTransaction.setNote(order.getNote());
+                historyTransaction.setCreateAt(new Date());
+                historyTransaction.setUpdateAt(new Date());
+                historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
+                historyTransactionService.add(historyTransaction);
+
+                OrderTimeline orderTimeline = new OrderTimeline();
+                orderTimeline.setOrder(order);
+                orderTimeline.setAccount(order.getAccount());
+                orderTimeline.setType(Constant.ORDER_TIMELINE.WAIT_CHECKIN);
+                orderTimeline.setNote("Khách chuyển khoản để thanh toán tiền cọc");
+                orderTimeline.setCreateAt(new Date());
+                orderTimelineService.add(orderTimeline);
+            }
+            String redirectUrl = "http://localhost:3001/";
+            response.sendRedirect(redirectUrl);
+            return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
+        } else {
+            // Thanh toán không thành công, xử lý theo logic của bạn
+            return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
+        }
+    }
+
+
     // truy vấn lại trạng thái thanh toán
     @PostMapping("/transactionStatus")
     public Map<String, Object> transactionStatus(@RequestParam String requestId, @RequestParam String orderId)
@@ -425,6 +558,11 @@ public class PaymentMethodController {
         SimpleDateFormat fmt = new SimpleDateFormat(format);
         fmt.setCalendar(cal);
         return fmt.format(cal.getTimeInMillis());
+    }
+
+    public static int generateRandomNumber(int min, int max) {
+        Random random = new Random();
+        return random.nextInt(max - min + 1) + min;
     }
 
     @PostMapping("/payment-zalo/{id}")

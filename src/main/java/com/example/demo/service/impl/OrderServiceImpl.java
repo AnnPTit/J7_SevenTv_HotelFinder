@@ -1,6 +1,11 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.constant.Constant;
+import com.example.demo.dto.ConfirmOrderDTO;
+import com.example.demo.entity.Customer;
 import com.example.demo.entity.Order;
+import com.example.demo.entity.OrderDetail;
+import com.example.demo.repository.CustomerRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.service.OrderService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -8,6 +13,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
 
@@ -16,6 +23,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private CustomerRepository customerRepository;
 
     @Override
     public List<Order> getList() {
@@ -59,6 +68,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Order getOrderByCode(String code) {
+        return orderRepository.getByCode(code);
+    }
+
+    @Override
     public Long countOrderCancel() {
         return orderRepository.countOrderCancel();
     }
@@ -95,5 +109,34 @@ public class OrderServiceImpl implements OrderService {
         } catch (Exception e) {
             System.out.println("Delete error!");
         }
+    }
+
+    @Override
+    public ConfirmOrderDTO confirmOrder(ConfirmOrderDTO confirmOrderDTO) {
+        // Cập nhật trạng thái order
+        Order order = orderRepository.getById(confirmOrderDTO.getOrderId());
+        order.setStatus(Constant.ORDER_STATUS.WAIT_PAYMENT);
+        orderRepository.save(order);
+        // Cập nhật trạng thông tin khách hàng
+        Customer customer = customerRepository.getCustomerById(confirmOrderDTO.getCustomerId());
+        customer.setAddress(confirmOrderDTO.getAddress());
+        String birthday = confirmOrderDTO.getBirthday();
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy");
+        Date date = null;
+        try {
+            date = dateFormat.parse(birthday);
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+        if (date != null) {
+            customer.setBirthday(date);
+        } else {
+            System.out.println("Không thể chuyển đổi ngày sinh.");
+        }
+        customer.setNationality(confirmOrderDTO.getNation());
+        customer.setGender(confirmOrderDTO.isGender());
+        customer.setCitizenId(confirmOrderDTO.getCitizenId());
+        customerRepository.save(customer);
+        return confirmOrderDTO;
     }
 }

@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
+import com.example.demo.dto.ConfirmOrderDTO;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.entity.Account;
 import com.example.demo.entity.Customer;
@@ -409,6 +410,11 @@ public class OrderController {
         orderTimeline.setCreateAt(new Date());
         orderTimelineService.add(orderTimeline);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
+    }
+
+    @PostMapping("/confirm-order")
+    public ResponseEntity<ConfirmOrderDTO> confirmOrder(@RequestBody ConfirmOrderDTO confirmOrderDTO) {
+        return new ResponseEntity<>(orderService.confirmOrder(confirmOrderDTO), HttpStatus.OK);
     }
 
 

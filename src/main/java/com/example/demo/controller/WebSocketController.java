@@ -5,6 +5,7 @@ import com.example.demo.dto.PayloadObject;
 import com.example.demo.dto.RoomData;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
+import com.example.demo.util.DataUtil;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -33,6 +34,7 @@ public class WebSocketController {
     private final OrderTimelineService orderTimelineService;
 
     private final OrderDetailService orderDetailService;
+    private final InformationCustomerService informationCustomerService;
 
     private final AccountService accountService;
 
@@ -62,7 +64,7 @@ public class WebSocketController {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String startDate = sdf.format(payload.getDayStart());
                 String endDate = sdf.format(payload.getDayEnd());
-                return new Response("Phòng đã được đặt từ ngày :  "
+                return new Response("Phòng đã được đặt trong khoảng :  "
                         + startDate + "   đến ngày :    " + endDate + "  !" + ". Vui lòng chọn ngày khác !",
                         Constant.COMMON_STATUS.UNACTIVE, idsRoom);
             }
@@ -81,7 +83,7 @@ public class WebSocketController {
                 newCustomer.setUsername(customerCode);
                 newCustomer.setCitizenId("034203007140");
                 newCustomer.setBirthday(birthDate);
-                newCustomer.setDistricts("Nam Tu Liem");
+                newCustomer.setDistricts("N/A");
                 newCustomer.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 newCustomer.setCreateAt(new Date());
                 newCustomer.setEmail(payload.getUser().getEmail());
@@ -122,12 +124,14 @@ public class WebSocketController {
             orderTimeline.setCreateAt(new Date());
             orderTimelineService.add(orderTimeline);
             // B5 : Tạo hóa đơn chi tiết
+            List<OrderDetail> orderDetailList = new ArrayList<>();
             for (RoomData roomData : payload.getRooms()
             ) {
                 Room room = roomService.getRoomById(roomData.getId());
                 OrderDetail orderDetail = new OrderDetail();
                 orderDetail.setRoom(room);
                 orderDetail.setOrder(order);
+                orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setOrderDetailCode("HDCT" + randomNumber);
                 orderDetail.setRoomPrice(room.getTypeRoom().getPricePerDay());
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
@@ -138,9 +142,17 @@ public class WebSocketController {
                 orderDetail.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
                 roomService.add(room);
                 // Thêm hóa đơn chi tiết
-                orderDetailService.add(orderDetail);
+                orderDetailList.add(orderDetail);
             }
-
+            orderDetailService.addAll(orderDetailList);
+            InformationCustomer informationCustomer;
+            if (!Objects.isNull(customerForOrder)) {
+                informationCustomer = DataUtil.convertCustomerToInformationCustomer(customerForOrder);
+            } else {
+                informationCustomer = DataUtil.convertCustomerToInformationCustomer(newCustomer);
+            }
+            informationCustomer.setOrderDetail(orderDetailList.get(0));
+            informationCustomerService.add(informationCustomer);
             return new Response("Đặt phòng thành công !", Constant.COMMON_STATUS.ACTIVE, idsRoom);
         } catch (Exception e) {
             e.printStackTrace();

@@ -70,6 +70,8 @@ import java.util.List;
                                                 @ColumnResult(name = "orderStatus", type = Integer.class),
                                                 @ColumnResult(name = "bookingDay", type = Date.class),
                                                 @ColumnResult(name = "url", type = String.class),
+                                                @ColumnResult(name = "orderCode", type = String.class),
+                                                @ColumnResult(name = "deposit", type = BigDecimal.class),
                                         }
                                 ),
                         }

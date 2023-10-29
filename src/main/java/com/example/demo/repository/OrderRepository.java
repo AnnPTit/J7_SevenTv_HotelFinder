@@ -62,4 +62,7 @@ public interface OrderRepository extends JpaRepository<Order, String> {
     @Query(value = "SELECT * FROM `order` WHERE id = :id", nativeQuery = true)
     Order getById(String id);
 
+    @Query(value = "select * from `order` o where order_code =:code", nativeQuery = true)
+    Order getByCode(@Param("code") String code);
+
 }
