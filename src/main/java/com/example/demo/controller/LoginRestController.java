@@ -57,7 +57,13 @@ public class LoginRestController {
 
         // Trả về jwt cho người dùng.
         String jwt = tokenProvider.generateToken((UserInfoUserDetails) authentication.getPrincipal());
-        return new LoginResponse(jwt);
+        LoginResponse loginResponse = new LoginResponse();
+        loginResponse.setAccessToken(jwt);
+        loginResponse.setIdUser(((UserInfoUserDetails) authentication.getPrincipal()).getId());
+        loginResponse.setFullName(((UserInfoUserDetails) authentication.getPrincipal()).getFullName());
+        System.out.println("idUser: " + ((UserInfoUserDetails) authentication.getPrincipal()).getId());
+        System.out.println("name: " + ((UserInfoUserDetails) authentication.getPrincipal()).getFullName());
+        return loginResponse;
     }
 
     // Api /api/random yêu cầu phải xác thực mới có thể request

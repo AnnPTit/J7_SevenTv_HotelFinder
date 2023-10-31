@@ -19,12 +19,14 @@ import java.util.stream.Collectors;
 public class UserInfoUserDetails implements UserDetails {
     private String id;
     private String name;
+    private String fullName;
     private String password;
     private List<GrantedAuthority> authorities;
 
     public UserInfoUserDetails(Account account) {
         id= account.getId();
         name = account.getEmail();
+        fullName = account.getFullname();
         password = account.getPassword();
         System.out.println();
         authorities = Arrays.stream(account.getPosition().getPositionName().split(","))
