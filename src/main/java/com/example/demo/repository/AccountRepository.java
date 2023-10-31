@@ -31,10 +31,9 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     @Query(value = "SELECT *\n" +
             "FROM account\n" +
-            "WHERE status = 1\n" +
-            "  AND ((:accountCode IS NULL OR account_code = :accountCode)\n" +
+            "WHERE ((:accountCode IS NULL OR account_code = :accountCode)\n" +
             "       OR (:fullname IS NULL OR fullname LIKE CONCAT('%', :fullname, '%')))\n" +
-            "  AND (:positionId IS NULL OR position_id = :positionId)", nativeQuery = true)
+            "  AND (:positionId IS NULL OR position_id = :positionId) and status = 1 order by update_at desc", nativeQuery = true)
     Page<Account> loadAndSearch(@Param("accountCode") String accountCode,
                                 @Param("fullname") String fullname,
                                 @Param("positionId") String positionId, Pageable pageable);
