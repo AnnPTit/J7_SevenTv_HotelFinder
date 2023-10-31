@@ -4,8 +4,8 @@ import com.example.demo.dto.ConfirmOrderDTO;
 import com.example.demo.entity.Order;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.jpa.repository.Query;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +25,6 @@ public interface OrderService {
 
     Order getOrderById(String id);
 
-
     Order getOrderByCode(String code);
 
     Long countOrderCancel();
@@ -41,5 +40,9 @@ public interface OrderService {
     void delete(String id);
 
     ConfirmOrderDTO confirmOrder(ConfirmOrderDTO confirmOrderDTO);
+
+    BigDecimal getRevenueMonth();
+
+    BigDecimal getRevenueYear();
 
 }

@@ -10,7 +10,7 @@ import java.util.List;
 @Repository
 public interface InformationCustomerRepository extends JpaRepository<InformationCustomer, String> {
 
-    @Query(value = "SELECT * FROM information_customer WHERE order_detail_id = ?1", nativeQuery = true)
+    @Query(value = "SELECT * FROM information_customer WHERE order_detail_id = ?1 ORDER BY update_at DESC", nativeQuery = true)
     List<InformationCustomer> findAllByOrderDetailId(String id);
 
 }

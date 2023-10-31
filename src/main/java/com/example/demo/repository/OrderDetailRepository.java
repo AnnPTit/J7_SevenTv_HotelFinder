@@ -25,5 +25,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
             "OR (check_out_datetime between :dayStart and :dayEnd)) and od.status = 1", nativeQuery = true)
     List<String> checkRoomExist(@Param("dayStart") Date dayStart, @Param("dayEnd") Date dayEnd, @Param("idRoom") String idRoom);
 
+    @Query(value = "SELECT COUNT(`status`) FROM order_detail " +
+            "WHERE DATE(update_at) = DATE(current_date()) AND `status` IN (1, 2, 3)", nativeQuery = true)
+    Integer getBooking();
 
 }

@@ -4,18 +4,17 @@ import com.example.demo.constant.Constant;
 import com.example.demo.dto.ConfirmOrderDTO;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Order;
-import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.OrderTimeline;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.OrderTimelineRepository;
 import com.example.demo.service.OrderService;
-import com.example.demo.service.OrderTimelineService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -152,4 +151,15 @@ public class OrderServiceImpl implements OrderService {
         customerRepository.save(customer);
         return confirmOrderDTO;
     }
+
+    @Override
+    public BigDecimal getRevenueMonth() {
+        return orderRepository.getRevenueMonth();
+    }
+
+    @Override
+    public BigDecimal getRevenueYear() {
+        return orderRepository.getRevenueYear();
+    }
+
 }
