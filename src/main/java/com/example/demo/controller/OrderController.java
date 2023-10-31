@@ -147,6 +147,16 @@ public class OrderController {
         return orderService.countOrderAccept();
     }
 
+    @GetMapping("/getRevenueMonth")
+    public BigDecimal getRevenueMonth() {
+        return orderService.getRevenueMonth();
+    }
+
+    @GetMapping("/getRevenueYear")
+    public BigDecimal getRevenueYear() {
+        return orderService.getRevenueYear();
+    }
+
     @GetMapping("/detail-info/{id}")
     public ResponseEntity<?> detailInfo(@PathVariable("id") String id) {
         Order order = orderService.getOrderById(id);
@@ -279,6 +289,7 @@ public class OrderController {
         paymentMethod.setPaymentMethodCode(paymentMethodCode);
         paymentMethod.setMethod(true);
         paymentMethod.setTotalMoney(order.getTotalMoney());
+        paymentMethod.setNote(order.getNote());
         paymentMethod.setCreateAt(new Date());
         paymentMethod.setUpdateAt(new Date());
         paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
@@ -342,7 +353,10 @@ public class OrderController {
         orderTimelineService.add(orderTimeline);
 
         OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
+        orderDetail.getRoom().setStatus(Constant.ROOM.EMPTY);
         orderDetail.setOrder(order);
+        orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_OUT);
+        orderDetailService.add(orderDetail);
 
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setOrder(order);
@@ -355,6 +369,7 @@ public class OrderController {
         paymentMethod.setPaymentMethodCode(paymentMethodCode);
         paymentMethod.setMethod(true);
         paymentMethod.setTotalMoney(order.getTotalMoney());
+        paymentMethod.setNote(order.getNote());
         paymentMethod.setCreateAt(new Date());
         paymentMethod.setUpdateAt(new Date());
         paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
@@ -372,14 +387,10 @@ public class OrderController {
         OrderTimeline timeline = new OrderTimeline();
         timeline.setOrder(order);
         timeline.setAccount(order.getAccount());
-        timeline.setType(Constant.ORDER_TIMELINE.WAIT_PAYMENT);
+        timeline.setType(Constant.ORDER_TIMELINE.LEAVE_EARLY);
         timeline.setNote(order.getNote());
         timeline.setCreateAt(new Date());
         orderTimelineService.add(timeline);
-
-        OrderDetail orderDetailRoom = orderDetailService.getOrderDetailById(id);
-        orderDetailRoom.getRoom().setStatus(Constant.ROOM.EMPTY);
-        orderDetailService.add(orderDetailRoom);
 
         Order orderUpdate = orderService.getOrderById(order.getId());
         orderUpdate.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);

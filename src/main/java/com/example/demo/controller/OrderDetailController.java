@@ -95,6 +95,11 @@ public class OrderDetailController {
         return new ResponseEntity<List<OrderDetailDTO>>(orderDetailDTOS, HttpStatus.OK);
     }
 
+    @GetMapping("/getBooking")
+    public Integer getBooking() {
+        return orderDetailService.getBooking();
+    }
+
     @GetMapping("/getByIdOrder/{id}")
     public ResponseEntity<List<OrderDetail>> getByIdOrder(@PathVariable("id") String id) {
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(id);

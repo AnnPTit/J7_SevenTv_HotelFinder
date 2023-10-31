@@ -28,4 +28,6 @@ public interface OrderDetailService {
 
     void delete(OrderDetail orderDetail);
 
+    Integer getBooking();
+
 }

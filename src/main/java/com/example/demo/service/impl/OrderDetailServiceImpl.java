@@ -84,4 +84,10 @@ public class OrderDetailServiceImpl implements OrderDetailService {
             System.out.println("Delete error!");
         }
     }
+
+    @Override
+    public Integer getBooking() {
+        return orderDetailRepository.getBooking();
+    }
+
 }

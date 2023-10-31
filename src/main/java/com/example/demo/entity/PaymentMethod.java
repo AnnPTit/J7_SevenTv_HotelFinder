@@ -46,6 +46,9 @@ public class PaymentMethod {
     @Column(name = "total_money")
     private BigDecimal totalMoney;
 
+    @Column(name = "note")
+    private String note;
+
     @Column(name = "create_at")
     private Date createAt;
 
