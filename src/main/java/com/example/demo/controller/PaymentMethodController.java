@@ -18,10 +18,8 @@ import com.example.demo.service.PaymentMethodService;
 import com.example.demo.service.RoomService;
 import com.example.demo.util.HMACUtil;
 import com.example.demo.util.MomoEncoderUtils;
-import jakarta.servlet.http.Cookie;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
-import jakarta.servlet.http.HttpSession;
 import org.apache.http.NameValuePair;
 import org.apache.http.client.entity.UrlEncodedFormEntity;
 import org.apache.http.client.methods.CloseableHttpResponse;
@@ -180,7 +178,7 @@ public class PaymentMethodController {
             String orderId = request.getParameter("vnp_TxnRef"); // Lấy mã đơn hàng từ VNPay
             Order order = orderService.getOrderById(orderId);
             if (order != null) {
-                order.setMoneyGivenByCustomer(order.getTotalMoney());
+                order.setMoneyGivenByCustomer(order.getTotalMoney().subtract(order.getDeposit()));
                 order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setNote("Khách thanh toán bằng tài khoản ngân hàng");
                 order.setUpdateAt(new Date());
@@ -205,6 +203,7 @@ public class PaymentMethodController {
                 paymentMethod.setPaymentMethodCode(paymentMethodCode);
                 paymentMethod.setMethod(false);
                 paymentMethod.setTotalMoney(order.getTotalMoney());
+                paymentMethod.setNote(order.getNote());
                 paymentMethod.setCreateAt(new Date());
                 paymentMethod.setUpdateAt(new Date());
                 paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
@@ -391,7 +390,7 @@ public class PaymentMethodController {
             String orderId = request.getParameter("orderId"); // Lấy mã đơn hàng từ VNPay
             Order order = orderService.getOrderById(orderId);
             if (order != null) {
-                order.setMoneyGivenByCustomer(order.getTotalMoney());
+                order.setMoneyGivenByCustomer(order.getTotalMoney().subtract(order.getDeposit()));
                 order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setNote("Khách thanh toán bằng Momo");
                 order.setUpdateAt(new Date());
