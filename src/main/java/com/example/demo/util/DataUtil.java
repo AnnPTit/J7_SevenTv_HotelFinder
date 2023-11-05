@@ -4,9 +4,14 @@ import com.example.demo.entity.Customer;
 import com.example.demo.entity.InformationCustomer;
 
 import java.lang.reflect.Field;
+import java.math.BigDecimal;
+import java.text.DecimalFormat;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 
 public class DataUtil {
     private static final char KEY_ESCAPE = '\\';
+
     public static String likeSpecialToStr(String str) {
         str = str.trim();
         str = str.replace("_", KEY_ESCAPE + "_");
@@ -44,5 +49,17 @@ public class DataUtil {
         informationCustomer.setStatus(customer.getStatus());
 
         return informationCustomer;
+    }
+
+    public static String currencyFormat(BigDecimal n) {
+        return new DecimalFormat("#,###").format(n);
+    }
+
+    public static String dateToString(Date date) {
+        if (date == null) {
+            return null;
+        }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        return dateFormat.format(date);
     }
 }
