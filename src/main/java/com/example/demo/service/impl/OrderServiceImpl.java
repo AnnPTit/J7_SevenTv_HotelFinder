@@ -2,6 +2,8 @@ package com.example.demo.service.impl;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.ConfirmOrderDTO;
+import com.example.demo.dto.OrderDetailExport;
+import com.example.demo.dto.OrderExportDTO;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderTimeline;
@@ -9,18 +11,34 @@ import com.example.demo.repository.CustomerRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.OrderTimelineRepository;
 import com.example.demo.service.OrderService;
+import com.example.demo.util.DataUtil;
+import com.example.demo.util.NumToViet;
+import lombok.RequiredArgsConstructor;
+import net.sf.jasperreports.engine.*;
+import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
+import net.sf.jasperreports.engine.export.ooxml.JRDocxExporter;
+import net.sf.jasperreports.export.SimpleExporterInput;
+import net.sf.jasperreports.export.SimpleOutputStreamExporterOutput;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.ZonedDateTime;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
+@RequiredArgsConstructor
 public class OrderServiceImpl implements OrderService {
 
     @Autowired
@@ -29,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
     private CustomerRepository customerRepository;
     @Autowired
     private OrderTimelineRepository orderTimelineRepository;
+    private NumToViet numToViet;
 
     @Override
     public List<Order> getList() {
@@ -160,6 +179,46 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public BigDecimal getRevenueYear() {
         return orderRepository.getRevenueYear();
+    }
+
+    @Override
+    public ByteArrayResource exportRecommended(String orderId) throws JRException {
+        OrderExportDTO orderExportDTO = orderRepository.getData(orderId);
+        List<OrderDetailExport> dataTable = orderRepository.getDataDetail(orderId);
+        ZonedDateTime zonedDateTime = ZonedDateTime.now();
+        int year = zonedDateTime.getYear();
+        int month = zonedDateTime.getMonthValue();
+        int day = zonedDateTime.getDayOfMonth();
+
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        InputStream employeeReportStream = getClass().getResourceAsStream("/templates/doc/recommended.jrxml");
+        JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
+        Map<String, Object> parameters = new HashMap<>();
+        parameters.put("logoPath", getClass().getResourceAsStream("/templates/image/logo.png"));
+        parameters.put("code", orderExportDTO.getCode());
+        parameters.put("deliverer", orderExportDTO.getCreater());
+        parameters.put("customer", orderExportDTO.getCustomer());
+        parameters.put("bookingDay", DataUtil.dateToString(orderExportDTO.getBookingDay()));
+        parameters.put("checkin",DataUtil.dateToString(orderExportDTO.getCheckIn()));
+        parameters.put("checkOut", DataUtil.dateToString(orderExportDTO.getCheckOut()));
+        parameters.put("day", day);
+        parameters.put("month", month);
+        parameters.put("year", year);
+        parameters.put("note", StringUtils.isNotBlank(orderExportDTO.getNote()) ? orderExportDTO.getNote() : "");
+        long total = orderExportDTO.getTotalMoney().longValue();
+        String totalPriceString = numToViet.num2String(total) + " đồng";
+        totalPriceString = totalPriceString.substring(0, 1).toUpperCase() + totalPriceString.substring(1);
+        //stringTotalPrice
+        parameters.put("stringTotalPrice", totalPriceString);
+        parameters.put("total", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
+        parameters.put("vat", DataUtil.currencyFormat(orderExportDTO.getVat()));
+        parameters.put("dataTable", new JRBeanCollectionDataSource(dataTable));
+        JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
+        JRDocxExporter export = new JRDocxExporter();
+        export.setExporterInput(new SimpleExporterInput(jasperPrint));
+        export.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
+        export.exportReport();
+        return new ByteArrayResource(baos.toByteArray());
     }
 
 }
