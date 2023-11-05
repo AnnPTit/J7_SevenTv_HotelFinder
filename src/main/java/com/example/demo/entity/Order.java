@@ -1,16 +1,11 @@
 package com.example.demo.entity;
 
+import com.example.demo.dto.CartDTO;
+import com.example.demo.dto.OrderDetailExport;
+import com.example.demo.dto.OrderExportDTO;
+import com.example.demo.dto.RoomResponeDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.FetchType;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.OneToMany;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -28,6 +23,49 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "`order`")
+@SqlResultSetMappings(
+        value = {
+                @SqlResultSetMapping(
+                        name = "orderResult",
+                        classes = {
+                                @ConstructorResult(
+                                        targetClass = OrderExportDTO.class,
+                                        columns = {
+                                                @ColumnResult(name = "code", type = String.class),
+                                                @ColumnResult(name = "creater", type = String.class),
+                                                @ColumnResult(name = "customer", type = String.class),
+                                                @ColumnResult(name = "bookingDay", type = Date.class),
+                                                @ColumnResult(name = "checkIn", type = Date.class),
+                                                @ColumnResult(name = "checkOut", type = Date.class),
+                                                @ColumnResult(name = "note", type = String.class),
+                                                @ColumnResult(name = "monneyCustom", type = BigDecimal.class),
+                                                @ColumnResult(name = "deposit", type = BigDecimal.class),
+                                                @ColumnResult(name = "vat", type = BigDecimal.class),
+                                                @ColumnResult(name = "totalMoney", type = BigDecimal.class),
+                                                @ColumnResult(name = "excessMoney", type = BigDecimal.class)
+                                        }
+                                ),
+                        }
+                ),
+                @SqlResultSetMapping(
+                        name = "orderDetailResult",
+                        classes = {
+                                @ConstructorResult(
+                                        targetClass = OrderDetailExport.class,
+                                        columns = {
+                                                @ColumnResult(name = "roomName", type = String.class),
+                                                @ColumnResult(name = "typeRoom", type = String.class),
+                                                @ColumnResult(name = "quantity", type = Integer.class),
+                                                @ColumnResult(name = "checkIn", type = Date.class),
+                                                @ColumnResult(name = "checkOut", type = Date.class),
+                                                @ColumnResult(name = "unitPrice", type = BigDecimal.class),
+                                                @ColumnResult(name = "totalPrice", type = BigDecimal.class)
+                                        }
+                                ),
+                        }
+                ),
+        }
+)
 public class Order {
 
     @Id

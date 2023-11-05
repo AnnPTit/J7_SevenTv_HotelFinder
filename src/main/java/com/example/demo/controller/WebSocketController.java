@@ -2,6 +2,8 @@ package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.PayloadObject;
+import com.example.demo.model.Mail;
+import com.example.demo.service.MailService;
 import com.example.demo.dto.RoomData;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
@@ -11,10 +13,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
+
 
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -37,6 +41,9 @@ public class WebSocketController {
     private final InformationCustomerService informationCustomerService;
 
     private final AccountService accountService;
+
+
+    private final MailService mailService;
 
     @AllArgsConstructor
     @NoArgsConstructor
@@ -72,7 +79,9 @@ public class WebSocketController {
             int randomNumber = random.nextInt(1000);
             Customer customer = customerService.findCustomerByEmail(payload.getUser().getEmail()).orElse(null);
             Customer newCustomer = new Customer();
+            boolean isNewCustom = false;
             if (customer == null) {
+                isNewCustom = true;
                 Date currentDate = new Date();
                 Calendar calendar = Calendar.getInstance();
                 calendar.setTime(currentDate);
@@ -153,6 +162,38 @@ public class WebSocketController {
             }
             informationCustomer.setOrderDetail(orderDetailList.get(0));
             informationCustomerService.add(informationCustomer);
+
+            // gửi mail
+            Mail mail = new Mail();
+            mail.setMailFrom("phamthanhanzwz@gmail.com");
+            mail.setMailTo(customer.getEmail());
+            String subject = "Đặt phòng thành công ! ";
+            String content = "Chúc mừng bạn đặt phòng thành công ! \n" +
+                    "Thông tin đơn hàng của bạn : \n" +
+                    "Mã hóa đơn : " + orderCode + "\n" +
+                    "Tên khách hàng : " + customer.getFullname() + "\n" +
+                    "Số điện thoại : " + customer.getPhoneNumber() + "\n" +
+                    "Ngày đặt : " + order.getCreateAt() + "\n" +
+                    "Ngày CheckIn : " + order.getBookingDateStart() + "\n" +
+                    "Ngày CheckOut : " + order.getBookingDateEnd() + "\n" +
+                    "Tổng tiền phòng tạm tính : " + order.getTotalMoney() + "\n" +
+                    "Số tiền phải cọc : " + order.getDeposit() + "\n" +
+                    "Chi tiết : ";
+            for (OrderDetail orderDetail : orderDetailList) {
+                content = content + "\n" +
+                        "- Phòng : " + orderDetail.getRoom().getRoomName() + "Số khách : " + orderDetail.getCustomerQuantity() + "\n";
+            }
+
+            if (isNewCustom) {
+                content = content + "\n Bạn vui lòng đăng nhập với thông tin sau để theo dõi đơn hàng : \n " +
+                        "Tên đăng nhập : " + customer.getEmail() + "\n" +
+                        "Mật khẩu : " + customer.getPassword() + "\n" +
+                        "Tại đường dẫn sau : http://localhost:3000/sign-in";
+            }
+            content = content + "\n Chúc bạn có một trải nghiệm tuyệt vời ! \n";
+            mail.setMailSubject(subject);
+            mail.setMailContent(content);
+            mailService.sendEmail(mail);
             return new Response("Đặt phòng thành công !", Constant.COMMON_STATUS.ACTIVE, idsRoom);
         } catch (Exception e) {
             e.printStackTrace();

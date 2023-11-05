@@ -2,6 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.dto.ConfirmOrderDTO;
 import com.example.demo.entity.Order;
+import net.sf.jasperreports.engine.JRException;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -44,5 +46,7 @@ public interface OrderService {
     BigDecimal getRevenueMonth();
 
     BigDecimal getRevenueYear();
+
+    ByteArrayResource exportRecommended(String order) throws JRException;
 
 }

@@ -19,7 +19,9 @@ import com.example.demo.service.OrderService;
 import com.example.demo.service.OrderTimelineService;
 import com.example.demo.service.PaymentMethodService;
 import com.example.demo.service.RoomService;
+import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -35,6 +37,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -155,6 +158,12 @@ public class OrderController {
     @GetMapping("/getRevenueYear")
     public BigDecimal getRevenueYear() {
         return orderService.getRevenueYear();
+    }
+
+    @GetMapping("/recommended/{orderId}")
+    public ResponseEntity<ByteArrayResource> exportRecommended(@PathVariable("orderId") String orderId)
+            throws JRException, IOException {
+        return new ResponseEntity<>(orderService.exportRecommended(orderId), HttpStatus.OK);
     }
 
     @GetMapping("/detail-info/{id}")
