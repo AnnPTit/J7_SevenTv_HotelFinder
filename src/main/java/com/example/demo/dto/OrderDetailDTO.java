@@ -36,7 +36,10 @@ public class OrderDetailDTO {
     private Integer overdueTime;
     private String note;
     private Date createAt;
+    private String createBy;
     private Date updateAt;
+    private String updatedBy;
+    private String deleted;
     private Integer status;
 
     private List<String> roomImages;

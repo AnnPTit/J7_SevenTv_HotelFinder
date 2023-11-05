@@ -184,7 +184,7 @@ public class OrderController {
 
     @PostMapping("/save")
     public ResponseEntity<Order> save(@RequestBody Order order) {
-        Account account = accountService.getAccountByCode();
+        Account account = accountService.findById(order.getAccount().getId());
         Customer customer = customerService.getCustomertByCode();
 
         LocalDate currentDate = LocalDate.now();
@@ -198,20 +198,23 @@ public class OrderController {
         order.setTotalMoney(BigDecimal.valueOf(0));
         order.setDeposit(BigDecimal.valueOf(0));
         order.setSurcharge(BigDecimal.valueOf(0));
+        order.setVat(BigDecimal.valueOf(0));
         order.setDiscount(BigDecimal.valueOf(0));
         order.setAccount(account);
         order.setCustomer(customer);
         order.setCreateAt(new Date());
+        order.setCreateBy(account.getFullname());
         order.setUpdateAt(new Date());
+        order.setUpdatedBy(account.getFullname());
         order.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
-        order.setNote("Tạo hóa đơn");
+        order.setNote(account.getFullname() + " tạo hóa đơn");
         orderService.add(order);
 
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
         orderTimeline.setAccount(order.getAccount());
         orderTimeline.setType(Constant.ORDER_TIMELINE.WAIT_CONFIRM);
-        orderTimeline.setNote("Nhân viên tạo hóa đơn");
+        orderTimeline.setNote(account.getFullname() + " tạo hóa đơn");
         orderTimeline.setCreateAt(new Date());
         orderTimelineService.add(orderTimeline);
 
@@ -291,7 +294,9 @@ public class OrderController {
         paymentMethod.setTotalMoney(order.getTotalMoney());
         paymentMethod.setNote(order.getNote());
         paymentMethod.setCreateAt(new Date());
+        paymentMethod.setCreateBy(order.getCreateBy());
         paymentMethod.setUpdateAt(new Date());
+        paymentMethod.setUpdatedBy(order.getUpdatedBy());
         paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
         paymentMethodService.add(paymentMethod);
 
@@ -300,7 +305,9 @@ public class OrderController {
         historyTransaction.setTotalMoney(order.getTotalMoney());
         historyTransaction.setNote(order.getNote());
         historyTransaction.setCreateAt(new Date());
+        historyTransaction.setCreateBy(order.getCreateBy());
         historyTransaction.setUpdateAt(new Date());
+        historyTransaction.setUpdatedBy(order.getUpdatedBy());
         historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
         historyTransactionService.add(historyTransaction);
 
@@ -316,7 +323,7 @@ public class OrderController {
 
     @PostMapping("/return/{id}")
     public ResponseEntity<Order> returnRoom(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
-        Account account = accountService.getAccountByCode();
+        Account account = accountService.findById(orderDTO.getAccount().getId());
         Customer customer = customerService.getCustomerById(orderDTO.getCustomerId());
 
         LocalDate currentDate = LocalDate.now();
@@ -336,7 +343,9 @@ public class OrderController {
         order.setAccount(account);
         order.setCustomer(customer);
         order.setCreateAt(new Date());
+        order.setCreateBy(account.getFullname());
         order.setUpdateAt(new Date());
+        order.setUpdatedBy(account.getFullname());
         order.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
         orderService.add(order);
 
@@ -371,7 +380,9 @@ public class OrderController {
         paymentMethod.setTotalMoney(order.getTotalMoney());
         paymentMethod.setNote(order.getNote());
         paymentMethod.setCreateAt(new Date());
+        paymentMethod.setCreateBy(account.getFullname());
         paymentMethod.setUpdateAt(new Date());
+        paymentMethod.setUpdatedBy(account.getFullname());
         paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
         paymentMethodService.add(paymentMethod);
 
@@ -380,7 +391,9 @@ public class OrderController {
         historyTransaction.setTotalMoney(order.getTotalMoney());
         historyTransaction.setNote(order.getNote());
         historyTransaction.setCreateAt(new Date());
+        historyTransaction.setCreateBy(account.getFullname());
         historyTransaction.setUpdateAt(new Date());
+        historyTransaction.setUpdatedBy(account.getFullname());
         historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
         historyTransactionService.add(historyTransaction);
 
@@ -400,14 +413,18 @@ public class OrderController {
     }
 
     @PutMapping("/delete/{id}")
-    public ResponseEntity<String> delete(@PathVariable("id") String id) {
+    public ResponseEntity<String> delete(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
         Order order = orderService.getOrderById(id);
         order.setStatus(Constant.ORDER_STATUS.CANCEL);
-        order.setNote("Hủy hóa đơn");
+        order.setDeleted(orderDTO.getDeleted());
+        order.setNote(orderDTO.getDeleted() + " hủy hóa đơn");
+        order.setUpdateAt(new Date());
         orderService.add(order);
 
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(id);
         for (OrderDetail orderDetail : orderDetails) {
+            orderDetail.setStatus(Constant.ORDER_DETAIL.CANCEL);
+            orderDetailService.add(orderDetail);
             Room room = orderDetail.getRoom();
             room.setStatus(Constant.ROOM.EMPTY);
             roomService.add(room);
@@ -427,6 +444,5 @@ public class OrderController {
     public ResponseEntity<ConfirmOrderDTO> confirmOrder(@RequestBody ConfirmOrderDTO confirmOrderDTO) {
         return new ResponseEntity<>(orderService.confirmOrder(confirmOrderDTO), HttpStatus.OK);
     }
-
 
 }
