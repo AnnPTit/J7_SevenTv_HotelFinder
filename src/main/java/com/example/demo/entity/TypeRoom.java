@@ -50,6 +50,12 @@ public class TypeRoom {
     @Column(name = "capacity")
     private Integer capacity;
 
+    @Column(name = "adult")
+    private Integer adult;
+
+    @Column(name = "children")
+    private Integer children;
+
     @Column(name = "note")
     private String note;
 

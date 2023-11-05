@@ -154,7 +154,9 @@ public class OrderDetailController {
         orderDetail.setRoomPrice(orderDetailDTO.getRoomPrice());
         orderDetail.setCustomerQuantity(orderDetailDTO.getCustomerQuantity());
         orderDetail.setCreateAt(new Date());
+        orderDetail.setCreateBy(orderDetailDTO.getCreateBy());
         orderDetail.setUpdateAt(new Date());
+        orderDetail.setUpdatedBy(orderDetailDTO.getUpdatedBy());
         orderDetail.setStatus(Constant.ORDER_DETAIL.WAIT_CONFIRM);
         orderDetailService.add(orderDetail);
 

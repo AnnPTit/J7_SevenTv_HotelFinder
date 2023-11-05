@@ -34,6 +34,7 @@ public class OrderDTO {
     private Integer status;
     private Customer customer;
     private Account account;
+    private String deleted;
     private List<OrderDetail> orderDetailList;
 
 }

@@ -205,7 +205,9 @@ public class PaymentMethodController {
                 paymentMethod.setTotalMoney(order.getTotalMoney());
                 paymentMethod.setNote(order.getNote());
                 paymentMethod.setCreateAt(new Date());
+                paymentMethod.setCreateBy(order.getCreateBy());
                 paymentMethod.setUpdateAt(new Date());
+                paymentMethod.setUpdatedBy(order.getUpdatedBy());
                 paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 paymentMethodService.add(paymentMethod);
 
@@ -214,7 +216,9 @@ public class PaymentMethodController {
                 historyTransaction.setTotalMoney(order.getTotalMoney());
                 historyTransaction.setNote(order.getNote());
                 historyTransaction.setCreateAt(new Date());
+                historyTransaction.setCreateBy(order.getCreateBy());
                 historyTransaction.setUpdateAt(new Date());
+                historyTransaction.setUpdatedBy(order.getUpdatedBy());
                 historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 historyTransactionService.add(historyTransaction);
 
@@ -417,7 +421,9 @@ public class PaymentMethodController {
                 paymentMethod.setTotalMoney(order.getTotalMoney());
                 paymentMethod.setNote(order.getNote());
                 paymentMethod.setCreateAt(new Date());
+                paymentMethod.setCreateBy(order.getCreateBy());
                 paymentMethod.setUpdateAt(new Date());
+                paymentMethod.setUpdatedBy(order.getUpdatedBy());
                 paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 paymentMethodService.add(paymentMethod);
 
@@ -426,7 +432,9 @@ public class PaymentMethodController {
                 historyTransaction.setTotalMoney(order.getTotalMoney());
                 historyTransaction.setNote(order.getNote());
                 historyTransaction.setCreateAt(new Date());
+                historyTransaction.setCreateBy(order.getCreateBy());
                 historyTransaction.setUpdateAt(new Date());
+                historyTransaction.setUpdatedBy(order.getUpdatedBy());
                 historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 historyTransactionService.add(historyTransaction);
 
@@ -476,7 +484,9 @@ public class PaymentMethodController {
                 paymentMethod.setTotalMoney(order.getDeposit());
                 paymentMethod.setNote(order.getNote());
                 paymentMethod.setCreateAt(new Date());
+                paymentMethod.setCreateBy(order.getCreateBy());
                 paymentMethod.setUpdateAt(new Date());
+                paymentMethod.setUpdatedBy(order.getUpdatedBy());
                 paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 paymentMethodService.add(paymentMethod);
 
@@ -485,7 +495,9 @@ public class PaymentMethodController {
                 historyTransaction.setTotalMoney(order.getDeposit());
                 historyTransaction.setNote(order.getNote());
                 historyTransaction.setCreateAt(new Date());
+                historyTransaction.setCreateBy(order.getCreateBy());
                 historyTransaction.setUpdateAt(new Date());
+                historyTransaction.setUpdatedBy(order.getUpdatedBy());
                 historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 historyTransactionService.add(historyTransaction);
 
