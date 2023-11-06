@@ -4,6 +4,7 @@ import com.example.demo.constant.Constant;
 import com.example.demo.dto.ConfirmOrderDTO;
 import com.example.demo.dto.OrderDetailExport;
 import com.example.demo.dto.OrderExportDTO;
+import com.example.demo.dto.RevenueDTO;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderTimeline;
@@ -76,13 +77,18 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public Page<Order> loadBookRoomOffline(String orderCode, Pageable pageable) {
-        return orderRepository.loadBookRoomOffline((orderCode != null && !orderCode.isEmpty()) ? orderCode : null, pageable);
+    public Page<Order> loadBookRoomOnline(String orderCode, String customerFullname, String customerPhone, String customerEmail, Integer status, Pageable pageable) {
+        return orderRepository.loadBookRoomOnline((orderCode != null && !orderCode.isEmpty()) ? orderCode : null,
+                (customerFullname != null && !customerFullname.isEmpty()) ? customerFullname : null,
+                (customerPhone != null && !customerPhone.isEmpty()) ? customerPhone : null,
+                (customerEmail != null && !customerEmail.isEmpty()) ? customerEmail : null,
+                (status != null && !status.toString().isEmpty()) ? status : null, pageable);
     }
 
     @Override
-    public Page<Order> loadBookRoomOnline(String orderCode, Pageable pageable) {
-        return orderRepository.loadBookRoomOnline(orderCode, pageable);
+    public Page<Order> loadBookRoomOffline(String orderCode, Integer status, Pageable pageable) {
+        return orderRepository.loadBookRoomOffline((orderCode != null && !orderCode.isEmpty()) ? orderCode : null,
+                (status != null && !status.toString().isEmpty()) ? status : null, pageable);
     }
 
     @Override
@@ -219,6 +225,11 @@ public class OrderServiceImpl implements OrderService {
         export.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
         export.exportReport();
         return new ByteArrayResource(baos.toByteArray());
+    }
+
+    @Override
+    public List<RevenueDTO> getRevenue() {
+        return orderRepository.getRevenue();
     }
 
 }

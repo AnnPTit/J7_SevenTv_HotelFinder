@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.ConfirmOrderDTO;
 import com.example.demo.dto.OrderDTO;
+import com.example.demo.dto.RevenueDTO;
 import com.example.demo.entity.Account;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.HistoryTransaction;
@@ -107,16 +108,18 @@ public class OrderController {
 
     @GetMapping("/loadBookRoomOffline")
     public Page<Order> loadBookRoomOffline(@RequestParam(name = "key", defaultValue = "") String key,
+                                           @RequestParam(name = "status", defaultValue = "") Integer status,
                                            @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        return orderService.loadBookRoomOffline(key, pageable);
+        return orderService.loadBookRoomOffline(key, status, pageable);
     }
 
     @GetMapping("/loadBookRoomOnline")
     public Page<Order> loadBookRoomOnline(@RequestParam(name = "key", defaultValue = "") String key,
+                                          @RequestParam(name = "status", defaultValue = "") Integer status,
                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        return orderService.loadBookRoomOnline(key, pageable);
+        return orderService.loadBookRoomOnline(key, key, key, key, status, pageable);
     }
 
     @GetMapping("/loadByStatus")
@@ -128,6 +131,11 @@ public class OrderController {
     @GetMapping("/getList")
     public List<Order> getList() {
         return orderService.getList();
+    }
+
+    @GetMapping("/getRevenue")
+    public List<RevenueDTO> getRevenue() {
+        return orderService.getRevenue();
     }
 
     @GetMapping("/countByCancel")

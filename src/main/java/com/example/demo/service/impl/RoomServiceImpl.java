@@ -204,4 +204,9 @@ public class RoomServiceImpl implements RoomService {
         return cartDTOS;
     }
 
+    @Override
+    public List<Room> getTopRoom() {
+        return roomRepository.getTopRoom();
+    }
+
 }

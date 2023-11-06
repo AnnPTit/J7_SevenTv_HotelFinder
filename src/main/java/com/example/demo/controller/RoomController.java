@@ -86,6 +86,11 @@ public class RoomController {
         return roomService.getAll(pageable);
     }
 
+    @GetMapping("/topRoom")
+    public List<Room> getTopRoom() {
+        return roomService.getTopRoom();
+    }
+
     @GetMapping("/room-plan")
     public List<List<RoomDTO>> getRoomsByFloorsAscendingOrder() {
         List<List<RoomDTO>> roomDTOS = new ArrayList<>();

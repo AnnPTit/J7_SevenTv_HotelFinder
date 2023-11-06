@@ -3,11 +3,14 @@ package com.example.demo.repository.custom.impl;
 import com.example.demo.dto.CartDTO;
 import com.example.demo.dto.OrderDetailExport;
 import com.example.demo.dto.OrderExportDTO;
+import com.example.demo.dto.RevenueDTO;
 import com.example.demo.repository.custom.OrderRepositoryCustom;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.List;
 
 public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
@@ -64,4 +67,25 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
         List<OrderDetailExport> result = query.getResultList();
         return result;
     }
+
+    @Override
+    public List<RevenueDTO> getRevenue() {
+        String sql = "SELECT EXTRACT(MONTH FROM update_at) AS month, EXTRACT(YEAR FROM update_at) AS year, SUM(total_money) AS revenue\n" +
+                "FROM `order` GROUP BY EXTRACT(YEAR FROM update_at), EXTRACT(MONTH FROM update_at)\n" +
+                "ORDER BY EXTRACT(YEAR FROM update_at), EXTRACT(MONTH FROM update_at)";
+
+        Query query = entityManager.createNativeQuery(sql);
+        List<Object[]> rows = query.getResultList();
+
+        List<RevenueDTO> resultList = new ArrayList<>();
+        for (Object[] row : rows) {
+            RevenueDTO dto = new RevenueDTO();
+            dto.setMonth((Integer) row[0]);
+            dto.setYear((Integer) row[1]);
+            dto.setRevenue((BigDecimal) row[2]);
+            resultList.add(dto);
+        }
+        return resultList;
+    }
+
 }
