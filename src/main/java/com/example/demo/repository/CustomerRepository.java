@@ -35,9 +35,9 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
     List<Customer> findByCitizenId(@Param("citizenId") String citizenId);
 
     @Query(value = "SELECT * FROM customer " +
-            " WHERE status = 1 AND ((:customerCode IS NULL OR customer_code = :customerCode) " +
+            " WHERE ((:customerCode IS NULL OR customer_code = :customerCode) " +
             " OR (:fullname IS NULL OR fullname LIKE CONCAT('%', :fullname ,'%')) " +
-            " OR (:phoneNumber IS NULL OR phone_number = :phoneNumber))\n", nativeQuery = true)
+            " OR (:phoneNumber IS NULL OR phone_number = :phoneNumber)) AND status = 1 ORDER BY update_at DESC \n", nativeQuery = true)
     Page<Customer> loadAndSearch(@Param("customerCode") String customerCode,
                                  @Param("fullname") String fullname,
                                  @Param("phoneNumber") String phoneNumber,
