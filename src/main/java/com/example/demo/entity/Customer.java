@@ -48,7 +48,7 @@ public class Customer {
 
     @Column(name = "password")
 //    @Size(min = 5, max = 20, message = "Password phải từ 5-20 kí ")
-//    @NotBlank(message = "Password không được bỏ trống")
+    @NotBlank(message = "Password không được bỏ trống")
     private String password;
 
     @Column(name = "fullname")
