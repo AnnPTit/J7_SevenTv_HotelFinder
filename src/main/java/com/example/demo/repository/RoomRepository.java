@@ -136,4 +136,9 @@ public interface RoomRepository extends JpaRepository<Room, String>, RoomReposit
     @Query("SELECT r FROM Room r WHERE r.floor.id = :floorId")
     List<Room> getRoomsByFloorId(String floorId);
 
+    @Query(value = "SELECT r FROM Room r LEFT JOIN r.photoList p" +
+            " LEFT JOIN r.orderDetailList od GROUP BY r.id, r.roomName, p.url" +
+            " ORDER BY COUNT(od.room.id) DESC")
+    List<Room> getTopRoom();
+
 }

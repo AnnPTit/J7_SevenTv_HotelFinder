@@ -1,7 +1,10 @@
 package com.example.demo.repository;
 
+import com.example.demo.dto.RevenueDTO;
 import com.example.demo.entity.Order;
 import com.example.demo.repository.custom.OrderRepositoryCustom;
+import jakarta.persistence.EntityManager;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -11,6 +14,7 @@ import org.springframework.stereotype.Repository;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Repository
 public interface OrderRepository extends JpaRepository<Order, String> , OrderRepositoryCustom {
@@ -39,15 +43,27 @@ public interface OrderRepository extends JpaRepository<Order, String> , OrderRep
                               @Param("endDate") Date endDate,
                               Pageable pageable);
 
-    @Query(value = "SELECT * FROM `order` " +
-            "WHERE (:orderCode IS NULL OR order_code LIKE CONCAT('%', :orderCode, '%'))" +
-            " AND type_of_order = 1 ORDER BY update_at DESC", nativeQuery = true)
-    Page<Order> loadBookRoomOffline(@Param("orderCode") String orderCode, Pageable pageable);
+    @Query(value = "SELECT * FROM `order` ORDER BY create_at DESC", nativeQuery = true)
+    List<Order> findAll();
 
-    @Query(value = "SELECT * FROM `order` " +
-            "WHERE (:orderCode IS NULL OR order_code LIKE CONCAT('%', :orderCode, '%'))" +
-            " AND type_of_order = 0 ORDER BY update_at DESC", nativeQuery = true)
-    Page<Order> loadBookRoomOnline(@Param("orderCode") String orderCode, Pageable pageable);
+    @Query(value = "SELECT o.* FROM `order` o " +
+            "JOIN customer c ON o.customer_id = c.id\n" +
+            "WHERE ((:orderCode IS NULL OR o.order_code LIKE CONCAT('%', :orderCode, '%'))" +
+            "OR (:customerFullname IS NULL OR c.fullname LIKE CONCAT('%', :customerFullname, '%'))" +
+            "OR (:customerPhone IS NULL OR c.phone_number LIKE CONCAT('%', :customerPhone, '%'))" +
+            "OR (:customerEmail IS NULL OR c.email LIKE CONCAT('%', :customerEmail, '%')))\n" +
+            " AND o.type_of_order = 0 AND (:status IS NULL OR o.status = :status) ORDER BY o.update_at DESC", nativeQuery = true)
+    Page<Order> loadBookRoomOnline(@Param("orderCode") String orderCode,
+                                    @Param("customerFullname") String customerFullname,
+                                    @Param("customerPhone") String customerPhone,
+                                    @Param("customerEmail") String customerEmail,
+                                    @Param("status") Integer status, Pageable pageable);
+
+    @Query(value = "SELECT * FROM `order` o " +
+            "WHERE (:orderCode IS NULL OR o.order_code LIKE CONCAT('%', :orderCode, '%'))" +
+            " AND o.type_of_order = 1 AND (:status IS NULL OR o.status = :status) ORDER BY o.update_at DESC", nativeQuery = true)
+    Page<Order> loadBookRoomOffline(@Param("orderCode") String orderCode,
+                                   @Param("status") Integer status, Pageable pageable);
 
     @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 0")
     Long countOrderCancel();

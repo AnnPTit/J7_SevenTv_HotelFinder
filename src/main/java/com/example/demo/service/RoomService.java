@@ -27,7 +27,6 @@ public interface RoomService {
 
     Page<Room> loadAndSearchForHome(String roomCode, String roomName, String floorId, String typeRoomId, String id, Pageable pageable);
 
-
     List<Room> findRoomsByFilters(
             String roomName, String typeRoomCode,
             BigDecimal startPrice,
@@ -40,7 +39,6 @@ public interface RoomService {
     Page<Room> findRoomsOrderByOrderDetailCountDesc(Pageable pageable);
 
     List<Room> loadAndSearchBookRoom(String roomCode, String roomName, String floorId, String typeRoomId, BigDecimal start, BigDecimal end, Date dayStart, Date dayEnd);
-
 
     Room getRoomById(String id);
 
@@ -57,5 +55,7 @@ public interface RoomService {
     List<List<Room>> getRoomsByAllFloors();
 
     List<CartDTO> getCart(String customId, Integer odStt);
+
+    List<Room> getTopRoom();
 
 }

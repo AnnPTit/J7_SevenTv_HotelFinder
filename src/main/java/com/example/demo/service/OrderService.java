@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.ConfirmOrderDTO;
+import com.example.demo.dto.RevenueDTO;
 import com.example.demo.entity.Order;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.ByteArrayResource;
@@ -21,9 +22,9 @@ public interface OrderService {
 
     Page<Order> loadAndSearch(String orderCode, Boolean typeOfOrder, Integer status, String customerFullname, Date startDate, Date endDate, Pageable pageable);
 
-    Page<Order> loadBookRoomOffline(String orderCode, Pageable pageable);
+    Page<Order> loadBookRoomOnline(String orderCode, String customerFullname, String customerPhone, String customerEmail, Integer status, Pageable pageable);
 
-    Page<Order> loadBookRoomOnline(String orderCode, Pageable pageable);
+    Page<Order> loadBookRoomOffline(String orderCode, Integer status, Pageable pageable);
 
     Order getOrderById(String id);
 
@@ -48,5 +49,7 @@ public interface OrderService {
     BigDecimal getRevenueYear();
 
     ByteArrayResource exportRecommended(String order) throws JRException;
+
+    List<RevenueDTO> getRevenue();
 
 }
