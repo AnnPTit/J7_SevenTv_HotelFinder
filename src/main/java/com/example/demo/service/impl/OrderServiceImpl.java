@@ -8,6 +8,7 @@ import com.example.demo.dto.RevenueDTO;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderTimeline;
+import com.example.demo.errors.BadRequestAlertException;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.OrderTimelineRepository;
@@ -33,10 +34,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -142,6 +140,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ConfirmOrderDTO confirmOrder(ConfirmOrderDTO confirmOrderDTO) {
+
+        // kiểm tra căn cước công dân trùng nhau
+        Customer customer1 = customerRepository.findByCitizenId(confirmOrderDTO.getCitizenId()).get(0);
+        if (!Objects.isNull(customer1)) {
+            throw new BadRequestAlertException("Căn cước công dân không được để trống !", "Order", "Confirm");
+        }
         // Cập nhật trạng thái order
         Order order = orderRepository.getById(confirmOrderDTO.getOrderId());
         order.setStatus(Constant.ORDER_STATUS.WAIT_PAYMENT);
@@ -205,7 +209,7 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("deliverer", orderExportDTO.getCreater());
         parameters.put("customer", orderExportDTO.getCustomer());
         parameters.put("bookingDay", DataUtil.dateToString(orderExportDTO.getBookingDay()));
-        parameters.put("checkin",DataUtil.dateToString(orderExportDTO.getCheckIn()));
+        parameters.put("checkin", DataUtil.dateToString(orderExportDTO.getCheckIn()));
         parameters.put("checkOut", DataUtil.dateToString(orderExportDTO.getCheckOut()));
         parameters.put("day", day);
         parameters.put("month", month);

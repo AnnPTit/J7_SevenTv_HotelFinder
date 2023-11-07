@@ -31,7 +31,8 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
 
     Optional<Customer> findByEmail(String email);
 
-    Customer findByCitizenId(String citizenId);
+    @Query(value = "select * from customer c where c.citizen_id =:citizenId and status =1 ",nativeQuery = true)
+    List<Customer> findByCitizenId(@Param("citizenId") String citizenId);
 
     @Query(value = "SELECT * FROM customer " +
             " WHERE status = 1 AND ((:customerCode IS NULL OR customer_code = :customerCode) " +

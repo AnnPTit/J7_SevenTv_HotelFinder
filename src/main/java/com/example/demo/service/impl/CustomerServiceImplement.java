@@ -90,7 +90,7 @@ public class CustomerServiceImplement implements CustomerService {
 
     @Override
     public Customer findByCitizenId(String citizenId) {
-        return customerRepository.findByCitizenId(citizenId);
+        return customerRepository.findByCitizenId(citizenId).get(0);
     }
 
     @Override
