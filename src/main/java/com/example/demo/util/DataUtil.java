@@ -7,6 +7,7 @@ import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
 import java.util.Date;
 
 public class DataUtil {
@@ -62,4 +63,27 @@ public class DataUtil {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         return dateFormat.format(date);
     }
+
+    public static boolean isInOneMonth(Date date) {
+        // Lấy ngày hôm nay
+        Date today = new Date();
+
+        // Tạo một Calendar để tính toán thời gian
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(today);
+
+        // Tính ngày sau 1 tháng
+        calendar.add(Calendar.MONTH, 1);
+        Date oneMonthFromNow = calendar.getTime();
+
+        // Kiểm tra xem date có nằm trong khoảng 1 tháng từ ngày hiện tại trở đi
+        if (date.after(today) && date.before(oneMonthFromNow)) {
+            return true;
+        } else if (date.equals(today) || date.equals(oneMonthFromNow)) {
+            return true;
+        } else {
+            return false;
+        }
+    }
+
 }
