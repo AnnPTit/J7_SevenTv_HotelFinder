@@ -61,6 +61,11 @@ public class WebSocketController {
             ObjectMapper objectMapper = new ObjectMapper();
             PayloadObject payload = objectMapper.readValue(message, PayloadObject.class);
             System.out.println(payload);
+            // Kiểm tra ngày đặt nằm trong khoảng 1 tháng tới
+            if (!DataUtil.isInOneMonth(payload.getDayStart())) {
+                return new Response("Vui lòng đặt phòng trong vòng 30 ngày !",
+                        Constant.COMMON_STATUS.UNACTIVE, null);
+            }
             // Kiểm tra ngày đặt đã trùng
             List<String> idsRoom = payload.getRooms().stream()
                     .map(RoomData::getId)
@@ -181,7 +186,7 @@ public class WebSocketController {
                     "Chi tiết : ";
             for (OrderDetail orderDetail : orderDetailList) {
                 content = content + "\n" +
-                        "- Phòng : " + orderDetail.getRoom().getRoomName() + "Số khách : " + orderDetail.getCustomerQuantity() + "\n";
+                        "- Phòng : " + orderDetail.getRoom().getRoomName() + " \nSố khách : " + orderDetail.getCustomerQuantity() + "\n";
             }
 
             if (isNewCustom) {
