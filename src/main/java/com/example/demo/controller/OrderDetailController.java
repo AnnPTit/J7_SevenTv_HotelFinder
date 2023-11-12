@@ -15,6 +15,7 @@ import com.example.demo.service.OrderDetailService;
 import com.example.demo.service.OrderService;
 import com.example.demo.service.RoomService;
 import com.example.demo.service.ServiceUsedSerivce;
+import com.example.demo.util.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -135,7 +136,7 @@ public class OrderDetailController {
         System.out.println(dayEnd);
         String id = orderDetailDTO.getRoom().getId();
         System.out.println(id);
-        List<String> list = orderDetailService.checkRoomExist(dayStart, dayEnd, id);
+        List<String> list = orderDetailService.checkRoomExist(DataUtil.toLocalDateTime(dayStart), DataUtil.toLocalDateTime(dayEnd), id);
         System.out.println(list.toString());
         if (!list.isEmpty()) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

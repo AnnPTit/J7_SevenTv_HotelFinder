@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -29,12 +30,12 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public List<String> checkRoomIsBooked(Date dayStart, Date dayEnd, List<String> idsRoom) {
+    public List<String> checkRoomIsBooked(LocalDateTime dayStart, LocalDateTime dayEnd, List<String> idsRoom) {
         return orderDetailRepository.checkRoomIsBooked(dayStart, dayEnd, idsRoom);
     }
 
     @Override
-    public List<String> checkRoomExist(Date dayStart, Date dayEnd, String id) {
+    public List<String> checkRoomExist(LocalDateTime dayStart, LocalDateTime dayEnd, String id) {
         return orderDetailRepository.checkRoomExist(dayStart, dayEnd, id);
     }
 

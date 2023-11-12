@@ -142,9 +142,25 @@ public class OrderServiceImpl implements OrderService {
     public ConfirmOrderDTO confirmOrder(ConfirmOrderDTO confirmOrderDTO) {
 
         // kiểm tra căn cước công dân trùng nhau
-        Customer customer1 = customerRepository.findByCitizenId(confirmOrderDTO.getCitizenId()).get(0);
-        if (!Objects.isNull(customer1)) {
-            throw new BadRequestAlertException("Căn cước công dân không được để trống !", "Order", "Confirm");
+        Customer customer1 = customerRepository.getCustomerById(confirmOrderDTO.getCustomerId());
+        // Kiểm tra trống
+        if (customer1.getCitizenId().equals(Constant.citizenId) &&
+                DataUtil.isNull(confirmOrderDTO.getCitizenId())) {
+            ConfirmOrderDTO confirmOrderDTO1 = new ConfirmOrderDTO();
+            confirmOrderDTO1.setMessage("Căn cước công dân không được để trống !");
+            return confirmOrderDTO1;
+        }
+        // kiểm tra định dạng
+        if (!confirmOrderDTO.getCitizenId().matches("\\d{12}")) {
+            ConfirmOrderDTO confirmOrderDTO1 = new ConfirmOrderDTO();
+            confirmOrderDTO1.setMessage("Căn cước công dân không đúng định dạng !");
+            return confirmOrderDTO1;
+        }
+        if (customer1.getCitizenId().equals(Constant.citizenId) && customer1.getCitizenId().equals(confirmOrderDTO.getCitizenId())) {
+            // kiểm tra -> không được trùng
+            ConfirmOrderDTO confirmOrderDTO1 = new ConfirmOrderDTO();
+            confirmOrderDTO1.setMessage("Căn cước công dân không được trùng nhau !");
+            return confirmOrderDTO1;
         }
         // Cập nhật trạng thái order
         Order order = orderRepository.getById(confirmOrderDTO.getOrderId());
