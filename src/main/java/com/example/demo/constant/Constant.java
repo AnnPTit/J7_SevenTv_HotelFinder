@@ -34,6 +34,11 @@ public class Constant {
         public static Integer ACTIVE = 1;
     }
 
+    public static final class MESSAGE_STATUS {
+        public static Integer ERROR = 0;
+        public static Integer SUCCESS = 1;
+    }
+
     public static final class ORDER_TIMELINE {
         public static Integer CANCEL = 0;
         public static Integer WAIT_CONFIRM = 1;

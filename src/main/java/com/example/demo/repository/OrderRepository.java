@@ -4,10 +4,12 @@ import com.example.demo.dto.RevenueDTO;
 import com.example.demo.entity.Order;
 import com.example.demo.repository.custom.OrderRepositoryCustom;
 import jakarta.persistence.EntityManager;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -17,7 +19,7 @@ import java.util.Date;
 import java.util.List;
 
 @Repository
-public interface OrderRepository extends JpaRepository<Order, String> , OrderRepositoryCustom {
+public interface OrderRepository extends JpaRepository<Order, String>, OrderRepositoryCustom {
 
     @Query(value = "select * from `order` ORDER BY update_at DESC", nativeQuery = true)
     Page<Order> findAll(Pageable pageable);
@@ -54,16 +56,16 @@ public interface OrderRepository extends JpaRepository<Order, String> , OrderRep
             "OR (:customerEmail IS NULL OR c.email LIKE CONCAT('%', :customerEmail, '%')))\n" +
             " AND o.type_of_order = 0 AND (:status IS NULL OR o.status = :status) ORDER BY o.update_at DESC", nativeQuery = true)
     Page<Order> loadBookRoomOnline(@Param("orderCode") String orderCode,
-                                    @Param("customerFullname") String customerFullname,
-                                    @Param("customerPhone") String customerPhone,
-                                    @Param("customerEmail") String customerEmail,
-                                    @Param("status") Integer status, Pageable pageable);
+                                   @Param("customerFullname") String customerFullname,
+                                   @Param("customerPhone") String customerPhone,
+                                   @Param("customerEmail") String customerEmail,
+                                   @Param("status") Integer status, Pageable pageable);
 
     @Query(value = "SELECT * FROM `order` o " +
             "WHERE (:orderCode IS NULL OR o.order_code LIKE CONCAT('%', :orderCode, '%'))" +
             " AND o.type_of_order = 1 AND (:status IS NULL OR o.status = :status) ORDER BY o.update_at DESC", nativeQuery = true)
     Page<Order> loadBookRoomOffline(@Param("orderCode") String orderCode,
-                                   @Param("status") Integer status, Pageable pageable);
+                                    @Param("status") Integer status, Pageable pageable);
 
     @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 0")
     Long countOrderCancel();
@@ -90,5 +92,10 @@ public interface OrderRepository extends JpaRepository<Order, String> , OrderRep
     @Query(value = "SELECT SUM(total_money) FROM `order` " +
             "WHERE YEAR(update_at) = YEAR(CURRENT_DATE()) AND `status` = 3", nativeQuery = true)
     BigDecimal getRevenueYear();
+
+    @Modifying
+    @Transactional
+    @Query(value = "update `order` o set o.status = :stt where o.id =:id", nativeQuery = true)
+    void updateStatus(@Param("id") String id, @Param("stt") Integer stt);
 
 }
