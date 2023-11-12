@@ -34,6 +34,8 @@ public class HomeController {
     private TypeRoomService typeRoomService;
     @Autowired
     private ComboService comboService;
+    @Autowired
+    private HomeService homeService;
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -148,6 +150,11 @@ public class HomeController {
     @PostMapping("/login")
     public ResponseEntity<Customer> login(@RequestBody CustomerLoginDTO customerLoginDTO) {
         return new ResponseEntity<>(customerService.login(customerLoginDTO), HttpStatus.OK);
+    }
+
+    @PostMapping("/order/cancel/{code}/{oddStt}")
+    public ResponseEntity<Message> cancelOrder(@PathVariable("code") String code , @PathVariable("oddStt") Integer oddStt) {
+        return new ResponseEntity<>(homeService.cancelOrder(code,oddStt), HttpStatus.OK);
     }
 
 

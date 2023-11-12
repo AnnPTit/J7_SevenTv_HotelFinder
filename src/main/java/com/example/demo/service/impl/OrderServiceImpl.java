@@ -254,4 +254,14 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.getRevenue();
     }
 
+    @Override
+    public void refuse(String id, Integer stt) {
+         orderRepository.updateStatus(id, stt);
+    }
+
+    @Override
+    public void cancel(String id, Integer stt) {
+         orderRepository.updateStatus(id, stt);
+    }
+
 }

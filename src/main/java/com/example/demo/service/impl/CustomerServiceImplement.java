@@ -19,7 +19,8 @@ import java.util.Optional;
 public class CustomerServiceImplement implements CustomerService {
 
     @Autowired
-    CustomerRepository customerRepository;
+    private  CustomerRepository customerRepository;
+
 
     @Autowired
     private PasswordEncoder passwordEncoder;
@@ -146,5 +147,6 @@ public class CustomerServiceImplement implements CustomerService {
         return customer;
 
     }
+
 
 }
