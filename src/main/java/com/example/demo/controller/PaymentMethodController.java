@@ -173,9 +173,9 @@ public class PaymentMethodController {
     public ResponseEntity<String> vnPayDone(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Xác định xem thanh toán đã thành công hay chưa
         String vnp_ResponseCode = request.getParameter("vnp_ResponseCode");
+        String orderId = request.getParameter("vnp_TxnRef"); // Lấy mã đơn hàng từ VNPay
         if (vnp_ResponseCode != null && vnp_ResponseCode.equals("00")) { // Mã 00 thường tượng trưng cho thanh toán thành công
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
-            String orderId = request.getParameter("vnp_TxnRef"); // Lấy mã đơn hàng từ VNPay
             Order order = orderService.getOrderById(orderId);
             if (order != null) {
                 order.setMoneyGivenByCustomer(order.getTotalMoney().subtract(order.getDeposit()));
@@ -187,6 +187,8 @@ public class PaymentMethodController {
 
                 List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
                 for (OrderDetail orderDetail : orderDetails) {
+                    orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_OUT);
+                    orderDetailService.add(orderDetail);
                     Room room = orderDetail.getRoom();
                     room.setStatus(Constant.ROOM.EMPTY);
                     roomService.add(room);
@@ -234,6 +236,8 @@ public class PaymentMethodController {
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         } else {
+            String redirectUrl = "http://localhost:3000/room-service?id=" + orderId;
+            response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         }
     }
@@ -252,7 +256,7 @@ public class PaymentMethodController {
         json.put("accessKey", accessKey);
         json.put("requestId", String.valueOf(System.currentTimeMillis()));
         json.put("amount", amount.toString());
-        json.put("orderId", order.getId());
+        json.put("orderId", order.getId() + generateRandomNumber(1, 100));
         json.put("orderInfo", "Thanh toan don hang #" + order.getOrderCode());
         json.put("returnUrl", returnUrl);
         json.put("notifyUrl", notifyUrl);
@@ -389,9 +393,12 @@ public class PaymentMethodController {
     @GetMapping("/payment-momo/success")
     public ResponseEntity<String> paymentMomoSuccess(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String errorCode = request.getParameter("errorCode");
+        String orderId = request.getParameter("orderId"); // Lấy mã đơn hàng từ VNPay
+        if (orderId.length() > 36) {
+            orderId = orderId.substring(0, 36);
+        }
         if (errorCode != null && errorCode.equals("0")) { // Mã 00 thường tượng trưng cho thanh toán thành công
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
-            String orderId = request.getParameter("orderId"); // Lấy mã đơn hàng từ VNPay
             Order order = orderService.getOrderById(orderId);
             if (order != null) {
                 order.setMoneyGivenByCustomer(order.getTotalMoney().subtract(order.getDeposit()));
@@ -403,6 +410,8 @@ public class PaymentMethodController {
 
                 List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
                 for (OrderDetail orderDetail : orderDetails) {
+                    orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_OUT);
+                    orderDetailService.add(orderDetail);
                     Room room = orderDetail.getRoom();
                     room.setStatus(Constant.ROOM.EMPTY);
                     roomService.add(room);
@@ -451,7 +460,9 @@ public class PaymentMethodController {
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         } else {
             // Thanh toán không thành công, xử lý theo logic của bạn
-            return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
+            String redirectUrl = "http://localhost:3000/room-service?id=" + orderId;
+            response.sendRedirect(redirectUrl);
+            return ResponseEntity.ok("Payment failed. Back to page.");
         }
     }
 
