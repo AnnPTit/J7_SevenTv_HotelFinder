@@ -3,6 +3,7 @@ package com.example.demo.constant;
 import java.net.URI;
 
 public class Constant {
+    public static final String citizenId = "034203007140";
 
     public static final class ORDER_STATUS {
         public static Integer CANCEL = 0;

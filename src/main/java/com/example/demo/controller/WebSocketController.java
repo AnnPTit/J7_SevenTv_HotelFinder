@@ -104,7 +104,7 @@ public class WebSocketController {
                 String customerCode = "KH" + randomNumber;
                 newCustomer.setCustomerCode(customerCode);
                 newCustomer.setUsername(customerCode);
-                newCustomer.setCitizenId("034203007140");
+                newCustomer.setCitizenId(Constant.citizenId);
                 newCustomer.setBirthday(birthDate);
                 newCustomer.setDistricts("N/A");
                 newCustomer.setStatus(Constant.COMMON_STATUS.ACTIVE);

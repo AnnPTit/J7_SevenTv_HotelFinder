@@ -87,7 +87,6 @@ public class DataUtil {
     }
 
     public static LocalDateTime toLocalDateTime(Date date) {
-
         // Chuyển đổi thành ZonedDateTime
         ZonedDateTime zonedDateTime = ZonedDateTime.of(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), ZoneId.systemDefault());
 
@@ -95,6 +94,16 @@ public class DataUtil {
         ZoneId zoneId = zonedDateTime.getZone();
         System.out.println("Múi giờ của LocalDateTime là: " + zoneId);
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+    }
+
+    public static boolean isNull(Object obj) {
+        if (obj == null) {
+            return true;
+        }
+        if (obj.equals("")) {
+            return true;
+        }
+        return false;
     }
 
 }

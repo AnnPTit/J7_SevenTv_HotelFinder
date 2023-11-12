@@ -15,4 +15,5 @@ public class ConfirmOrderDTO {
     private String nation;
     private String orderId;
     private String customerId;
+    private String message;
 }
