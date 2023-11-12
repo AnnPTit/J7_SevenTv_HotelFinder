@@ -31,12 +31,13 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
 
     Optional<Customer> findByEmail(String email);
 
-    Customer findByCitizenId(String citizenId);
+    @Query(value = "select * from customer c where c.citizen_id =:citizenId and status =1 ",nativeQuery = true)
+    List<Customer> findByCitizenId(@Param("citizenId") String citizenId);
 
     @Query(value = "SELECT * FROM customer " +
-            " WHERE status = 1 AND ((:customerCode IS NULL OR customer_code = :customerCode) " +
+            " WHERE ((:customerCode IS NULL OR customer_code = :customerCode) " +
             " OR (:fullname IS NULL OR fullname LIKE CONCAT('%', :fullname ,'%')) " +
-            " OR (:phoneNumber IS NULL OR phone_number = :phoneNumber))\n", nativeQuery = true)
+            " OR (:phoneNumber IS NULL OR phone_number = :phoneNumber)) AND status = 1 ORDER BY update_at DESC \n", nativeQuery = true)
     Page<Customer> loadAndSearch(@Param("customerCode") String customerCode,
                                  @Param("fullname") String fullname,
                                  @Param("phoneNumber") String phoneNumber,

@@ -8,6 +8,7 @@ import com.example.demo.dto.RevenueDTO;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderTimeline;
+import com.example.demo.errors.BadRequestAlertException;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.OrderTimelineRepository;
@@ -33,10 +34,7 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.ZonedDateTime;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 @Service
 @RequiredArgsConstructor
@@ -142,6 +140,28 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public ConfirmOrderDTO confirmOrder(ConfirmOrderDTO confirmOrderDTO) {
+
+        // kiểm tra căn cước công dân trùng nhau
+        Customer customer1 = customerRepository.getCustomerById(confirmOrderDTO.getCustomerId());
+        // Kiểm tra trống
+        if (customer1.getCitizenId().equals(Constant.citizenId) &&
+                DataUtil.isNull(confirmOrderDTO.getCitizenId())) {
+            ConfirmOrderDTO confirmOrderDTO1 = new ConfirmOrderDTO();
+            confirmOrderDTO1.setMessage("Căn cước công dân không được để trống !");
+            return confirmOrderDTO1;
+        }
+        // kiểm tra định dạng
+        if (!confirmOrderDTO.getCitizenId().matches("\\d{12}")) {
+            ConfirmOrderDTO confirmOrderDTO1 = new ConfirmOrderDTO();
+            confirmOrderDTO1.setMessage("Căn cước công dân không đúng định dạng !");
+            return confirmOrderDTO1;
+        }
+        if (customer1.getCitizenId().equals(Constant.citizenId) && customer1.getCitizenId().equals(confirmOrderDTO.getCitizenId())) {
+            // kiểm tra -> không được trùng
+            ConfirmOrderDTO confirmOrderDTO1 = new ConfirmOrderDTO();
+            confirmOrderDTO1.setMessage("Căn cước công dân không được trùng nhau !");
+            return confirmOrderDTO1;
+        }
         // Cập nhật trạng thái order
         Order order = orderRepository.getById(confirmOrderDTO.getOrderId());
         order.setStatus(Constant.ORDER_STATUS.WAIT_PAYMENT);
@@ -205,7 +225,7 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("deliverer", orderExportDTO.getCreater());
         parameters.put("customer", orderExportDTO.getCustomer());
         parameters.put("bookingDay", DataUtil.dateToString(orderExportDTO.getBookingDay()));
-        parameters.put("checkin",DataUtil.dateToString(orderExportDTO.getCheckIn()));
+        parameters.put("checkin", DataUtil.dateToString(orderExportDTO.getCheckIn()));
         parameters.put("checkOut", DataUtil.dateToString(orderExportDTO.getCheckOut()));
         parameters.put("day", day);
         parameters.put("month", month);
@@ -225,11 +245,23 @@ public class OrderServiceImpl implements OrderService {
         export.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
         export.exportReport();
         return new ByteArrayResource(baos.toByteArray());
+        // API thêm mới 1
+        // API UPdate lan 2
     }
 
     @Override
     public List<RevenueDTO> getRevenue() {
         return orderRepository.getRevenue();
+    }
+
+    @Override
+    public void refuse(String id, Integer stt) {
+         orderRepository.updateStatus(id, stt);
+    }
+
+    @Override
+    public void cancel(String id, Integer stt) {
+         orderRepository.updateStatus(id, stt);
     }
 
 }

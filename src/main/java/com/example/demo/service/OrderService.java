@@ -52,4 +52,7 @@ public interface OrderService {
 
     List<RevenueDTO> getRevenue();
 
+    void refuse(String id, Integer stt);
+    void cancel(String id, Integer stt);
+
 }
