@@ -14,6 +14,7 @@ import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.Photo;
 import com.example.demo.entity.Room;
 import com.example.demo.service.PhotoService;
+import com.example.demo.service.RoomFacilityService;
 import com.example.demo.service.RoomService;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
@@ -60,6 +61,8 @@ public class RoomController {
     private RoomService roomService;
     @Autowired
     private PhotoService photoService;
+    @Autowired
+    private RoomFacilityService roomFacilityService;
     @Autowired
     private S3Util s3Util;
 
@@ -232,12 +235,18 @@ public class RoomController {
         }
 
         try {
+
             String ma = "P" + (roomService.getList().size() + 1);
             room.setRoomCode(ma);
             room.setCreateAt(new Date());
             room.setUpdateAt(new Date());
             room.setStatus(Constant.ROOM.EMPTY);
             roomService.add(room);
+
+//            List<RoomFacility> roomFacilityList = new ArrayList<>();
+//            for (RoomFacility roomFacility : roomFacilityList) {
+//            }
+
             for (MultipartFile file : photos) {
                 File fileObj = convertMultiPartToFile(file);
                 String key = "AnDz" + file.getOriginalFilename();
