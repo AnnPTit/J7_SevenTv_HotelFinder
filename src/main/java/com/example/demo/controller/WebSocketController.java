@@ -61,6 +61,14 @@ public class WebSocketController {
             ObjectMapper objectMapper = new ObjectMapper();
             PayloadObject payload = objectMapper.readValue(message, PayloadObject.class);
             System.out.println(payload);
+            // Kiểm tra ngày check in có phải ngày hôm nay
+            Date today = new Date();
+            String dateString = payload.getDayStart().toString().substring(0, 11);
+            String todayString = today.toString().substring(0, 11);
+            if(dateString.equals(todayString)){
+                return new Response("Ngày checkIn phải lớn hơn ngày hôm nay !",
+                        Constant.COMMON_STATUS.UNACTIVE, null);
+            }
             // Kiểm tra ngày đặt nằm trong khoảng 1 tháng tới
             if (!DataUtil.isInOneMonth(payload.getDayStart())) {
                 return new Response("Vui lòng đặt phòng trong vòng 30 ngày !",
@@ -70,7 +78,8 @@ public class WebSocketController {
             List<String> idsRoom = payload.getRooms().stream()
                     .map(RoomData::getId)
                     .collect(Collectors.toList());
-            List<String> orderDetailIds = orderDetailService.checkRoomIsBooked(payload.getDayStart(), payload.getDayEnd(), idsRoom);
+            List<String> orderDetailIds = orderDetailService.checkRoomIsBooked(DataUtil.toLocalDateTime(payload.getDayStart()),
+                    DataUtil.toLocalDateTime(payload.getDayEnd()), idsRoom);
             System.out.println(orderDetailIds.toString());
             if (!orderDetailIds.isEmpty()) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");

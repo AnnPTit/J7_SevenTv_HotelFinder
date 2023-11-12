@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 import java.util.List;
 
@@ -18,12 +19,12 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
     @Query(value = "select od.id from order_detail od where room_id in (:idsRoom)" +
             "and ((check_in_datetime between :dayStart and :dayEnd) "   +
             "OR (check_out_datetime between :dayStart and :dayEnd)) and od.status = 1", nativeQuery = true)
-    List<String> checkRoomIsBooked(@Param("dayStart") Date dayStart, @Param("dayEnd") Date dayEnd, @Param("idsRoom") List<String> idsRoom);
+    List<String> checkRoomIsBooked(@Param("dayStart") LocalDateTime dayStart, @Param("dayEnd") LocalDateTime dayEnd, @Param("idsRoom") List<String> idsRoom);
 
     @Query(value = "select od.id from order_detail od where room_id = :idRoom " +
             "AND ((check_in_datetime between :dayStart and :dayEnd) "   +
             "OR (check_out_datetime between :dayStart and :dayEnd)) and od.status = 1", nativeQuery = true)
-    List<String> checkRoomExist(@Param("dayStart") Date dayStart, @Param("dayEnd") Date dayEnd, @Param("idRoom") String idRoom);
+    List<String> checkRoomExist(@Param("dayStart") LocalDateTime dayStart, @Param("dayEnd") LocalDateTime dayEnd, @Param("idRoom") String idRoom);
 
     @Query(value = "SELECT COUNT(`status`) FROM order_detail " +
             "WHERE DATE(update_at) = DATE(current_date()) AND `status` IN (1, 2, 3)", nativeQuery = true)

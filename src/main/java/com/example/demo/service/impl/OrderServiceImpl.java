@@ -142,7 +142,12 @@ public class OrderServiceImpl implements OrderService {
     public ConfirmOrderDTO confirmOrder(ConfirmOrderDTO confirmOrderDTO) {
 
         // kiểm tra căn cước công dân trùng nhau
-        Customer customer1 = customerRepository.findByCitizenId(confirmOrderDTO.getCitizenId()).get(0);
+        Customer customer1 = null;
+        if (customerRepository.findByCitizenId(confirmOrderDTO.getCitizenId()).size() != 0) {
+            customer1 = customerRepository.findByCitizenId(confirmOrderDTO.getCitizenId()).get(0);
+        }
+        // TODO : Kiểm tra định dạng căn cước bla bla ....
+
         if (!Objects.isNull(customer1)) {
             throw new BadRequestAlertException("Căn cước công dân không được để trống !", "Order", "Confirm");
         }

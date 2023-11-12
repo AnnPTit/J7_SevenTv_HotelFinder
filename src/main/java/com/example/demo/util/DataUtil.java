@@ -3,10 +3,12 @@ package com.example.demo.util;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.InformationCustomer;
 
-import java.lang.reflect.Field;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -79,11 +81,20 @@ public class DataUtil {
         // Kiểm tra xem date có nằm trong khoảng 1 tháng từ ngày hiện tại trở đi
         if (date.after(today) && date.before(oneMonthFromNow)) {
             return true;
-        } else if (date.equals(today) || date.equals(oneMonthFromNow)) {
-            return true;
         } else {
             return false;
         }
+    }
+
+    public static LocalDateTime toLocalDateTime(Date date) {
+
+        // Chuyển đổi thành ZonedDateTime
+        ZonedDateTime zonedDateTime = ZonedDateTime.of(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), ZoneId.systemDefault());
+
+        // Lấy thông tin về múi giờ
+        ZoneId zoneId = zonedDateTime.getZone();
+        System.out.println("Múi giờ của LocalDateTime là: " + zoneId);
+        return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
 }
