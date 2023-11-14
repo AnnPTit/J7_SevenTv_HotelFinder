@@ -10,6 +10,8 @@ public interface InformationCustomerService {
 
     List<InformationCustomer> findAllByOrderDetailId(String id);
 
+    List<InformationCustomer> findAllByOrderId(String id);
+
     InformationCustomer add(InformationCustomer informationCustomer);
 
     InformationCustomer getById(String id);

@@ -129,7 +129,7 @@ public class Room {
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<OrderDetail> orderDetailList;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<RoomFacility> roomFacilityList;
 

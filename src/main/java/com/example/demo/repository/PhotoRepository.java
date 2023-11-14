@@ -19,7 +19,7 @@ public interface PhotoRepository extends JpaRepository<Photo, String> {
     @Query(value = "DELETE FROM photo where id = ?1", nativeQuery = true)
     void deletePhotoById(String id);
 
-    @Query(value = "select p.url from photo p where room_id  = :id", nativeQuery = true)
+    @Query(value = "select p.url from photo p where room_id = :id", nativeQuery = true)
     List<String> getUrlByIdRoom(@Param("id") String id);
 
 }
