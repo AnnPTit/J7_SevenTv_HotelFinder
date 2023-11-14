@@ -20,9 +20,7 @@ public class OrderDetailExport {
     private BigDecimal unitPrice;
     private BigDecimal totalPrice;
 
-    public String getCheckIn() {
-        return DataUtil.dateToString(this.checkIn);
-    }
+    public String getCheckIn() {return DataUtil.dateToString(this.checkIn);}
 
     public String getCheckOut() {
         return DataUtil.dateToString(this.checkOut);

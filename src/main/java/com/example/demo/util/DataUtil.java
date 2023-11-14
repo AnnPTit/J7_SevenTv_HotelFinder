@@ -88,11 +88,6 @@ public class DataUtil {
 
     public static LocalDateTime toLocalDateTime(Date date) {
         // Chuyển đổi thành ZonedDateTime
-        ZonedDateTime zonedDateTime = ZonedDateTime.of(date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime(), ZoneId.systemDefault());
-
-        // Lấy thông tin về múi giờ
-        ZoneId zoneId = zonedDateTime.getZone();
-        System.out.println("Múi giờ của LocalDateTime là: " + zoneId);
         return date.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
     }
 
