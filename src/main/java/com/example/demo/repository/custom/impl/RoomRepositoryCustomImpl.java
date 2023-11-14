@@ -103,7 +103,8 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
                         "tr.price_per_day  as pricePerDay\n" +
                         "from room r   \n" +
                         "inner join type_room tr on tr.id = r.type_room_id  \n" +
-                        "left join order_detail od on od.room_id = r.id  \n" +
+                        "left join order_detail od on od.room_id = r.id \n " +
+                        "left join `order` o on o.id = od.order_id \n" +
                         "where r.status = 1\n" +
                         "and tr.status =1 \n "
         );
@@ -119,9 +120,13 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
         }
         if (request.getCheckIn() != null && request.getCheckOut() != null) {
             sql.append(" AND (\n" +
-                    "        od.room_id IS NULL OR\n" +
-                    "        ((od.check_in_datetime NOT BETWEEN :checkIn AND :checkOut) AND (od.check_out_datetime NOT BETWEEN :checkIn AND :checkOut))\n" +
-                    "    ) ");
+                    " od.room_id IS NULL OR\n" +
+                    " (\n" +
+                    " ((od.check_in_datetime NOT BETWEEN :checkIn AND :checkOut) or o.status in(0,3,6,7)) \n" +
+                    " AND \n" +
+                    " ((od.check_out_datetime NOT BETWEEN :checkIn AND :checkOut) or o.status in(0,3,6,7))\n" +
+                    " )\n" +
+                    " ) ");
             params.put("checkIn", DataUtil.toLocalDateTime(request.getCheckIn()));
             params.put("checkOut", DataUtil.toLocalDateTime(request.getCheckOut()));
         }

@@ -1,10 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.constant.Constant;
-import com.example.demo.dto.ConfirmOrderDTO;
-import com.example.demo.dto.OrderDetailExport;
-import com.example.demo.dto.OrderExportDTO;
-import com.example.demo.dto.RevenueDTO;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderTimeline;
@@ -211,6 +208,9 @@ public class OrderServiceImpl implements OrderService {
     public ByteArrayResource exportRecommended(String orderId) throws JRException {
         OrderExportDTO orderExportDTO = orderRepository.getData(orderId);
         List<OrderDetailExport> dataTable = orderRepository.getDataDetail(orderId);
+        List<ServiceUsedInvoiceDTO> serviceUsedInvoiceDTOS = new ArrayList<>();
+        serviceUsedInvoiceDTOS.addAll(orderRepository.getService(orderId));
+        serviceUsedInvoiceDTOS.addAll(orderRepository.getCombo(orderId));
         ZonedDateTime zonedDateTime = ZonedDateTime.now();
         int year = zonedDateTime.getYear();
         int month = zonedDateTime.getMonthValue();
@@ -234,10 +234,10 @@ public class OrderServiceImpl implements OrderService {
         long total = orderExportDTO.getTotalMoney().longValue();
         String totalPriceString = numToViet.num2String(total) + " đồng";
         totalPriceString = totalPriceString.substring(0, 1).toUpperCase() + totalPriceString.substring(1);
-        //stringTotalPrice
         parameters.put("stringTotalPrice", totalPriceString);
         parameters.put("total", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
         parameters.put("vat", DataUtil.currencyFormat(orderExportDTO.getVat()));
+//        parameters.put("dataTable2", new JRBeanCollectionDataSource(serviceUsedInvoiceDTOS));
         parameters.put("dataTable", new JRBeanCollectionDataSource(dataTable));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
         JRDocxExporter export = new JRDocxExporter();
@@ -245,8 +245,6 @@ public class OrderServiceImpl implements OrderService {
         export.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
         export.exportReport();
         return new ByteArrayResource(baos.toByteArray());
-        // API thêm mới 1
-        // API UPdate lan 2
     }
 
     @Override
@@ -256,12 +254,12 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void refuse(String id, Integer stt) {
-         orderRepository.updateStatus(id, stt);
+        orderRepository.updateStatus(id, stt);
     }
 
     @Override
     public void cancel(String id, Integer stt) {
-         orderRepository.updateStatus(id, stt);
+        orderRepository.updateStatus(id, stt);
     }
 
 }

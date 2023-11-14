@@ -1,13 +1,9 @@
 package com.example.demo.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
-import jakarta.persistence.Table;
+import com.example.demo.dto.OrderDetailExport;
+import com.example.demo.dto.OrderExportDTO;
+import com.example.demo.dto.ServiceUsedInvoiceDTO;
+import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
@@ -15,6 +11,7 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.Date;
 import java.util.UUID;
@@ -26,6 +23,25 @@ import java.util.UUID;
 @Builder
 @Entity
 @Table(name = "service_used")
+@SqlResultSetMappings(
+        value = {
+                @SqlResultSetMapping(
+                        name = "serviceResult",
+                        classes = {
+                                @ConstructorResult(
+                                        targetClass = ServiceUsedInvoiceDTO.class,
+                                        columns = {
+                                                @ColumnResult(name = "roomName1", type = String.class),
+                                                @ColumnResult(name = "service", type = String.class),
+                                                @ColumnResult(name = "quantity2", type = Integer.class),
+                                                @ColumnResult(name = "price", type = BigDecimal.class),
+                                                @ColumnResult(name = "total", type = BigDecimal.class),
+                                        }
+                                ),
+                        }
+                ),
+        }
+)
 public class ServiceUsed {
 
     @Id

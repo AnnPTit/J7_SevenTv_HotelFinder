@@ -1,9 +1,6 @@
 package com.example.demo.repository.custom.impl;
 
-import com.example.demo.dto.CartDTO;
-import com.example.demo.dto.OrderDetailExport;
-import com.example.demo.dto.OrderExportDTO;
-import com.example.demo.dto.RevenueDTO;
+import com.example.demo.dto.*;
 import com.example.demo.repository.custom.OrderRepositoryCustom;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -19,7 +16,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 
     @Override
     public OrderExportDTO getData(String orderId) {
-        String sql ="select \n" +
+        String sql = "select \n" +
                 "o.order_code  as code, \n" +
                 "o.create_by as creater, \n" +
                 "c.fullname as customer ,\n" +
@@ -45,7 +42,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 
     @Override
     public List<OrderDetailExport> getDataDetail(String orderId) {
-        String sql ="select\n" +
+        String sql = "select\n" +
                 " r.room_name as roomName ,\n" +
                 " tr.type_room_name as typeRoom ,\n" +
                 " coalesce(od.customer_quantity , 0) as quantity,\n" +
@@ -86,6 +83,48 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
             resultList.add(dto);
         }
         return resultList;
+    }
+
+    @Override
+    public List<ServiceUsedInvoiceDTO> getService(String orderId) {
+        String sql = "select \n" +
+                "r.room_name as roomName1 ,\n" +
+                "s.service_name as service ,\n" +
+                "su.quantity as quantity2,\n" +
+                "s.price ,\n" +
+                "(su.quantity* s.price) as total\n" +
+                "from order_detail od \n" +
+                "inner join room r on r.id = od.room_id \n" +
+                "inner join `order` o on o.id = od.order_id \n" +
+                "inner join service_used su on su.order_detail_id = od.id \n" +
+                "left join service s on s.id = su.service_id \n" +
+                "where o.id =:orderId";
+        Query query = entityManager.createNativeQuery(sql, "serviceResult");
+        query.setParameter("orderId", orderId);
+        @SuppressWarnings("unchecked")
+        List<ServiceUsedInvoiceDTO> result = query.getResultList();
+        return result;
+    }
+
+    @Override
+    public List<ServiceUsedInvoiceDTO> getCombo(String orderId) {
+        String sql = "select \n" +
+                "r.room_name as roomName1 ,\n" +
+                "c.combo_name  as service ,\n" +
+                "cu.quantity as quantity2,\n" +
+                "c.price ,\n" +
+                "(cu.quantity* c.price) as total\n" +
+                "from order_detail od \n" +
+                "inner join room r on r.id = od.room_id \n" +
+                "inner join `order` o on o.id = od.order_id \n" +
+                "inner  join combo_used cu  on cu.order_detail_id = od.id \n" +
+                "left join combo c on c.id = cu.combo_id  \n" +
+                "where o.id =:orderId";
+        Query query = entityManager.createNativeQuery(sql, "serviceResult");
+        query.setParameter("orderId", orderId);
+        @SuppressWarnings("unchecked")
+        List<ServiceUsedInvoiceDTO> result = query.getResultList();
+        return result;
     }
 
 }

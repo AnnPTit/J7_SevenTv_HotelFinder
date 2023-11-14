@@ -179,8 +179,8 @@ public class WebSocketController {
 
             // gửi mail
             Mail mail = new Mail();
-            mail.setMailFrom("phamthanhanzwz@gmail.com");
-            mail.setMailTo(customer.getEmail());
+            mail.setMailFrom("nguyenvantundz2003@gmail.com");
+            mail.setMailTo(payload.getUser().getEmail());
             String subject = "Đặt phòng thành công ! ";
             String content = "Chúc mừng bạn đặt phòng thành công ! \n" +
                     "Thông tin đơn hàng của bạn : \n" +
