@@ -170,7 +170,7 @@ public class OrderController {
 
     @GetMapping("/recommended/{orderId}")
     public ResponseEntity<ByteArrayResource> exportRecommended(@PathVariable("orderId") String orderId)
-            throws JRException, IOException {
+            throws JRException {
         return new ResponseEntity<>(orderService.exportRecommended(orderId), HttpStatus.OK);
     }
 

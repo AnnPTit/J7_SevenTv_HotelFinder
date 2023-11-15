@@ -215,7 +215,10 @@ public class OrderServiceImpl implements OrderService {
         int year = zonedDateTime.getYear();
         int month = zonedDateTime.getMonthValue();
         int day = zonedDateTime.getDayOfMonth();
-
+        BigDecimal totalPriceService = BigDecimal.ZERO;
+        for (ServiceUsedInvoiceDTO serviceUsedInvoiceDTO : serviceUsedInvoiceDTOS) {
+            totalPriceService = totalPriceService.add(serviceUsedInvoiceDTO.getTotal3());
+        }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream employeeReportStream = getClass().getResourceAsStream("/templates/doc/recommended.jrxml");
         JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
@@ -230,6 +233,7 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("day", day);
         parameters.put("month", month);
         parameters.put("year", year);
+        parameters.put("totalPriceService", DataUtil.currencyFormat(totalPriceService));
         parameters.put("note", StringUtils.isNotBlank(orderExportDTO.getNote()) ? orderExportDTO.getNote() : "");
         long total = orderExportDTO.getTotalMoney().longValue();
         String totalPriceString = numToViet.num2String(total) + " đồng";
@@ -237,7 +241,7 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("stringTotalPrice", totalPriceString);
         parameters.put("total", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
         parameters.put("vat", DataUtil.currencyFormat(orderExportDTO.getVat()));
-//        parameters.put("dataTable2", new JRBeanCollectionDataSource(serviceUsedInvoiceDTOS));
+        parameters.put("Parameter1", new JRBeanCollectionDataSource(serviceUsedInvoiceDTOS));
         parameters.put("dataTable", new JRBeanCollectionDataSource(dataTable));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
         JRDocxExporter export = new JRDocxExporter();

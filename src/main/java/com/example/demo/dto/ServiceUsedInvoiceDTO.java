@@ -15,13 +15,18 @@ public class ServiceUsedInvoiceDTO {
     private String service;
     private Integer quantity2;
     private BigDecimal price;
-    private BigDecimal total;
+    private BigDecimal total2;
 
     public String getPrice() {
         return DataUtil.currencyFormat(this.price);
     }
 
-    public String getTotal() {
-        return DataUtil.currencyFormat(this.total);
+    public String getTotal2() {
+        return DataUtil.currencyFormat(this.total2);
     }
+
+    public BigDecimal getTotal3() {
+        return this.total2;
+    }
+
 }
