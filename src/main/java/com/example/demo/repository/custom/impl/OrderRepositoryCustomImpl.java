@@ -68,7 +68,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
     @Override
     public List<RevenueDTO> getRevenue() {
         String sql = "SELECT EXTRACT(MONTH FROM update_at) AS month, EXTRACT(YEAR FROM update_at) AS year, SUM(total_money) AS revenue\n" +
-                "FROM `order` GROUP BY EXTRACT(YEAR FROM update_at), EXTRACT(MONTH FROM update_at)\n" +
+                "FROM `order` WHERE status = 3 GROUP BY EXTRACT(YEAR FROM update_at), EXTRACT(MONTH FROM update_at)\n" +
                 "ORDER BY EXTRACT(YEAR FROM update_at), EXTRACT(MONTH FROM update_at)";
 
         Query query = entityManager.createNativeQuery(sql);

@@ -8,4 +8,6 @@ public interface FacilityService {
 
     List<Facility> getAll();
 
+    Facility findById(String id);
+
 }

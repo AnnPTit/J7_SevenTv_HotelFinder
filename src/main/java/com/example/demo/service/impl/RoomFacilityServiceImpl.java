@@ -6,11 +6,18 @@ import com.example.demo.service.RoomFacilityService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class RoomFacilityServiceImpl implements RoomFacilityService {
 
     @Autowired
     private RoomFacilityRepository roomFacilityRepository;
+
+    @Override
+    public List<RoomFacility> getRoomFacilitiesByRoomId(String id) {
+        return roomFacilityRepository.getRoomFacilitiesByRoomId(id);
+    }
 
     @Override
     public RoomFacility save(RoomFacility roomFacility) {

@@ -10,9 +10,12 @@ import com.example.demo.config.S3Util;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.PhotoDTO;
 import com.example.demo.dto.RoomDTO;
+import com.example.demo.entity.Facility;
 import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.Photo;
 import com.example.demo.entity.Room;
+import com.example.demo.entity.RoomFacility;
+import com.example.demo.service.FacilityService;
 import com.example.demo.service.PhotoService;
 import com.example.demo.service.RoomFacilityService;
 import com.example.demo.service.RoomService;
@@ -61,6 +64,8 @@ public class RoomController {
     private RoomService roomService;
     @Autowired
     private PhotoService photoService;
+    @Autowired
+    private FacilityService facilityService;
     @Autowired
     private RoomFacilityService roomFacilityService;
     @Autowired
@@ -214,6 +219,7 @@ public class RoomController {
     @PostMapping("/save")
     public ResponseEntity<Room> save(@Valid @ModelAttribute Room room,
                                      BindingResult bindingResult,
+                                     @RequestParam("facilities") List<String> facilityIds,
                                      @PathParam("photos") MultipartFile[] photos) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
@@ -243,10 +249,6 @@ public class RoomController {
             room.setStatus(Constant.ROOM.EMPTY);
             roomService.add(room);
 
-//            List<RoomFacility> roomFacilityList = new ArrayList<>();
-//            for (RoomFacility roomFacility : roomFacilityList) {
-//            }
-
             for (MultipartFile file : photos) {
                 File fileObj = convertMultiPartToFile(file);
                 String key = "AnDz" + file.getOriginalFilename();
@@ -257,14 +259,6 @@ public class RoomController {
                         .withRegion(region)
                         .withCredentials(new AWSStaticCredentialsProvider(credentials))
                         .build();
-
-//                // Tạo yêu cầu URL công khai
-//                GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(bucketName, key)
-//                        .withMethod(HttpMethod.GET);
-////                .withExpiration(getExpirationTime(expirationInSeconds));
-//
-//                // Lấy URL công khai
-//                URL publicUrl = s3Client.generatePresignedUrl(urlRequest);
 
                 String imageUrl = s3Client.getUrl(bucketName, key).toString();
                 System.out.println(imageUrl);
@@ -277,14 +271,25 @@ public class RoomController {
                 photo.setUpdateAt(new Date());
                 photo.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 photoService.add(photo);
-
             }
-            System.out.println("Thêm thành công");
 
+            for (String facilityId : facilityIds) {
+                Facility facility = facilityService.findById(facilityId);
+                if (facility != null) {
+                    RoomFacility roomFacility = new RoomFacility();
+                    roomFacility.setRoom(room);
+                    roomFacility.setFacility(facility);
+                    roomFacility.setCreateAt(new Date());
+                    roomFacility.setUpdateAt(new Date());
+                    roomFacility.setStatus(Constant.COMMON_STATUS.ACTIVE);
+                    roomFacilityService.save(roomFacility);
+                }
+            }
+
+            System.out.println("Thêm thành công");
         } catch (IOException e) {
             e.printStackTrace();
         }
-
         return new ResponseEntity<Room>(room, HttpStatus.OK);
     }
 
@@ -303,6 +308,7 @@ public class RoomController {
     @PutMapping("/update/{id}")
     public ResponseEntity<Room> update(@PathVariable("id") String id, @Valid @ModelAttribute Room room,
                                        BindingResult bindingResult,
+                                       @RequestParam("facilities") List<String> facilityIds,
                                        @PathParam("photos") MultipartFile[] photos) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
@@ -323,6 +329,7 @@ public class RoomController {
             room.setUpdateAt(new Date());
             room.setStatus(1);
             roomService.add(room);
+
             if (photos != null) {
                 for (MultipartFile file : photos) {
                     File fileObj = convertMultiPartToFile(file);
@@ -335,18 +342,9 @@ public class RoomController {
                             .withCredentials(new AWSStaticCredentialsProvider(credentials))
                             .build();
 
-//                // Tạo yêu cầu URL công khai
-//                GeneratePresignedUrlRequest urlRequest = new GeneratePresignedUrlRequest(bucketName, key)
-//                        .withMethod(HttpMethod.GET);
-////                .withExpiration(getExpirationTime(expirationInSeconds));
-//
-//                // Lấy URL công khai
-//                URL publicUrl = s3Client.generatePresignedUrl(urlRequest);
-
                     String imageUrl = s3Client.getUrl(bucketName, key).toString();
                     System.out.println(imageUrl);
 
-//                listURL.add(imageUrl);
                     Photo photo = new Photo();
                     photo.setUrl(imageUrl);
                     photo.setRoom(room);
@@ -357,6 +355,19 @@ public class RoomController {
 
                 }
                 System.out.println("Them Thanh cong ");
+            }
+
+            for (String facilityId : facilityIds) {
+                Facility facility = facilityService.findById(facilityId);
+                if (facility != null) {
+                    RoomFacility roomFacility = new RoomFacility();
+                    roomFacility.setRoom(room);
+                    roomFacility.setFacility(facility);
+                    roomFacility.setCreateAt(new Date());
+                    roomFacility.setUpdateAt(new Date());
+                    roomFacility.setStatus(Constant.COMMON_STATUS.ACTIVE);
+                    roomFacilityService.save(roomFacility);
+                }
             }
 
         } catch (IOException e) {
@@ -377,19 +388,15 @@ public class RoomController {
     @GetMapping("/photo/{id}")
     public ResponseEntity<List<PhotoDTO>> getRoomImages(@PathVariable("id") String id) {
         List<PhotoDTO> photoDTOs = new ArrayList<>();
-        // Fetch room images by roomId (use the roomId to query the database or any other data source)
-        // For example, assuming you have a service method to get room images by ID:
         List<Photo> roomPhotos = photoService.getPhotoByRoomId(id);
 
-        // Iterate through the roomImages and extract the image URLs
         for (Photo photo : roomPhotos) {
             PhotoDTO photoDTO = new PhotoDTO();
             System.out.println("Id: " + photo.getId());
             photoDTO.setId(photo.getId());
             photoDTO.setUrl(photo.getUrl());
-            photoDTOs.add(photoDTO); // Assuming 'getUrl()' method returns the image URL from the Photo entity
+            photoDTOs.add(photoDTO);
         }
-        // Return the list of image URLs in the response
         return new ResponseEntity<>(photoDTOs, HttpStatus.OK);
     }
 
@@ -399,13 +406,17 @@ public class RoomController {
         Photo photo = photoService.getPhotoById(id);
 
         if (photo != null) {
-            // Delete the photo entity from the database
             photoService.deletePhoto(photo);
             return new ResponseEntity<String>("Photo deleted successfully", HttpStatus.OK);
         } else {
-            // Handle the case when the photo with the provided id does not exist
             return new ResponseEntity<String>("Error deleting the photo", HttpStatus.INTERNAL_SERVER_ERROR);
         }
+    }
+
+    @GetMapping("/facilities/{id}")
+    public ResponseEntity<List<RoomFacility>> getFacilities(@PathVariable("id") String id) {
+        List<RoomFacility> facilityList = roomFacilityService.getRoomFacilitiesByRoomId(id);
+        return new ResponseEntity<>(facilityList, HttpStatus.OK);
     }
 
 }

@@ -19,4 +19,9 @@ public class FacilityServiceImpl implements FacilityService {
         return facilityRepository.findAll();
     }
 
+    @Override
+    public Facility findById(String id) {
+        return facilityRepository.findById(id).orElse(null);
+    }
+
 }

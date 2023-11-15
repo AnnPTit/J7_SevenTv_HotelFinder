@@ -1,5 +1,6 @@
 package com.example.demo.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -31,6 +32,7 @@ public class RoomFacility {
     private String id;
 
     @ManyToOne
+    @JsonBackReference
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 

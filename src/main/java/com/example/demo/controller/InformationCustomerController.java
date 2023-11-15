@@ -41,8 +41,13 @@ public class InformationCustomerController {
     }
 
     @GetMapping("/load/{id}")
-    public List<InformationCustomer> loadByOrderId(@PathVariable("id") String id) {
+    public List<InformationCustomer> loadByOrderDetailId(@PathVariable("id") String id) {
         return informationCustomerService.findAllByOrderDetailId(id);
+    }
+
+    @GetMapping("/load/order/{id}")
+    public List<InformationCustomer> loadByOrderId(@PathVariable("id") String id) {
+        return informationCustomerService.findAllByOrderId(id);
     }
 
     @PostMapping("/save/{id}")
