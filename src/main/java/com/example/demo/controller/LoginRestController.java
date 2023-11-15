@@ -37,13 +37,18 @@ public class LoginRestController {
     public LoginResponse authenticateUser(@Valid @RequestBody LoginRequest loginRequest) {
 
         // Xác thực từ username và password.
-        Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(
-                        loginRequest.getUsername(),
-                        loginRequest.getPassword()
+        Authentication authentication = null;
+        try {
+            authentication = authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(
+                            loginRequest.getUsername(),
+                            loginRequest.getPassword()
 
-                )
-        );
+                    )
+            );
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
         Account account = accountRepository.findByEmailAndStatus(loginRequest.getUsername(), Constant.COMMON_STATUS.ACTIVE);
         if (account == null || account.getStatus() == Constant.COMMON_STATUS.UNACTIVE) {
             return null;

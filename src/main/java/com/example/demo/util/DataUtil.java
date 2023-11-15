@@ -60,9 +60,9 @@ public class DataUtil {
 
     public static String dateToString(Date date) {
         if (date == null) {
-            return null;
+            return "";
         }
-        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy\nHH:mm:ss");
         return dateFormat.format(date);
     }
 

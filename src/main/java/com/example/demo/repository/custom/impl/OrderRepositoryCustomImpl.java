@@ -92,7 +92,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
                 "s.service_name as service ,\n" +
                 "su.quantity as quantity2,\n" +
                 "s.price ,\n" +
-                "(su.quantity* s.price) as total\n" +
+                "(su.quantity* s.price) as total2\n" +
                 "from order_detail od \n" +
                 "inner join room r on r.id = od.room_id \n" +
                 "inner join `order` o on o.id = od.order_id \n" +
@@ -113,7 +113,7 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
                 "c.combo_name  as service ,\n" +
                 "cu.quantity as quantity2,\n" +
                 "c.price ,\n" +
-                "(cu.quantity* c.price) as total\n" +
+                "(cu.quantity* c.price) as total2\n" +
                 "from order_detail od \n" +
                 "inner join room r on r.id = od.room_id \n" +
                 "inner join `order` o on o.id = od.order_id \n" +
