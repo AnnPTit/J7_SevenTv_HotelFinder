@@ -239,6 +239,7 @@ public class OrderServiceImpl implements OrderService {
         String totalPriceString = numToViet.num2String(total) + " đồng";
         totalPriceString = totalPriceString.substring(0, 1).toUpperCase() + totalPriceString.substring(1);
         parameters.put("stringTotalPrice", totalPriceString);
+        parameters.put("totalNumberPrice", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
         parameters.put("total", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
         parameters.put("vat", DataUtil.currencyFormat(orderExportDTO.getVat()));
         parameters.put("Parameter1", new JRBeanCollectionDataSource(serviceUsedInvoiceDTOS));
