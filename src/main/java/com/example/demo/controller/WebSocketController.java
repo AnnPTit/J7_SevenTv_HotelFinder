@@ -20,6 +20,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 
+import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -45,6 +46,8 @@ public class WebSocketController {
 
     private final MailService mailService;
 
+    private final DepositService depositService;
+
     @AllArgsConstructor
     @NoArgsConstructor
     @Data
@@ -62,22 +65,22 @@ public class WebSocketController {
             PayloadObject payload = objectMapper.readValue(message, PayloadObject.class);
             System.out.println(payload);
             // Kiểm tra ngày check in có phải ngày hôm nay
-            Date today = new Date();
-            String dateString = payload.getDayStart().toString().substring(0, 11);
-            String todayString = today.toString().substring(0, 11);
-            if(dateString.equals(todayString)){
-                return new Response("Ngày checkIn phải lớn hơn ngày hôm nay !",
-                        Constant.COMMON_STATUS.UNACTIVE, null);
-            }
-            // Kiểm tra ngày đặt nằm trong khoảng 1 tháng tới
-            if (!DataUtil.isInOneMonth(payload.getDayStart())) {
-                return new Response("Vui lòng đặt phòng trong vòng 30 ngày !",
-                        Constant.COMMON_STATUS.UNACTIVE, null);
-            }
             // Kiểm tra ngày đặt đã trùng
             List<String> idsRoom = payload.getRooms().stream()
                     .map(RoomData::getId)
                     .collect(Collectors.toList());
+            Date today = new Date();
+            String dateString = payload.getDayStart().toString().substring(0, 11);
+            String todayString = today.toString().substring(0, 11);
+            if (dateString.equals(todayString)) {
+                return new Response("Ngày checkIn phải lớn hơn ngày hôm nay !",
+                        Constant.COMMON_STATUS.ACTIVE, idsRoom);
+            }
+            // Kiểm tra ngày đặt nằm trong khoảng 1 tháng tới
+            if (!DataUtil.isInOneMonth(payload.getDayStart())) {
+                return new Response("Vui lòng đặt phòng trong vòng 30 ngày !",
+                        Constant.COMMON_STATUS.ACTIVE, idsRoom);
+            }
             List<String> orderDetailIds = orderDetailService.checkRoomIsBooked(DataUtil.toLocalDateTime(payload.getDayStart()),
                     DataUtil.toLocalDateTime(payload.getDayEnd()), idsRoom);
             System.out.println(orderDetailIds.toString());
@@ -87,7 +90,7 @@ public class WebSocketController {
                 String endDate = sdf.format(payload.getDayEnd());
                 return new Response("Phòng đã được đặt trong khoảng :  "
                         + startDate + "   đến ngày :    " + endDate + "  !" + ". Vui lòng chọn ngày khác !",
-                        Constant.COMMON_STATUS.UNACTIVE, idsRoom);
+                        Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
             Random random = new Random();
             int randomNumber = random.nextInt(1000);
@@ -130,6 +133,7 @@ public class WebSocketController {
             order.setOrderCode(orderCode);
             order.setTypeOfOrder(false);
             order.setDeposit(payload.getDeposit());
+            order.setVat((payload.getTotalPriceRoom().multiply(new BigDecimal(depositService.getByCode("VAT").getPileValue()))).divide(new BigDecimal(100)));
             order.setBookingDateStart(payload.getDayStart());
             order.setBookingDateEnd(payload.getDayEnd());
             order.setTotalMoney(payload.getTotalPriceRoom());

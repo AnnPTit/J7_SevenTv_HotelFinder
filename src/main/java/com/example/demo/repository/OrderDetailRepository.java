@@ -23,12 +23,12 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
             "left join `order` o on\n" +
             "o.id = od.order_id\n" +
             "where\n" +
-            "od.room_id in (:idsRoom)\n" +
-            "and (od.room_id is null\n" +
-            "or(((od.check_in_datetime not between :dayStart and :dayEnd)\n" +
-            "or o.status in(0, 3, 6, 7))\n" +
-            "and ((od.check_out_datetime not between :dayStart and :dayEnd)\n" +
-            "or o.status in(0, 3, 6, 7))))", nativeQuery = true)
+            "od.room_id in :idsRoom\n" +
+            "and (\n" +
+            "((od.check_in_datetime  between :dayStart and :dayEnd) or o.status not in(0, 3, 6, 7))\n" +
+            "and \n" +
+            "((od.check_out_datetime  between :dayStart and :dayEnd) or o.status not in(0, 3, 6, 7))\n" +
+            ") ", nativeQuery = true)
     List<String> checkRoomIsBooked(@Param("dayStart") LocalDateTime dayStart, @Param("dayEnd") LocalDateTime dayEnd, @Param("idsRoom") List<String> idsRoom);
 
     @Query(value = "select od.id from order_detail od where room_id = :idRoom " +
