@@ -176,7 +176,7 @@
                     <textFieldExpression><![CDATA["- Ghi Chú : " + $P{note}]]></textFieldExpression>
                 </textField>
             </band>
-            <band height="50">
+            <band height="60">
                 <property name="com.jaspersoft.studio.unit.height" value="px"/>
                 <componentElement>
                     <reportElement x="-40" y="17" width="519" height="31" uuid="68c28d3d-fabe-4269-9b3b-45fc1cb623b6">
@@ -434,9 +434,10 @@
                     <textFieldExpression><![CDATA["Danh sách phòng"]]></textFieldExpression>
                 </textField>
             </band>
-            <band height="50">
+            <band height="60">
+                <property name="com.jaspersoft.studio.unit.height" value="px"/>
                 <componentElement>
-                    <reportElement x="-40" y="17" width="519" height="31" uuid="1a729f1d-8f03-47fe-8fc0-3c57a32ef7cc">
+                    <reportElement x="-40" y="20" width="519" height="31" uuid="1a729f1d-8f03-47fe-8fc0-3c57a32ef7cc">
                         <property name="com.jaspersoft.studio.layout" value="com.jaspersoft.studio.editor.layout.VerticalRowLayout"/>
                         <property name="com.jaspersoft.studio.table.style.table_header" value="Table_TH"/>
                         <property name="com.jaspersoft.studio.table.style.column_header" value="Table_CH"/>
@@ -633,7 +634,7 @@
                     </jr:table>
                 </componentElement>
                 <textField textAdjust="StretchHeight">
-                    <reportElement stretchType="RelativeToTallestObject" x="-41" y="3" width="520" height="13" uuid="9eeb8d84-9b9f-4dbf-90a3-a296c9d34e16">
+                    <reportElement stretchType="RelativeToTallestObject" x="-41" y="2" width="520" height="13" uuid="9eeb8d84-9b9f-4dbf-90a3-a296c9d34e16">
                         <property name="com.jaspersoft.studio.unit.width" value="px"/>
                     </reportElement>
                     <textElement>
@@ -641,9 +642,6 @@
                     </textElement>
                     <textFieldExpression><![CDATA["Danh sách dịch vụ"]]></textFieldExpression>
                 </textField>
-            </band>
-            <band height="24">
-                <property name="com.jaspersoft.studio.unit.height" value="px"/>
             </band>
             <band height="24">
                 <property name="com.jaspersoft.studio.unit.height" value="px"/>
@@ -657,7 +655,6 @@
                     <textFieldExpression><![CDATA["- Tổng số tiền viết bằng chữ:  " + $P{stringTotalPrice}]]></textFieldExpression>
                 </textField>
             </band>
-            <band height="19"/>
             <band height="71">
                 <staticText>
                     <reportElement x="-2" y="5" width="90" height="26" uuid="5b0e58d4-06ff-43e1-b901-2b8995bf944f">
