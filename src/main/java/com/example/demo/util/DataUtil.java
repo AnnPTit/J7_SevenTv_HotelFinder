@@ -111,4 +111,15 @@ public class DataUtil {
         return ZonedDateTime.now();
     }
 
+    public static Date setFixedTime(Date originalDate, int hour, int minute, int second) {
+        // Chuyển đổi Date thành LocalDateTime
+        LocalDateTime localDateTime = originalDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+        // Thiết lập giờ cố định
+        localDateTime = localDateTime.withHour(hour).withMinute(minute).withSecond(second);
+
+        // Chuyển đổi LocalDateTime trở lại thành Date
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
 }

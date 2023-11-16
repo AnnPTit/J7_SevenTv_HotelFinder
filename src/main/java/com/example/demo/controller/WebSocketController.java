@@ -134,8 +134,8 @@ public class WebSocketController {
             order.setTypeOfOrder(false);
             order.setDeposit(payload.getDeposit());
             order.setVat((payload.getTotalPriceRoom().multiply(new BigDecimal(depositService.getByCode("VAT").getPileValue()))).divide(new BigDecimal(100)));
-            order.setBookingDateStart(payload.getDayStart());
-            order.setBookingDateEnd(payload.getDayEnd());
+            order.setBookingDateStart(DataUtil.setFixedTime(payload.getDayStart(),14,0, 0));
+            order.setBookingDateEnd(DataUtil.setFixedTime(payload.getDayEnd(),12,0, 0));
             order.setTotalMoney(payload.getTotalPriceRoom());
             order.setCreateAt(new Date());
             order.setUpdateAt(new Date());
