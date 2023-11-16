@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.util.DataUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -23,4 +24,22 @@ public class OrderExportDTO {
     private BigDecimal vat;
     private BigDecimal totalMoney;
     private BigDecimal excessMoney;
+    private BigDecimal surcharge;
+
+
+    public String getMonneyCustom() {
+        return DataUtil.currencyFormat(monneyCustom);
+    }
+
+    public String getDeposit() {
+        return DataUtil.currencyFormat(deposit);
+    }
+
+    public String getExcessMoney() {
+        return DataUtil.currencyFormat(excessMoney);
+    }
+
+    public String getSurcharge() {
+        return DataUtil.currencyFormat(surcharge);
+    }
 }

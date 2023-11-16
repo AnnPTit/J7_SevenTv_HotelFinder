@@ -232,7 +232,11 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("checkOut", DataUtil.dateToString(orderExportDTO.getCheckOut()));
         parameters.put("day", day);
         parameters.put("month", month);
-        parameters.put("year", year);
+        parameters.put("deposit", orderExportDTO.getDeposit());
+        parameters.put("monneyCustom", orderExportDTO.getMonneyCustom());
+        parameters.put("totalMoney", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
+        parameters.put("excessMoney", orderExportDTO.getExcessMoney());
+        parameters.put("surcharge", orderExportDTO.getSurcharge());
         parameters.put("totalPriceService", DataUtil.currencyFormat(totalPriceService));
         parameters.put("note", StringUtils.isNotBlank(orderExportDTO.getNote()) ? orderExportDTO.getNote() : "");
         long total = orderExportDTO.getTotalMoney().longValue();
