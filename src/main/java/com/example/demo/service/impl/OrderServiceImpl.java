@@ -216,8 +216,12 @@ public class OrderServiceImpl implements OrderService {
         int month = zonedDateTime.getMonthValue();
         int day = zonedDateTime.getDayOfMonth();
         BigDecimal totalPriceService = BigDecimal.ZERO;
+        BigDecimal totalPriceRoom = BigDecimal.ZERO;
         for (ServiceUsedInvoiceDTO serviceUsedInvoiceDTO : serviceUsedInvoiceDTOS) {
             totalPriceService = totalPriceService.add(serviceUsedInvoiceDTO.getTotal3());
+        }
+        for (OrderDetailExport export : dataTable) {
+            totalPriceRoom = totalPriceRoom.add(export.getTotalPrice2());
         }
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream employeeReportStream = getClass().getResourceAsStream("/templates/doc/recommended.jrxml");
@@ -232,6 +236,7 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("checkOut", DataUtil.dateToString(orderExportDTO.getCheckOut()));
         parameters.put("day", day);
         parameters.put("month", month);
+        parameters.put("year", year);
         parameters.put("deposit", orderExportDTO.getDeposit());
         parameters.put("monneyCustom", orderExportDTO.getMonneyCustom());
         parameters.put("totalMoney", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
@@ -244,7 +249,7 @@ public class OrderServiceImpl implements OrderService {
         totalPriceString = totalPriceString.substring(0, 1).toUpperCase() + totalPriceString.substring(1);
         parameters.put("stringTotalPrice", totalPriceString);
         parameters.put("totalNumberPrice", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
-        parameters.put("total", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
+        parameters.put("total", DataUtil.currencyFormat(totalPriceRoom));
         parameters.put("vat", DataUtil.currencyFormat(orderExportDTO.getVat()));
         parameters.put("Parameter1", new JRBeanCollectionDataSource(serviceUsedInvoiceDTOS));
         parameters.put("dataTable", new JRBeanCollectionDataSource(dataTable));
