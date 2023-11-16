@@ -18,6 +18,8 @@ public interface AccountRepository extends JpaRepository<Account, String> {
     Optional<Account> findByAccountCode(String code);
 
     Optional<Account> findByEmail(String email);
+    @Query(value = "select * from account a where a.email =:email and a.status =1", nativeQuery = true)
+    List<Account> findByEmailLs(@Param("email") String email);
 
     Account findByEmailAndStatus(String email, Integer status);
 
@@ -40,6 +42,9 @@ public interface AccountRepository extends JpaRepository<Account, String> {
 
     @Query(value = "SELECT * FROM account where account_code = 'TK00'", nativeQuery = true)
     Account getAccountByCode();
+
+    @Query(value = "SELECT * FROM account where account_code =:codes ", nativeQuery = true)
+    List<Account> getAccountByCode(@Param("codes") String codes);
 
     boolean existsByEmail(String email);
 

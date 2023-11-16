@@ -107,5 +107,8 @@ public class DataUtil {
         }
         return false;
     }
+    public static java.time.ZonedDateTime getCurrentDateTime() {
+        return ZonedDateTime.now();
+    }
 
 }

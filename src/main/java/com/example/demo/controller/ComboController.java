@@ -3,10 +3,12 @@ package com.example.demo.controller;
 import com.example.demo.dto.ComboListDTO;
 import com.example.demo.entity.Combo;
 import com.example.demo.entity.Service;
+import com.example.demo.repository.AccountRepository;
 import com.example.demo.repository.ComboRepository;
 import com.example.demo.service.ComboService;
 import com.example.demo.service.ComboServiceService;
 import com.example.demo.service.ServiceService;
+import com.example.demo.util.BaseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -46,6 +48,12 @@ public class ComboController {
     private ComboServiceService comboServiceService;
     @Autowired
     private ComboRepository comboRepository;
+
+    @Autowired
+    private AccountRepository accountRepository;
+
+
+
 
     @GetMapping("/load")
     public Page<Combo> load(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
@@ -88,6 +96,7 @@ public class ComboController {
 
     @PostMapping("/save")
     public ResponseEntity<?> save(@Valid @RequestBody Map<String, Object> payload, BindingResult result) {
+
         // Kiểm tra lỗi trong payload
         if (result.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
@@ -152,7 +161,8 @@ public class ComboController {
             return new ResponseEntity<>("Mã combo đã tồn tại !", HttpStatus.BAD_REQUEST);
         }
         // Them Combo vao cosoDulieu
-        combo.setCreateAt(new Date());
+//        combo.setCreateAt(new Date());
+        BaseService.setAccountRepository(accountRepository);
         combo.setStatus(1);
         comboService.add(combo);
         // Sau khi add combo -> add combo_service
