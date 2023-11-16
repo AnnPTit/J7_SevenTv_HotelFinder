@@ -62,6 +62,13 @@ public class DataUtil {
         if (date == null) {
             return "";
         }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        return dateFormat.format(date);
+    }
+    public static String dateToString2(Date date) {
+        if (date == null) {
+            return "";
+        }
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy\nHH:mm:ss");
         return dateFormat.format(date);
     }
@@ -99,6 +106,9 @@ public class DataUtil {
             return true;
         }
         return false;
+    }
+    public static java.time.ZonedDateTime getCurrentDateTime() {
+        return ZonedDateTime.now();
     }
 
 }
