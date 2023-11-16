@@ -160,7 +160,7 @@ public class WebSocketController {
                 orderDetail.setOrder(order);
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setOrderDetailCode("HDCT" + randomNumber);
-                orderDetail.setRoomPrice(room.getTypeRoom().getPricePerDay());
+                orderDetail.setRoomPrice(payload.getTotalPriceRoom());
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setCreateAt(new Date());
                 orderDetail.setUpdateAt(new Date());

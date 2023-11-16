@@ -106,7 +106,7 @@ public class PaymentMethodController {
         Order order = orderService.getOrderById(id);
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        long amount = (order.getTotalMoney().longValue() * 100);
+        long amount = ((order.getTotalMoney().longValue() - order.getDeposit().longValue()) * 100);
 
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         String vnp_IpAddr = VNPayConfig.getIpAddress(req);
@@ -178,8 +178,7 @@ public class PaymentMethodController {
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
             Order order = orderService.getOrderById(orderId);
             if (order != null) {
-                order.setMoneyGivenByCustomer(order.getTotalMoney().subtract(order.getDeposit()));
-                order.setExcessMoney(BigDecimal.valueOf(0));
+                order.setMoneyGivenByCustomer(order.getTotalMoney().subtract(order.getDeposit()));                order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setNote("Khách thanh toán bằng tài khoản ngân hàng");
                 order.setUpdateAt(new Date());
                 order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
@@ -204,7 +203,7 @@ public class PaymentMethodController {
                 String paymentMethodCode = "PT" + formattedDate + randomDigits;
                 paymentMethod.setPaymentMethodCode(paymentMethodCode);
                 paymentMethod.setMethod(false);
-                paymentMethod.setTotalMoney(order.getTotalMoney());
+                paymentMethod.setTotalMoney(order.getMoneyGivenByCustomer());
                 paymentMethod.setNote(order.getNote());
                 paymentMethod.setCreateAt(new Date());
                 paymentMethod.setCreateBy(order.getCreateBy());
@@ -215,7 +214,7 @@ public class PaymentMethodController {
 
                 HistoryTransaction historyTransaction = new HistoryTransaction();
                 historyTransaction.setOrder(order);
-                historyTransaction.setTotalMoney(order.getTotalMoney());
+                historyTransaction.setTotalMoney(order.getMoneyGivenByCustomer());
                 historyTransaction.setNote(order.getNote());
                 historyTransaction.setCreateAt(new Date());
                 historyTransaction.setCreateBy(order.getCreateBy());
@@ -245,7 +244,7 @@ public class PaymentMethodController {
     @PostMapping("/payment-momo/{id}")
     public Map<String, Object> createPaymentMomo(@PathVariable("id") String id) throws InvalidKeyException, NoSuchAlgorithmException, IOException {
         Order order = orderService.getOrderById(id);
-        Long amount = order.getTotalMoney().longValue();
+        Long amount = (order.getTotalMoney().longValue() - order.getDeposit().longValue());
         JSONObject json = new JSONObject();
         String partnerCode = MomoConfig.PARTNER_CODE;
         String accessKey = MomoConfig.ACCESS_KEY;
@@ -427,7 +426,7 @@ public class PaymentMethodController {
                 String paymentMethodCode = "PT" + formattedDate + randomDigits;
                 paymentMethod.setPaymentMethodCode(paymentMethodCode);
                 paymentMethod.setMethod(false);
-                paymentMethod.setTotalMoney(order.getTotalMoney());
+                paymentMethod.setTotalMoney(order.getMoneyGivenByCustomer());
                 paymentMethod.setNote(order.getNote());
                 paymentMethod.setCreateAt(new Date());
                 paymentMethod.setCreateBy(order.getCreateBy());
@@ -438,7 +437,7 @@ public class PaymentMethodController {
 
                 HistoryTransaction historyTransaction = new HistoryTransaction();
                 historyTransaction.setOrder(order);
-                historyTransaction.setTotalMoney(order.getTotalMoney());
+                historyTransaction.setTotalMoney(order.getMoneyGivenByCustomer());
                 historyTransaction.setNote(order.getNote());
                 historyTransaction.setCreateAt(new Date());
                 historyTransaction.setCreateBy(order.getCreateBy());
