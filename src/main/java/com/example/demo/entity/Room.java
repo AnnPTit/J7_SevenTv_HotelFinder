@@ -50,6 +50,7 @@ import java.util.List;
                                                 @ColumnResult(name = "capacity", type = Integer.class),
                                                 @ColumnResult(name = "pricePerHours", type = BigDecimal.class),
                                                 @ColumnResult(name = "pricePerDay", type = BigDecimal.class),
+                                                @ColumnResult(name = "countBook", type = Integer.class),
                                         }
                                 ),
                         }
@@ -72,6 +73,7 @@ import java.util.List;
                                                 @ColumnResult(name = "url", type = String.class),
                                                 @ColumnResult(name = "orderCode", type = String.class),
                                                 @ColumnResult(name = "deposit", type = BigDecimal.class),
+                                                @ColumnResult(name = "refuseReason", type = String.class),
                                         }
                                 ),
                         }
