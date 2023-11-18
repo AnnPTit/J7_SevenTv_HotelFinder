@@ -52,6 +52,8 @@ public interface RoomService {
 
     Page<RoomResponeDTO> search(RoomRequestDTO roomRequestDTO, Pageable pageable);
 
+    Page<RoomResponeDTO> topBook(Pageable pageable);
+
     List<List<Room>> getRoomsByAllFloors();
 
     List<CartDTO> getCart(String customId, Integer odStt);

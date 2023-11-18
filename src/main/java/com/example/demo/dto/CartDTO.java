@@ -22,5 +22,6 @@ public class CartDTO {
     private Date bookingDay;
     private String url;
     private String orderCode;
-    private BigDecimal deposit ;
+    private BigDecimal deposit;
+    private String refuseReason;
 }

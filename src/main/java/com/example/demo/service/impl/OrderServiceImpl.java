@@ -267,8 +267,8 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public void refuse(String id, Integer stt) {
-        orderRepository.updateStatus(id, stt);
+    public void refuse(String id, Integer stt, String refuseReason) {
+        orderRepository.updateStatus(id, stt,refuseReason);
     }
 
     @Override
