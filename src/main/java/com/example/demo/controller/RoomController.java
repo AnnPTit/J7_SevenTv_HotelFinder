@@ -325,10 +325,15 @@ public class RoomController {
         }
 
         try {
-            room.setId(id);
-            room.setUpdateAt(new Date());
-            room.setStatus(1);
-            roomService.add(room);
+            Room existingRoom = roomService.getRoomById(id);
+
+            if (existingRoom == null) {
+                return new ResponseEntity("Room not found", HttpStatus.NOT_FOUND);
+            }
+
+            existingRoom.setUpdateAt(new Date());
+            room.setStatus(Constant.ROOM.EMPTY);
+            roomService.add(existingRoom);
 
             if (photos != null) {
                 for (MultipartFile file : photos) {
@@ -357,11 +362,13 @@ public class RoomController {
                 System.out.println("Them Thanh cong ");
             }
 
+            roomFacilityService.deleteRoomFacilitiesByRoom(existingRoom);
+            // Add new room facilities
             for (String facilityId : facilityIds) {
                 Facility facility = facilityService.findById(facilityId);
                 if (facility != null) {
                     RoomFacility roomFacility = new RoomFacility();
-                    roomFacility.setRoom(room);
+                    roomFacility.setRoom(existingRoom);
                     roomFacility.setFacility(facility);
                     roomFacility.setCreateAt(new Date());
                     roomFacility.setUpdateAt(new Date());
