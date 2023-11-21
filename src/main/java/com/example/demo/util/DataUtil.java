@@ -62,6 +62,13 @@ public class DataUtil {
         if (date == null) {
             return "";
         }
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        return dateFormat.format(date);
+    }
+    public static String dateToString2(Date date) {
+        if (date == null) {
+            return "";
+        }
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy\nHH:mm:ss");
         return dateFormat.format(date);
     }
@@ -99,6 +106,20 @@ public class DataUtil {
             return true;
         }
         return false;
+    }
+    public static java.time.ZonedDateTime getCurrentDateTime() {
+        return ZonedDateTime.now();
+    }
+
+    public static Date setFixedTime(Date originalDate, int hour, int minute, int second) {
+        // Chuyển đổi Date thành LocalDateTime
+        LocalDateTime localDateTime = originalDate.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+
+        // Thiết lập giờ cố định
+        localDateTime = localDateTime.withHour(hour).withMinute(minute).withSecond(second);
+
+        // Chuyển đổi LocalDateTime trở lại thành Date
+        return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
 }

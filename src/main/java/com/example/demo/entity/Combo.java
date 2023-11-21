@@ -19,6 +19,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.List;
@@ -30,7 +31,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "combo")
-public class Combo {
+public class Combo extends AbstractAuditingEntity<String> implements Serializable {
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
@@ -52,17 +53,17 @@ public class Combo {
     @Column(name = "note")
     private String note;
 
-    @Column(name = "create_at")
-    private Date createAt;
-
-    @Column(name = "create_by")
-    private String createBy;
-
-    @Column(name = "update_at")
-    private Date updateAt;
-
-    @Column(name = "updated_by")
-    private String updatedBy;
+//    @Column(name = "create_at")
+//    private Date createAt;
+//
+//    @Column(name = "create_by")
+//    private String createBy;
+//
+//    @Column(name = "update_at")
+//    private Date updateAt;
+//
+//    @Column(name = "updated_by")
+//    private String updatedBy;
 
     @Column(name = "deleted")
     private String deleted;

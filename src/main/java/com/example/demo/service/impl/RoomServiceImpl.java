@@ -168,6 +168,17 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public Page<RoomResponeDTO> topBook(Pageable pageable) {
+        Page<RoomResponeDTO> page = roomRepository.topBook(pageable);
+        for (RoomResponeDTO roomResponeDTO1 : page.getContent()
+        ) {
+            List<String> url = photoRepository.getUrlByIdRoom(roomResponeDTO1.getId());
+            roomResponeDTO1.setUrls(url);
+        }
+        return page;
+    }
+
+    @Override
     public List<List<Room>> getRoomsByAllFloors() {
         List<Floor> allFloors = floorRepository.findAll();
         List<List<Room>> roomsByAllFloors = new ArrayList<>();

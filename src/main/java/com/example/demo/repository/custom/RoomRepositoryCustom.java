@@ -11,5 +11,7 @@ import java.util.List;
 public interface RoomRepositoryCustom {
     Page<RoomResponeDTO> search(RoomRequestDTO roomRequestDTO, Pageable pageable);
 
-    List<CartDTO> getCart(String customId , Integer odStt);
+    Page<RoomResponeDTO> topBook(Pageable pageable);
+
+    List<CartDTO> getCart(String customId, Integer odStt);
 }

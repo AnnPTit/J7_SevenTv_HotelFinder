@@ -42,7 +42,8 @@ import java.util.List;
                                                 @ColumnResult(name = "deposit", type = BigDecimal.class),
                                                 @ColumnResult(name = "vat", type = BigDecimal.class),
                                                 @ColumnResult(name = "totalMoney", type = BigDecimal.class),
-                                                @ColumnResult(name = "excessMoney", type = BigDecimal.class)
+                                                @ColumnResult(name = "excessMoney", type = BigDecimal.class),
+                                                @ColumnResult(name = "surcharge", type = BigDecimal.class),
                                         }
                                 ),
                         }
@@ -134,7 +135,8 @@ public class Order {
 
     @Column(name = "status")
     private Integer status;
-
+    @Column(name = "refuse_reason")
+    private String refuseReason;
     @JsonIgnore
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<HistoryTransaction> historyTransactionList;

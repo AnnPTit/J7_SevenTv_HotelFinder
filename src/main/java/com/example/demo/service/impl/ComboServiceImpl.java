@@ -3,8 +3,10 @@ package com.example.demo.service.impl;
 import com.example.demo.dto.ComboDTO;
 import com.example.demo.entity.Combo;
 import com.example.demo.mapper.impl.ComboMapperImpl;
+import com.example.demo.repository.AccountRepository;
 import com.example.demo.repository.ComboRepository;
 import com.example.demo.service.ComboService;
+import com.example.demo.util.BaseService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,9 @@ public class ComboServiceImpl implements ComboService {
 
     @Autowired
     private ComboRepository comboRepository;
+    @Autowired
+    private AccountRepository accountRepository;
+
 
     @Autowired
     private ComboMapperImpl comboMapper;
@@ -46,6 +51,7 @@ public class ComboServiceImpl implements ComboService {
     @Override
     public Combo add(Combo combo) {
         try {
+            BaseService.setAccountRepository(accountRepository);
             return comboRepository.save(combo);
         } catch (Exception e) {
             e.printStackTrace();

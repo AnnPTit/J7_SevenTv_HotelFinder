@@ -98,4 +98,9 @@ public interface OrderRepository extends JpaRepository<Order, String>, OrderRepo
     @Query(value = "update `order` o set o.status = :stt where o.id =:id", nativeQuery = true)
     void updateStatus(@Param("id") String id, @Param("stt") Integer stt);
 
+    @Modifying
+    @Transactional
+    @Query(value = "update `order` o set o.status = :stt, o.refuse_reason =:refuseReason where o.id =:id", nativeQuery = true)
+    void updateStatus(@Param("id") String id, @Param("stt") Integer stt , @Param("refuseReason") String refuseReason);
+
 }

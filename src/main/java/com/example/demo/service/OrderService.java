@@ -52,7 +52,8 @@ public interface OrderService {
 
     List<RevenueDTO> getRevenue();
 
-    void refuse(String id, Integer stt);
+    void refuse(String id, Integer stt, String refuseReason);
+
     void cancel(String id, Integer stt);
 
 }
