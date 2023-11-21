@@ -60,6 +60,7 @@ public class WebSocketController {
     @MessageMapping("/products")
     @SendTo("/topic/product")
     public Response broadcastNews(String message) {
+        // Todo : Số khách 100
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             PayloadObject payload = objectMapper.readValue(message, PayloadObject.class);
@@ -71,9 +72,14 @@ public class WebSocketController {
                     .collect(Collectors.toList());
             Date today = new Date();
             String dateString = payload.getDayStart().toString().substring(0, 11);
+            String dateStringEnd = payload.getDayEnd().toString().substring(0, 11);
             String todayString = today.toString().substring(0, 11);
             if (dateString.equals(todayString)) {
                 return new Response("Ngày checkIn phải lớn hơn ngày hôm nay !",
+                        Constant.COMMON_STATUS.ACTIVE, idsRoom);
+            }
+            if (dateString.equals(dateStringEnd)) {
+                return new Response("Số ngày đặt phải lớn hơn 1 ",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
             // Kiểm tra ngày đặt nằm trong khoảng 1 tháng tới
