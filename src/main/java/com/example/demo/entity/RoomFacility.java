@@ -9,11 +9,14 @@ import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
+import jakarta.persistence.Temporal;
+import jakarta.persistence.TemporalType;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.util.Date;
 
@@ -41,13 +44,17 @@ public class RoomFacility {
     private Facility facility;
 
     @Column(name = "create_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") // Specify the date format here
     private Date createAt;
+
+    @Column(name = "update_at")
+    @Temporal(TemporalType.TIMESTAMP)
+    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss") // Specify the date format here
+    private Date updateAt;
 
     @Column(name = "create_by")
     private String createBy;
-
-    @Column(name = "update_at")
-    private Date updateAt;
 
     @Column(name = "updated_by")
     private String updatedBy;

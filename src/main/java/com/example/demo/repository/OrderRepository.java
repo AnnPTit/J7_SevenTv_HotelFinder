@@ -49,6 +49,10 @@ public interface OrderRepository extends JpaRepository<Order, String>, OrderRepo
     List<Order> findAll();
 
     @Query(value = "SELECT o.* FROM `order` o " +
+            " WHERE o.type_of_order = 0 AND o.status = 1 ORDER BY o.update_at DESC", nativeQuery = true)
+    List<Order> loadNotify();
+
+    @Query(value = "SELECT o.* FROM `order` o " +
             "JOIN customer c ON o.customer_id = c.id\n" +
             "WHERE ((:orderCode IS NULL OR o.order_code LIKE CONCAT('%', :orderCode, '%'))" +
             "OR (:customerFullname IS NULL OR c.fullname LIKE CONCAT('%', :customerFullname, '%'))" +

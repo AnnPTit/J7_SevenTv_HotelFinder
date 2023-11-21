@@ -87,6 +87,11 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Order> loadNotify() {
+        return orderRepository.loadNotify();
+    }
+
+    @Override
     public Order getOrderById(String id) {
         return orderRepository.findById(id).orElse(null);
     }

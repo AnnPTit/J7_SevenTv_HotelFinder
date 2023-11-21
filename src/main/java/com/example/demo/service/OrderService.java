@@ -26,6 +26,8 @@ public interface OrderService {
 
     Page<Order> loadBookRoomOffline(String orderCode, Integer status, Pageable pageable);
 
+    List<Order> loadNotify();
+
     Order getOrderById(String id);
 
     Order getOrderByCode(String code);
