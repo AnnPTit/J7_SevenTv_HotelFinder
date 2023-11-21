@@ -128,6 +128,11 @@ public class OrderController {
         return orderService.getAllByStatus(pageable);
     }
 
+    @GetMapping("/loadNotify")
+    public List<Order> loadNotify() {
+        return orderService.loadNotify();
+    }
+
     @GetMapping("/getList")
     public List<Order> getList() {
         return orderService.getList();
@@ -434,7 +439,7 @@ public class OrderController {
         Order order = orderService.getOrderById(id);
         order.setStatus(Constant.ORDER_STATUS.CANCEL);
         order.setDeleted(orderDTO.getDeleted());
-        order.setNote(orderDTO.getDeleted() + " hủy hóa đơn");
+        order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
         orderService.add(order);
 
