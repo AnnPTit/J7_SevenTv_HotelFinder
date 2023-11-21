@@ -58,6 +58,12 @@ public class HomeController {
         return roomService.loadAndSearch(key, key, floorId, typeRoomId, pageable);
     }
 
+    @GetMapping("/room/load")
+    public Page<Room> loadRoom(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 6);
+        return roomService.getAllByStatus(Constant.COMMON_STATUS.ACTIVE, pageable);
+    }
+
     @GetMapping("/room/loadByBook")
     public Page<Room> getRoomByVBooking(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
