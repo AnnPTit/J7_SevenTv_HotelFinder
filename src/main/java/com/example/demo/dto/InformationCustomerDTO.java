@@ -25,6 +25,8 @@ public class InformationCustomerDTO {
     private String citizenId;
     private String passport;
     private String nationality;
+    private String email;
+    private String address;
     private Date stayFrom;
     private Date stayTo;
     private Date createAt;
