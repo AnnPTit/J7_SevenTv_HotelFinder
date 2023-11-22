@@ -30,7 +30,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public List<String> checkRoomIsBooked(LocalDateTime dayStart, LocalDateTime dayEnd, List<String> idsRoom) {
+    public List<String> checkRoomIsBooked(String dayStart, String dayEnd, List<String> idsRoom) {
         return orderDetailRepository.checkRoomIsBooked(dayStart, dayEnd, idsRoom);
     }
 
