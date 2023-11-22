@@ -11,6 +11,7 @@ import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -125,6 +126,18 @@ public class DataUtil {
         // Chuyển đổi LocalDateTime trở lại thành Date
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
+
+    // Convert ngày theo định dạng
+    public static String convertDateToString(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd/MM/yyyy HH:mm:ss");
+        return sdf.format(date);
+    }
+
+    public static long formatMoney(BigDecimal money) {
+        DecimalFormat df = new DecimalFormat("###,###,###");
+        return Long.valueOf(df.format(money));
+    }
+
 
     public static void sendMailCommon(String mailTo, String subject, String content, MailService mailService) {
         Mail mail = new Mail();
