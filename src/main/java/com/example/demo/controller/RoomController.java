@@ -99,40 +99,40 @@ public class RoomController {
         return roomService.getTopRoom();
     }
 
-    @GetMapping("/room-plan")
-    public List<List<RoomDTO>> getRoomsByFloorsAscendingOrder() {
-        List<List<RoomDTO>> roomDTOS = new ArrayList<>();
-        List<List<Room>> list = roomService.getRoomsByAllFloors();
-        for (List<Room> roomList : list) {
-            List<RoomDTO> roomDTOList = new ArrayList<>();
-            for (Room room : roomList) {
-                RoomDTO roomDTO = new RoomDTO();
-                roomDTO.setId(room.getId());
-                roomDTO.setFloor(room.getFloor());
-                roomDTO.setTypeRoom(room.getTypeRoom());
-                roomDTO.setRoomCode(room.getRoomCode());
-                roomDTO.setRoomName(room.getRoomName());
-                roomDTO.setNote(room.getNote());
-                roomDTO.setCreateAt(room.getCreateAt());
-                roomDTO.setCreateBy(room.getCreateBy());
-                roomDTO.setUpdateAt(room.getUpdateAt());
-                roomDTO.setUpdatedBy(room.getUpdatedBy());
-                roomDTO.setDeleted(room.getDeleted());
-                List<String> roomImages = room.getPhotoList()
-                        .stream()
-                        .map(Photo::getUrl)
-                        .collect(Collectors.toList());
-                List<OrderDetail> orderDetailList = room.getOrderDetailList();
-                roomDTO.setPhotoList(roomImages);
-                roomDTO.setOrderDetailList(orderDetailList);
-                roomDTO.setStatus(room.getStatus());
-                roomDTOList.add(roomDTO);
-            }
-            roomDTOS.add(roomDTOList);
-        }
-//        Collections.reverse(roomsByAllFloors);
-        return roomDTOS;
-    }
+//    @GetMapping("/room-plan")
+//    public List<List<RoomDTO>> getRoomsByFloorsAscendingOrder() {
+//        List<List<RoomDTO>> roomDTOS = new ArrayList<>();
+//        List<List<Room>> list = roomService.getRoomsByAllFloors();
+//        for (List<Room> roomList : list) {
+//            List<RoomDTO> roomDTOList = new ArrayList<>();
+//            for (Room room : roomList) {
+//                RoomDTO roomDTO = new RoomDTO();
+//                roomDTO.setId(room.getId());
+//                roomDTO.setFloor(room.getFloor());
+//                roomDTO.setTypeRoom(room.getTypeRoom());
+//                roomDTO.setRoomCode(room.getRoomCode());
+//                roomDTO.setRoomName(room.getRoomName());
+//                roomDTO.setNote(room.getNote());
+//                roomDTO.setCreateAt(room.getCreateAt());
+//                roomDTO.setCreateBy(room.getCreateBy());
+//                roomDTO.setUpdateAt(room.getUpdateAt());
+//                roomDTO.setUpdatedBy(room.getUpdatedBy());
+//                roomDTO.setDeleted(room.getDeleted());
+//                List<String> roomImages = room.getPhotoList()
+//                        .stream()
+//                        .map(Photo::getUrl)
+//                        .collect(Collectors.toList());
+//                List<OrderDetail> orderDetailList = room.getOrderDetailList();
+//                roomDTO.setPhotoList(roomImages);
+//                roomDTO.setOrderDetailList(orderDetailList);
+//                roomDTO.setStatus(room.getStatus());
+//                roomDTOList.add(roomDTO);
+//            }
+//            roomDTOS.add(roomDTOList);
+//        }
+////        Collections.reverse(roomsByAllFloors);
+//        return roomDTOS;
+//    }
 
     @GetMapping("/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
