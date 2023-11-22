@@ -40,46 +40,61 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
     }
 
     @Override
+    public Page<RoomResponeDTO> topBook(Pageable pageable) {
+        Query queryCount = buildQuerySearch(null);
+
+        Long count = Long.valueOf(queryCount.getResultList().size());
+
+        List<RoomResponeDTO> result = new ArrayList<>();
+        if (count > 0) {
+            Query query = buildQuerySearch(pageable);
+            result = query.getResultList(); // Sử dụng getResultList() thay vì getSingleResult()
+        }
+        return new PageImpl<>(result, pageable, count);
+    }
+
+    @Override
     public List<CartDTO> getCart(String customId, Integer odStt) {
         String sql =
                 "select\n" +
-                        "\tr.id as roomId,\n" +
-                        "\tr.room_name as roomName,\n" +
-                        "\ttr.type_room_name as typeRoom,\n" +
-                        "\to.booking_date_start as bookingStart,\n" +
-                        "\to.booking_date_end as bookingEnd,\n" +
-                        "\ttr.price_per_day as price,\n" +
-                        "\tod.customer_quantity as numberCustom,\n" +
-                        "\to.status as orderStatus,\n" +
-                        "\to.create_at as bookingDay,\n" +
-                        "\tMAX(p.url) as url,\n" +
-                        "\to.order_code as orderCode,\n" +
-                        "\to.deposit \n" +
+                        "  r.id as roomId,\n" +
+                        "  r.room_name as roomName,\n" +
+                        "  tr.type_room_name as typeRoom,\n" +
+                        "  o.booking_date_start as bookingStart,\n" +
+                        "  o.booking_date_end as bookingEnd,\n" +
+                        "  tr.price_per_day as price,\n" +
+                        "  od.customer_quantity as numberCustom,\n" +
+                        "  o.status as orderStatus,\n" +
+                        "  o.create_at as bookingDay,\n" +
+                        "  MAX(p.url) as url,\n" +
+                        "  o.order_code as orderCode,\n" +
+                        "  o.deposit,\n" +
+                        "  o.refuse_reason as refuseReason\n" +
                         "from\n" +
-                        "\t`order` o\n" +
+                        "  `order` o\n" +
                         "inner join order_detail od on\n" +
-                        "\to.id = od.order_id\n" +
+                        "  o.id = od.order_id\n" +
                         "inner join room r on\n" +
-                        "\tod.room_id = r.id\n" +
+                        "  od.room_id = r.id\n" +
                         "inner join type_room tr on\n" +
-                        "\ttr.id = r.type_room_id\n" +
-                        "\tand tr.status = 1\n" +
+                        "  tr.id = r.type_room_id\n" +
+                        "  and tr.status = 1\n" +
                         "left join photo p on\n" +
-                        "\tp.room_id = r.id\n" +
+                        "  p.room_id = r.id\n" +
                         "where\n" +
-                        "\to.customer_id = :customId\n" +
-                        "\tand o.status = :odStt\n" +
+                        "  o.customer_id = :customId\n" +
+                        "  and o.status = :odStt\n" +
                         "group by\n" +
-                        "\tr.id,\n" +
-                        "\tr.room_name,\n" +
-                        "\ttr.type_room_name,\n" +
-                        "\to.booking_date_start,\n" +
-                        "\to.booking_date_end,\n" +
-                        "\ttr.price_per_day,\n" +
-                        "\tod.customer_quantity,\n" +
-                        "\to.status,\n" +
-                        "\to.create_at,\n" +
-                        "\to.order_code";
+                        "  r.id,\n" +
+                        "  r.room_name,\n" +
+                        "  tr.type_room_name,\n" +
+                        "  o.booking_date_start,\n" +
+                        "  o.booking_date_end,\n" +
+                        "  tr.price_per_day,\n" +
+                        "  od.customer_quantity,\n" +
+                        "  o.status,\n" +
+                        "  o.create_at,\n" +
+                        "  o.order_code";
 
         Query query = entityManager.createNativeQuery(sql, "cartResult");
         query.setParameter("customId", customId);
@@ -100,7 +115,8 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
                         "tr.type_room_name  as typeRoom ,\n" +
                         "tr.capacity ,\n" +
                         "tr.price_per_hours as pricePerHours ,\n" +
-                        "tr.price_per_day  as pricePerDay\n" +
+                        "tr.price_per_day  as pricePerDay, \n" +
+                        "0 AS countBook\n" +
                         "from room r   \n" +
                         "inner join type_room tr on tr.id = r.type_room_id  \n" +
                         "left join order_detail od on od.room_id = r.id \n " +
@@ -147,6 +163,53 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
             query.setMaxResults(pageable.getPageSize()); // giới hạn số lượng kết quả trả về trên mỗi trang
         }
 
+        params.forEach(query::setParameter);
+        return query;
+    }
+
+    private Query buildQuerySearch(Pageable pageable) {
+        Map<String, Object> params = new HashMap<>();
+
+        StringBuilder sql = new StringBuilder(
+                "SELECT\n" +
+                        "    r.id,\n" +
+                        "    r.room_code AS roomCode,\n" +
+                        "    r.room_name AS roomName,\n" +
+                        "    r.note,\n" +
+                        "    tr.type_room_name AS typeRoom,\n" +
+                        "    tr.capacity,\n" +
+                        "    tr.price_per_hours AS pricePerHours,\n" +
+                        "    tr.price_per_day AS pricePerDay,\n" +
+                        "    COUNT(od.id) AS countBook\n" +
+                        "FROM\n" +
+                        "    room r\n" +
+                        "INNER JOIN type_room tr ON\n" +
+                        "    tr.id = r.type_room_id\n" +
+                        "LEFT JOIN order_detail od ON\n" +
+                        "    od.room_id = r.id\n" +
+                        "LEFT JOIN `order` o ON\n" +
+                        "    o.id = od.order_id\n" +
+                        "WHERE\n" +
+                        "    r.status = 1\n" +
+                        "    AND tr.status = 1\n" +
+                        "GROUP BY\n" +
+                        "    r.id,\n" +
+                        "    r.room_code,\n" +
+                        "    r.room_name,\n" +
+                        "    r.note,\n" +
+                        "    tr.type_room_name,\n" +
+                        "    tr.capacity,\n" +
+                        "    tr.price_per_hours,\n" +
+                        "    tr.price_per_day\n" +
+                        "ORDER BY\n" +
+                        "    countBook DESC\n"
+        );
+        Query query = entityManager.createNativeQuery(sql.toString(), "roomResult");
+
+        if (pageable != null) {
+            query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize()); // ví trí bản ghi đầu
+            query.setMaxResults(pageable.getPageSize()); // giới hạn số lượng kết quả trả về trên mỗi trang
+        }
         params.forEach(query::setParameter);
         return query;
     }

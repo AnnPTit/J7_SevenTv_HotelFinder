@@ -26,6 +26,8 @@ public interface OrderService {
 
     Page<Order> loadBookRoomOffline(String orderCode, Integer status, Pageable pageable);
 
+    List<Order> loadNotify();
+
     Order getOrderById(String id);
 
     Order getOrderByCode(String code);
@@ -52,7 +54,8 @@ public interface OrderService {
 
     List<RevenueDTO> getRevenue();
 
-    void refuse(String id, Integer stt);
+    void refuse(String id, Integer stt, String refuseReason);
+
     void cancel(String id, Integer stt);
 
 }

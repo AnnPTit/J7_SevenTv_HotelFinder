@@ -19,7 +19,7 @@ import java.util.Optional;
 public class CustomerServiceImplement implements CustomerService {
 
     @Autowired
-    private  CustomerRepository customerRepository;
+    private CustomerRepository customerRepository;
 
 
     @Autowired
@@ -90,7 +90,10 @@ public class CustomerServiceImplement implements CustomerService {
 
     @Override
     public Customer findByCitizenId(String citizenId) {
-        return customerRepository.findByCitizenId(citizenId).get(0);
+        if (customerRepository.findByCitizenId(citizenId).size() != 0) {
+            return customerRepository.findByCitizenId(citizenId).get(0);
+        }
+        return null;
     }
 
     @Override

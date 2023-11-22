@@ -20,4 +20,5 @@ public class RoomResponeDTO {
     private BigDecimal pricePerHours;
     private BigDecimal pricePerDay;
     private List<String> urls;
+    private Integer countBook;
 }

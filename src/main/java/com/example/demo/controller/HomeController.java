@@ -58,6 +58,12 @@ public class HomeController {
         return roomService.loadAndSearch(key, key, floorId, typeRoomId, pageable);
     }
 
+    @GetMapping("/room/load")
+    public Page<Room> loadRoom(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 6);
+        return roomService.getAllByStatus(Constant.COMMON_STATUS.ACTIVE, pageable);
+    }
+
     @GetMapping("/room/loadByBook")
     public Page<Room> getRoomByVBooking(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
@@ -137,6 +143,13 @@ public class HomeController {
         return roomService.search(roomRequestDTO, pageable);
     }
 
+    @GetMapping("/room/top")
+    public Page<RoomResponeDTO> testSearch(@RequestParam(name = "current_page", defaultValue = "0") int current_page,
+                                           @RequestParam(name = "total_page", defaultValue = "1000") int total_page) {
+        Pageable pageable = PageRequest.of(current_page, total_page);
+        return roomService.topBook(pageable);
+    }
+
     @GetMapping("/combo/getall")
     public List<ComboDTO> getAllCombo() {
         return comboService.getAll();
@@ -153,8 +166,10 @@ public class HomeController {
     }
 
     @PostMapping("/order/cancel/{code}/{oddStt}")
-    public ResponseEntity<Message> cancelOrder(@PathVariable("code") String code , @PathVariable("oddStt") Integer oddStt) {
-        return new ResponseEntity<>(homeService.cancelOrder(code,oddStt), HttpStatus.OK);
+    public ResponseEntity<Message> cancelOrder(@PathVariable("code") String code,
+                                               @PathVariable("oddStt") Integer oddStt,
+                                               @RequestParam( name ="refuseReason" , defaultValue = "") String refuseReason) {
+        return new ResponseEntity<>(homeService.cancelOrder(code, oddStt,refuseReason), HttpStatus.OK);
     }
 
 

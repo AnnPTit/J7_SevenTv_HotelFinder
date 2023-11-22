@@ -92,7 +92,6 @@ public class InformationCustomerController {
         return new ResponseEntity<InformationCustomer>(informationCustomer, HttpStatus.OK);
     }
 
-
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         InformationCustomer informationCustomer = informationCustomerService.getById(id);

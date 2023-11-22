@@ -21,6 +21,7 @@ public class UserInfoUserDetails implements UserDetails {
     private String name;
     private String fullName;
     private String password;
+    private String position;
     private List<GrantedAuthority> authorities;
 
     public UserInfoUserDetails(Account account) {
@@ -28,6 +29,7 @@ public class UserInfoUserDetails implements UserDetails {
         name = account.getEmail();
         fullName = account.getFullname();
         password = account.getPassword();
+        position = account.getPosition().getPositionName();
         System.out.println();
         authorities = Arrays.stream(account.getPosition().getPositionName().split(","))
                 .map(SimpleGrantedAuthority::new)

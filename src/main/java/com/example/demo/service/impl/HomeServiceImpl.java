@@ -15,7 +15,7 @@ public class HomeServiceImpl implements HomeService {
     private final OrderService orderService;
 
     @Override
-    public Message cancelOrder(String code, Integer oddStt) {
+    public Message cancelOrder(String code, Integer oddStt, String refuseReason) {
         // kiểm tra tồn tại
         Order order;
         if (code.length() == 36) {
@@ -28,7 +28,7 @@ public class HomeServiceImpl implements HomeService {
             return new Message(Constant.MESSAGE_STATUS.ERROR, "Hóa đơn không tồn tại !");
         }
         if (oddStt.equals(Constant.ORDER_STATUS.REFUSE)) {
-            orderService.refuse(order.getId(), oddStt);
+            orderService.refuse(order.getId(), oddStt, refuseReason);
         }
         if (oddStt.equals(Constant.ORDER_STATUS.CANCEL)) {
             orderService.cancel(order.getId(), oddStt);
