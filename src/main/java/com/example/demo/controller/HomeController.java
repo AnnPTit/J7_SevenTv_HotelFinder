@@ -168,7 +168,7 @@ public class HomeController {
     @PostMapping("/order/cancel/{code}/{oddStt}")
     public ResponseEntity<Message> cancelOrder(@PathVariable("code") String code,
                                                @PathVariable("oddStt") Integer oddStt,
-                                               @RequestParam("refuseReason") String refuseReason) {
+                                               @RequestParam( name ="refuseReason" , defaultValue = "") String refuseReason) {
         return new ResponseEntity<>(homeService.cancelOrder(code, oddStt,refuseReason), HttpStatus.OK);
     }
 
