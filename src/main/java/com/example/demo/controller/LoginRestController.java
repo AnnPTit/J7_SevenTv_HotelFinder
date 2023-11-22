@@ -66,6 +66,7 @@ public class LoginRestController {
         loginResponse.setAccessToken(jwt);
         loginResponse.setIdUser(((UserInfoUserDetails) authentication.getPrincipal()).getId());
         loginResponse.setFullName(((UserInfoUserDetails) authentication.getPrincipal()).getFullName());
+        loginResponse.setPosition(((UserInfoUserDetails) authentication.getPrincipal()).getPosition());
         System.out.println("idUser: " + ((UserInfoUserDetails) authentication.getPrincipal()).getId());
         System.out.println("name: " + ((UserInfoUserDetails) authentication.getPrincipal()).getFullName());
         return loginResponse;
