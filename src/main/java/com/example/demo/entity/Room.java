@@ -135,4 +135,7 @@ public class Room {
     @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
     private List<RoomFacility> roomFacilityList;
 
+    @OneToMany(mappedBy = "room", fetch = FetchType.LAZY)
+    private List<Favourite> favourites;
+
 }

@@ -2,6 +2,8 @@ package com.example.demo.util;
 
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.InformationCustomer;
+import com.example.demo.model.Mail;
+import com.example.demo.service.MailService;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -65,6 +67,7 @@ public class DataUtil {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         return dateFormat.format(date);
     }
+
     public static String dateToString2(Date date) {
         if (date == null) {
             return "";
@@ -107,6 +110,7 @@ public class DataUtil {
         }
         return false;
     }
+
     public static java.time.ZonedDateTime getCurrentDateTime() {
         return ZonedDateTime.now();
     }
@@ -120,6 +124,15 @@ public class DataUtil {
 
         // Chuyển đổi LocalDateTime trở lại thành Date
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
+    }
+
+    public static void sendMailCommon(String mailTo, String subject, String content, MailService mailService) {
+        Mail mail = new Mail();
+        mail.setMailFrom("nguyenvantundz2003@gmail.com");
+        mail.setMailTo(mailTo);
+        mail.setMailSubject(subject);
+        mail.setMailContent(content);
+        mailService.sendEmail(mail);
     }
 
 }
