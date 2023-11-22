@@ -134,8 +134,8 @@ public class WebSocketController {
             order.setTypeOfOrder(false);
             order.setDeposit(payload.getDeposit());
             order.setVat((payload.getTotalPriceRoom().multiply(new BigDecimal(depositService.getByCode("VAT").getPileValue()))).divide(new BigDecimal(100)));
-            order.setBookingDateStart(DataUtil.setFixedTime(payload.getDayStart(),14,0, 0));
-            order.setBookingDateEnd(DataUtil.setFixedTime(payload.getDayEnd(),12,0, 0));
+            order.setBookingDateStart(DataUtil.setFixedTime(payload.getDayStart(), 14, 0, 0));
+            order.setBookingDateEnd(DataUtil.setFixedTime(payload.getDayEnd(), 12, 0, 0));
             order.setTotalMoney(payload.getTotalPriceRoom());
             order.setCreateAt(new Date());
             order.setUpdateAt(new Date());
@@ -191,10 +191,10 @@ public class WebSocketController {
                     "Mã hóa đơn : " + orderCode + "\n" +
                     "Tên khách hàng : " + customer.getFullname() + "\n" +
                     "Số điện thoại : " + customer.getPhoneNumber() + "\n" +
-                    "Ngày đặt : " + order.getCreateAt() + "\n" +
-                    "Ngày CheckIn : " + order.getBookingDateStart() + "\n" +
-                    "Ngày CheckOut : " + order.getBookingDateEnd() + "\n" +
-                    "Tổng tiền phòng tạm tính : " + order.getTotalMoney() + "\n" +
+                    "Ngày đặt : " + DataUtil.convertDateToString(order.getCreateAt()) + "\n" +
+                    "Ngày CheckIn : " + DataUtil.convertDateToString(order.getBookingDateStart()) + "\n" +
+                    "Ngày CheckOut : " + DataUtil.convertDateToString(order.getBookingDateEnd()) + "\n" +
+                    "Tổng tiền phòng tạm tính : " + DataUtil.formatMoney(order.getTotalMoney()) + "\n" +
                     "Số tiền phải cọc : " + order.getDeposit() + "\n" +
                     "Chi tiết : ";
             for (OrderDetail orderDetail : orderDetailList) {
