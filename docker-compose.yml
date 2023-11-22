@@ -1,0 +1,27 @@
+version: '3'
+services:
+  your-app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    ports:
+      - "2005:2003"
+    environment:
+      - SPRING_DATASOURCE_URL=jdbc:mysql://mysql:3306/J7_SEVENTV_HOTEL_FINDER?allowPublicKeyRetrieval=true&useSSL=false&sessionVariables=sql_mode='NO_ENGINE_SUBSTITUTION'&jdbcCompliantTruncation=false
+      - SPRING_DATASOURCE_USERNAME=root
+      - SPRING_DATASOURCE_PASSWORD=123456
+      - SPRING_JPA_HIBERNATE_DDL_AUTO=update
+      - SPRING_JPA_DATABASE_PLATFORM=org.hibernate.dialect.MySQL8Dialect
+      - SERVER_PORT=2003
+    depends_on:
+      - mysql
+
+  mysql:
+    image: mysql:latest
+    environment:
+      MYSQL_ROOT_PASSWORD: 123456
+      MYSQL_DATABASE: J7_SEVENTV_HOTEL_FINDER
+      MYSQL_USER: root
+      MYSQL_PASSWORD: 123456
+    ports:
+      - "3307:3306"
