@@ -201,7 +201,7 @@ public class WebSocketController {
                     "Ngày CheckIn : " + DataUtil.convertDateToString(order.getBookingDateStart()) + "\n" +
                     "Ngày CheckOut : " + DataUtil.convertDateToString(order.getBookingDateEnd()) + "\n" +
                     "Tổng tiền phòng tạm tính : " + DataUtil.formatMoney(order.getTotalMoney()) + "\n" +
-                    "Số tiền phải cọc : " + order.getDeposit() + "\n" +
+                    "Số tiền phải cọc : " + DataUtil.formatMoney(order.getDeposit()) + "\n" +
                     "Chi tiết : ";
             for (OrderDetail orderDetail : orderDetailList) {
                 content = content + "\n" +
