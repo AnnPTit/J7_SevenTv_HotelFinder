@@ -51,7 +51,6 @@ public class ComboServiceImpl implements ComboService {
     @Override
     public Combo add(Combo combo) {
         try {
-            BaseService.setAccountRepository(accountRepository);
             return comboRepository.save(combo);
         } catch (Exception e) {
             e.printStackTrace();

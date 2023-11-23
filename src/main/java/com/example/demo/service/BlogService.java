@@ -9,4 +9,5 @@ public interface BlogService {
     Blog save(Blog blog);
 
     Page<BlogDTO> getPaginate(Pageable pageable);
+
 }
