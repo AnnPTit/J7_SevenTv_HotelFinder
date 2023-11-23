@@ -62,4 +62,9 @@ public class PhotoServiceImpl implements PhotoService {
         return photoRepository.getUrlByIdRoom(id);
     }
 
+    @Override
+    public List<String> getUrlByIdBlog(String id) {
+        return photoRepository.getUrlByIdRoom(id);
+    }
+
 }

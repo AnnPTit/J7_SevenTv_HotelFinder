@@ -28,8 +28,8 @@ public class Blog {
     @Column(name = "content")
     private String content;
 
-    @Column(name = "count_like")
-    private Integer count_like;
+    @Column(name = "count_view")
+    private Integer countView;
 
     @Column(name = "create_at")
     private Date createAt;
@@ -46,7 +46,7 @@ public class Blog {
     @Column(name = "status")
     private Integer status;
 
-    @JsonIgnore
+//    @JsonIgnore
     @OneToMany(mappedBy = "blog", fetch = FetchType.LAZY)
     private List<Photo> photoList;
 
