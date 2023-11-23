@@ -87,8 +87,8 @@ public class WebSocketController {
                 return new Response("Vui lòng đặt phòng trong vòng 30 ngày !",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
-            List<String> orderDetailIds = orderDetailService.checkRoomIsBooked(DataUtil.toLocalDateTime(payload.getDayStart()),
-                    DataUtil.toLocalDateTime(payload.getDayEnd()), idsRoom);
+            List<String> orderDetailIds = orderDetailService.checkRoomIsBooked(DataUtil.dateToStringSql(payload.getDayStart()),
+                    DataUtil.dateToStringSql(payload.getDayEnd()), idsRoom);
             System.out.println(orderDetailIds.toString());
             if (!orderDetailIds.isEmpty()) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -167,6 +167,10 @@ public class WebSocketController {
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setOrderDetailCode("HDCT" + randomNumber);
                 orderDetail.setRoomPrice(payload.getTotalPriceRoom());
+                if(roomData.getGuestCount() > room.getTypeRoom().getCapacity()){
+                    return new Response("Số khách vượt quá sức chứa  !",
+                            Constant.COMMON_STATUS.ACTIVE, idsRoom);
+                }
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setCreateAt(new Date());
                 orderDetail.setUpdateAt(new Date());

@@ -91,7 +91,7 @@ public class CustomerController {
         customer.setStatus(1);
 
 //        Mail mail = new Mail();
-//        mail.setMailFrom("phamthanhanzwz@gmail.com");
+//         mail.setMailFrom("nguyenvantundz2003@gmail.com");
 //        mail.setMailTo(customer.getEmail());
 //        mail.setMailSubject("Thông tin tài khoản website");
 //        mail.setMailContent(

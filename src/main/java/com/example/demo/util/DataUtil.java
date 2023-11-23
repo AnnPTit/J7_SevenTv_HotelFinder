@@ -2,6 +2,8 @@ package com.example.demo.util;
 
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.InformationCustomer;
+import com.example.demo.model.Mail;
+import com.example.demo.service.MailService;
 
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
@@ -66,6 +68,7 @@ public class DataUtil {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         return dateFormat.format(date);
     }
+
     public static String dateToString2(Date date) {
         if (date == null) {
             return "";
@@ -108,6 +111,7 @@ public class DataUtil {
         }
         return false;
     }
+
     public static java.time.ZonedDateTime getCurrentDateTime() {
         return ZonedDateTime.now();
     }
@@ -128,11 +132,24 @@ public class DataUtil {
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd/MM/yyyy HH:mm:ss");
         return sdf.format(date);
     }
-    
-    public static long formatMoney(BigDecimal money) {
+
+    public static String formatMoney(BigDecimal money) {
         DecimalFormat df = new DecimalFormat("###,###,###");
-        return Long.valueOf(df.format(money));
+        return df.format(money);
     }
 
 
+    public static void sendMailCommon(String mailTo, String subject, String content, MailService mailService) {
+        Mail mail = new Mail();
+        mail.setMailFrom("nguyenvantundz2003@gmail.com");
+        mail.setMailTo(mailTo);
+        mail.setMailSubject(subject);
+        mail.setMailContent(content);
+        mailService.sendEmail(mail);
+    }
+
+    public static String dateToStringSql(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(date);
+    }
 }
