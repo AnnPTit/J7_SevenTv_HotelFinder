@@ -43,40 +43,40 @@ public class Customer {
     private String customerCode;
 
     @Column(name = "username")
-    @NotBlank(message = "Username không được để ")
+//    @NotBlank(message = "Username không được để ")
     private String username;
 
     @Column(name = "password")
 //    @Size(min = 5, max = 20, message = "Password phải từ 5-20 kí ")
-    @NotBlank(message = "Password không được bỏ trống")
+//    @NotBlank(message = "Password không được bỏ trống")
     private String password;
 
     @Column(name = "fullname")
-    @NotBlank(message = "Full name không được bỏ trống")
+//    @NotBlank(message = "Full name không được bỏ trống")
     private String fullname;
 
     @Column(name = "gender")
     private Boolean gender;
 
     @Column(name = "birthday")
-    @DateTimeFormat(pattern = "yyyy-MM-dd")
-    @NotNull(message = "Ngày sinh không được để tróng!!")
-    @MinAge(value = 18, message = "Bạn phải ít nhất 18 tuổi!!")
+//    @DateTimeFormat(pattern = "yyyy-MM-dd")
+//    @NotNull(message = "Ngày sinh không được để tróng!!")
+//    @MinAge(value = 18, message = "Bạn phải ít nhất 18 tuổi!!")
     private Date birthday;
 
     @Column(name = "email")
-    @NotBlank(message = "Email không được để trống!!")
-    @Email(message = "Email không đúng định dạng!!")
+//    @NotBlank(message = "Email không được để trống!!")
+//    @Email(message = "Email không đúng định dạng!!")
     private String email;
 
     @Column(name = "phone_number")
-    @NotBlank(message = "Số điện thoại không được bỏ trống")
-    @Size(min = 10, max = 10, message = "Số điện thoại phải có 10 chữ số!!")
-    @Pattern(regexp = "^(\\+84|0)[35789][0-9]{8}$", message = "Số điện thoại không đúng định dạng!!")
+//    @NotBlank(message = "Số điện thoại không được bỏ trống")
+//    @Size(min = 10, max = 10, message = "Số điện thoại phải có 10 chữ số!!")
+//    @Pattern(regexp = "^(\\+84|0)[35789][0-9]{8}$", message = "Số điện thoại không đúng định dạng!!")
     private String phoneNumber;
 
     @Column(name = "citizen_id")
-    @NotBlank(message = "Căn cước công dân không được để trống!!")
+//    @NotBlank(message = "Căn cước công dân không được để trống!!")
 //    @Pattern(regexp = "\\d{12}", message = "Căn cước công dân không đúng định dạng!!")
     private String citizenId;
 
