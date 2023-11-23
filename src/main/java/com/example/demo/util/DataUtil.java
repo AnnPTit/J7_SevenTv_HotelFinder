@@ -133,9 +133,9 @@ public class DataUtil {
         return sdf.format(date);
     }
 
-    public static long formatMoney(BigDecimal money) {
+    public static String formatMoney(BigDecimal money) {
         DecimalFormat df = new DecimalFormat("###,###,###");
-        return Long.valueOf(df.format(money));
+        return df.format(money);
     }
 
 
@@ -148,4 +148,8 @@ public class DataUtil {
         mailService.sendEmail(mail);
     }
 
+    public static String dateToStringSql(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(date);
+    }
 }
