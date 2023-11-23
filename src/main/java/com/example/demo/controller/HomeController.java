@@ -41,6 +41,8 @@ public class HomeController {
     private ComboService comboService;
     @Autowired
     private HomeService homeService;
+    @Autowired
+    private BlogService blogService;
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -185,8 +187,15 @@ public class HomeController {
     @PostMapping("/order/cancel/{code}/{oddStt}")
     public ResponseEntity<Message> cancelOrder(@PathVariable("code") String code,
                                                @PathVariable("oddStt") Integer oddStt,
-                                               @RequestParam( name ="refuseReason" , defaultValue = "") String refuseReason) {
-        return new ResponseEntity<>(homeService.cancelOrder(code, oddStt,refuseReason), HttpStatus.OK);
+                                               @RequestParam(name = "refuseReason", defaultValue = "") String refuseReason) {
+        return new ResponseEntity<>(homeService.cancelOrder(code, oddStt, refuseReason), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/load/blog")
+    public Page<BlogDTO> load(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return blogService.getPaginate(pageable);
     }
 
 

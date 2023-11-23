@@ -38,7 +38,7 @@ public class ServiceController {
     @Autowired
     private ServiceService serviceService;
     @Autowired
-    private AccountRepository accountRepository;
+    private BaseService baseService;
 
     @GetMapping("/load")
     public Page<Service> load(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
@@ -87,10 +87,9 @@ public class ServiceController {
         if (serviceService.existsByCode(service.getServiceCode())) {
             return new ResponseEntity("Service Code is exists !", HttpStatus.BAD_REQUEST);
         }
-//        service.setCreateAt(new Date());
-//        service.setUpdateAt(new Date());
-        BaseService.setAccountRepository(accountRepository);
-//        service.setCreateBy(BaseService.getCurrentUser().getFullname());
+        service.setCreateAt(new Date());
+        service.setUpdateAt(new Date());
+        service.setCreateBy(baseService.getCurrentUser().getFullname());
         service.setStatus(1);
         serviceService.add(service);
         return new ResponseEntity<Service>(service, HttpStatus.OK);
