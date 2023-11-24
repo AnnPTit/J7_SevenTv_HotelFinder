@@ -50,9 +50,7 @@ public class ComboController {
     private ComboRepository comboRepository;
 
     @Autowired
-    private AccountRepository accountRepository;
-
-
+    private BaseService baseService;
 
 
     @GetMapping("/load")
@@ -161,8 +159,10 @@ public class ComboController {
             return new ResponseEntity<>("Mã combo đã tồn tại !", HttpStatus.BAD_REQUEST);
         }
         // Them Combo vao cosoDulieu
-//        combo.setCreateAt(new Date());
-        BaseService.setAccountRepository(accountRepository);
+        combo.setCreateAt(new Date());
+        combo.setUpdateAt(new Date());
+        combo.setCreateBy(baseService.getCurrentUser().getFullname());
+        combo.setUpdatedBy(baseService.getCurrentUser().getFullname());
         combo.setStatus(1);
         comboService.add(combo);
         // Sau khi add combo -> add combo_service

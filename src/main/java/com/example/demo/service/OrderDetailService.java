@@ -14,7 +14,7 @@ public interface OrderDetailService {
 
     List<OrderDetail> getOrderDetailByOrderId(String id);
 
-    List<String> checkRoomIsBooked(LocalDateTime dayStart, LocalDateTime dayEnd, List<String> idsRoom);
+    List<String> checkRoomIsBooked(String dayStart, String dayEnd, List<String> idsRoom);
 
     List<String> checkRoomExist(LocalDateTime dayStart, LocalDateTime dayEnd, String id);
 
@@ -23,6 +23,7 @@ public interface OrderDetailService {
     OrderDetail getOrderDetailById(String id);
 
     OrderDetail add(OrderDetail orderDetail);
+
     List<OrderDetail> addAll(List<OrderDetail> orderDetails);
 
     void delete(String id);

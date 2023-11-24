@@ -2,13 +2,20 @@ package com.example.demo.util;
 
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.InformationCustomer;
+import com.example.demo.model.Mail;
+import com.example.demo.service.MailService;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.File;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -65,6 +72,7 @@ public class DataUtil {
         SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         return dateFormat.format(date);
     }
+
     public static String dateToString2(Date date) {
         if (date == null) {
             return "";
@@ -107,6 +115,7 @@ public class DataUtil {
         }
         return false;
     }
+
     public static java.time.ZonedDateTime getCurrentDateTime() {
         return ZonedDateTime.now();
     }
@@ -122,4 +131,37 @@ public class DataUtil {
         return Date.from(localDateTime.atZone(ZoneId.systemDefault()).toInstant());
     }
 
+    // Convert ngày theo định dạng
+    public static String convertDateToString(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd/MM/yyyy HH:mm:ss");
+        return sdf.format(date);
+    }
+
+    public static String formatMoney(BigDecimal money) {
+        DecimalFormat df = new DecimalFormat("###,###,###");
+        return df.format(money);
+    }
+
+
+    public static void sendMailCommon(String mailTo, String subject, String content, MailService mailService) {
+        Mail mail = new Mail();
+        mail.setMailFrom("nguyenvantundz2003@gmail.com");
+        mail.setMailTo(mailTo);
+        mail.setMailSubject(subject);
+        mail.setMailContent(content);
+        mailService.sendEmail(mail);
+    }
+
+    public static String dateToStringSql(Date date) {
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+        return formatter.format(date);
+    }
+
+    public static File convertMultiPartToFile(MultipartFile file) throws IOException {
+        File convFile = new File(file.getOriginalFilename());
+        FileOutputStream fos = new FileOutputStream(convFile);
+        fos.write(file.getBytes());
+        fos.close();
+        return convFile;
+    }
 }

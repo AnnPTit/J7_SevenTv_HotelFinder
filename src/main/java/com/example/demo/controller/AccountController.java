@@ -93,7 +93,7 @@ public class AccountController {
         account.setPosition(positionService.getIdPosition());
 
 //        Mail mail = new Mail();
-//        mail.setMailFrom("phamthanhanzwz@gmail.com");
+//         mail.setMailFrom("nguyenvantundz2003@gmail.com");
 //        mail.setMailTo(account.getEmail());
 //        mail.setMailSubject("Thông tin tài khoản website");
 //        mail.setMailContent(

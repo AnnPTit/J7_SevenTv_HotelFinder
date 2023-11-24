@@ -19,6 +19,7 @@ import com.example.demo.service.FacilityService;
 import com.example.demo.service.PhotoService;
 import com.example.demo.service.RoomFacilityService;
 import com.example.demo.service.RoomService;
+import com.example.demo.util.DataUtil;
 import jakarta.validation.Valid;
 import jakarta.websocket.server.PathParam;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -176,7 +177,7 @@ public class RoomController {
     public void uploadFile(@RequestParam("file") MultipartFile[] files) {
         try {
             for (MultipartFile file : files) {
-                File fileObj = convertMultiPartToFile(file);
+                File fileObj = DataUtil.convertMultiPartToFile(file);
                 String key = "AnDz" + file.getOriginalFilename();
                 s3Util.uploadPhoto(key, fileObj);
             }
@@ -185,13 +186,7 @@ public class RoomController {
         }
     }
 
-    private File convertMultiPartToFile(MultipartFile file) throws IOException {
-        File convFile = new File(file.getOriginalFilename());
-        FileOutputStream fos = new FileOutputStream(convFile);
-        fos.write(file.getBytes());
-        fos.close();
-        return convFile;
-    }
+
 
     @GetMapping("getPublicUrl")
     public ResponseEntity<String> getPublicUrl(@RequestParam("fileName") String fileName) {
@@ -250,7 +245,7 @@ public class RoomController {
             roomService.add(room);
 
             for (MultipartFile file : photos) {
-                File fileObj = convertMultiPartToFile(file);
+                File fileObj = DataUtil.convertMultiPartToFile(file);
                 String key = "AnDz" + file.getOriginalFilename();
                 s3Util.uploadPhoto(key, fileObj);
                 BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);
@@ -337,7 +332,7 @@ public class RoomController {
 
             if (photos != null) {
                 for (MultipartFile file : photos) {
-                    File fileObj = convertMultiPartToFile(file);
+                    File fileObj = DataUtil.convertMultiPartToFile(file);
                     String key = "AnDz" + file.getOriginalFilename();
                     s3Util.uploadPhoto(key, fileObj);
                     BasicAWSCredentials credentials = new BasicAWSCredentials(accessKey, secretKey);

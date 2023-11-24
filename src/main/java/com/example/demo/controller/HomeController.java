@@ -5,6 +5,7 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
 import com.example.demo.service.ComboService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,11 +13,15 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
@@ -36,6 +41,8 @@ public class HomeController {
     private ComboService comboService;
     @Autowired
     private HomeService homeService;
+    @Autowired
+    private BlogService blogService;
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -106,6 +113,18 @@ public class HomeController {
         }
     }
 
+    @PostMapping("/customer/save")
+    public ResponseEntity<Customer> add( @RequestBody Customer customer,
+                                        BindingResult result) {
+        customer.setCustomerCode(customerService.generateCustomerCode());
+        customer.setCreateAt(new Date());
+        customer.setUpdateAt(new Date());
+        customer.setStatus(1);
+
+        customerService.add(customer);
+        return new ResponseEntity<Customer>(customer, HttpStatus.OK);
+    }
+
     // Filter
     @GetMapping("/get-room-filter")
     public List<Room> getRoomsByFilters(
@@ -168,8 +187,15 @@ public class HomeController {
     @PostMapping("/order/cancel/{code}/{oddStt}")
     public ResponseEntity<Message> cancelOrder(@PathVariable("code") String code,
                                                @PathVariable("oddStt") Integer oddStt,
-                                               @RequestParam( name ="refuseReason" , defaultValue = "") String refuseReason) {
-        return new ResponseEntity<>(homeService.cancelOrder(code, oddStt,refuseReason), HttpStatus.OK);
+                                               @RequestParam(name = "refuseReason", defaultValue = "") String refuseReason) {
+        return new ResponseEntity<>(homeService.cancelOrder(code, oddStt, refuseReason), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/load/blog")
+    public Page<BlogDTO> load(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        return blogService.getPaginate(pageable);
     }
 
 

@@ -22,5 +22,6 @@ public interface PhotoService {
     void deletePhoto(Photo photo);
 
     List<String> getUrlByIdRoom(String id);
+    List<String> getUrlByIdBlog(String id);
 
 }

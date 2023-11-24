@@ -6,9 +6,11 @@ import com.example.demo.entity.Customer;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderTimeline;
 import com.example.demo.errors.BadRequestAlertException;
+import com.example.demo.model.Mail;
 import com.example.demo.repository.CustomerRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.OrderTimelineRepository;
+import com.example.demo.service.MailService;
 import com.example.demo.service.OrderService;
 import com.example.demo.util.DataUtil;
 import com.example.demo.util.NumToViet;
@@ -59,6 +61,8 @@ public class OrderServiceImpl implements OrderService {
     public Page<Order> getAllByStatus(Pageable pageable) {
         return orderRepository.findAllByStatus(pageable);
     }
+
+    private final MailService mailService;
 
     @Override
     public Page<Order> loadAndSearch(String orderCode, Boolean typeOfOrder, Integer status, String customerFullname, Date startDate, Date endDate, Pageable pageable) {
@@ -273,7 +277,28 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     public void refuse(String id, Integer stt, String refuseReason) {
-        orderRepository.updateStatus(id, stt,refuseReason);
+        Order order = orderRepository.getById(id);
+        if (DataUtil.isNull(order)) {
+            return;
+        }
+        String mailTo = order.getCustomer().getEmail();
+        String subject = "Thông báo từ Chúng tôi về Đơn Đặt Phòng của Quý Khách";
+        String content = "Chào Quý khách " + order.getCustomer().getFullname() +
+                "\n" +
+                "Chúng tôi xin trân trọng gửi lời cảm ơn chân thành về sự quan tâm và lựa chọn dịch vụ của Armani Hotel. Rất tiếc, sau khi kiểm tra, chúng tôi phải thông báo rằng chúng tôi không thể chấp nhận được đơn đặt phòng của Quý khách vào thời gian mong muốn.\n" +
+                "\n" +
+                "Với lý do : " + refuseReason +
+                "\n" +
+                "Chúng tôi hiểu rằng điều này có thể tạo ra bất tiện và thất vọng. Để đền bù, chúng tôi muốn đề xuất một số lựa chọn khác hoặc giúp đỡ để đảm bảo chuyến đi của Quý khách vẫn diễn ra thuận lợi nhất có thể. Xin vui lòng liên hệ với chúng tôi qua số điện thoại hoặc email dưới đây để chúng tôi có thể hỗ trợ Quý khách:\n" +
+                "\n" +
+                "0389718892\n" +
+                "\n" +
+                "Chúng tôi chân thành xin lỗi về sự bất tiện này và hy vọng Quý khách sẽ hiểu rằng quyết định này không phản ánh đến mong muốn phục vụ của chúng tôi. Xin cảm ơn Quý khách đã chọn Armani Hotel, và chúng tôi mong được phục vụ Quý khách trong tương lai.\n" +
+                "\n" +
+                "Trân trọng,\n" +
+                "[Armani Hotel]\n";
+        DataUtil.sendMailCommon(mailTo, subject, content, mailService);
+        orderRepository.updateStatus(id, stt, refuseReason);
     }
 
     @Override

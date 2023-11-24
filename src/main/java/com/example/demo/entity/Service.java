@@ -18,7 +18,7 @@ import java.util.List;
 @Builder
 @Entity
 @Table(name = "service")
-public class Service extends AbstractAuditingEntity<String> implements Serializable {
+public class Service  implements Serializable {
 
     @Id
     @Column(name = "id")
@@ -49,17 +49,17 @@ public class Service extends AbstractAuditingEntity<String> implements Serializa
     @Column(name = "description")
     private String description;
 
-//    @Column(name = "create_at")
-//    private Date createAt;
-//
-//    @Column(name = "create_by")
-//    private String createBy;
-//
-//    @Column(name = "update_at")
-//    private Date updateAt;
-//
-//    @Column(name = "updated_by")
-//    private String updatedBy;
+    @Column(name = "create_at")
+    private Date createAt;
+
+    @Column(name = "create_by")
+    private String createBy;
+
+    @Column(name = "update_at")
+    private Date updateAt;
+
+    @Column(name = "updated_by")
+    private String updatedBy;
 
     @Column(name = "deleted")
     private String deleted;

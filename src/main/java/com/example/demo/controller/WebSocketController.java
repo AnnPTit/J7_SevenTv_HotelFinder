@@ -87,8 +87,8 @@ public class WebSocketController {
                 return new Response("Vui lòng đặt phòng trong vòng 30 ngày !",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
-            List<String> orderDetailIds = orderDetailService.checkRoomIsBooked(DataUtil.toLocalDateTime(payload.getDayStart()),
-                    DataUtil.toLocalDateTime(payload.getDayEnd()), idsRoom);
+            List<String> orderDetailIds = orderDetailService.checkRoomIsBooked(DataUtil.dateToStringSql(payload.getDayStart()),
+                    DataUtil.dateToStringSql(payload.getDayEnd()), idsRoom);
             System.out.println(orderDetailIds.toString());
             if (!orderDetailIds.isEmpty()) {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
@@ -140,8 +140,8 @@ public class WebSocketController {
             order.setTypeOfOrder(false);
             order.setDeposit(payload.getDeposit());
             order.setVat((payload.getTotalPriceRoom().multiply(new BigDecimal(depositService.getByCode("VAT").getPileValue()))).divide(new BigDecimal(100)));
-            order.setBookingDateStart(DataUtil.setFixedTime(payload.getDayStart(),14,0, 0));
-            order.setBookingDateEnd(DataUtil.setFixedTime(payload.getDayEnd(),12,0, 0));
+            order.setBookingDateStart(DataUtil.setFixedTime(payload.getDayStart(), 14, 0, 0));
+            order.setBookingDateEnd(DataUtil.setFixedTime(payload.getDayEnd(), 12, 0, 0));
             order.setTotalMoney(payload.getTotalPriceRoom());
             order.setCreateAt(new Date());
             order.setUpdateAt(new Date());
@@ -167,6 +167,10 @@ public class WebSocketController {
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setOrderDetailCode("HDCT" + randomNumber);
                 orderDetail.setRoomPrice(payload.getTotalPriceRoom());
+                if(roomData.getGuestCount() > room.getTypeRoom().getCapacity()){
+                    return new Response("Số khách vượt quá sức chứa  !",
+                            Constant.COMMON_STATUS.ACTIVE, idsRoom);
+                }
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setCreateAt(new Date());
                 orderDetail.setUpdateAt(new Date());
@@ -197,11 +201,11 @@ public class WebSocketController {
                     "Mã hóa đơn : " + orderCode + "\n" +
                     "Tên khách hàng : " + customer.getFullname() + "\n" +
                     "Số điện thoại : " + customer.getPhoneNumber() + "\n" +
-                    "Ngày đặt : " + order.getCreateAt() + "\n" +
-                    "Ngày CheckIn : " + order.getBookingDateStart() + "\n" +
-                    "Ngày CheckOut : " + order.getBookingDateEnd() + "\n" +
-                    "Tổng tiền phòng tạm tính : " + order.getTotalMoney() + "\n" +
-                    "Số tiền phải cọc : " + order.getDeposit() + "\n" +
+                    "Ngày đặt : " + DataUtil.convertDateToString(order.getCreateAt()) + "\n" +
+                    "Ngày CheckIn : " + DataUtil.convertDateToString(order.getBookingDateStart()) + "\n" +
+                    "Ngày CheckOut : " + DataUtil.convertDateToString(order.getBookingDateEnd()) + "\n" +
+                    "Tổng tiền phòng tạm tính : " + DataUtil.formatMoney(order.getTotalMoney()) + "\n" +
+                    "Số tiền phải cọc : " + DataUtil.formatMoney(order.getDeposit()) + "\n" +
                     "Chi tiết : ";
             for (OrderDetail orderDetail : orderDetailList) {
                 content = content + "\n" +

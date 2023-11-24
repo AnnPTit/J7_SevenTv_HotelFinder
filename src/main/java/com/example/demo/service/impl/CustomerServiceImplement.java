@@ -65,7 +65,6 @@ public class CustomerServiceImplement implements CustomerService {
     @Override
     public Customer add(Customer customer) {
         try {
-            customer.setPassword(passwordEncoder.encode(customer.getPassword()));
             return customerRepository.save(customer);
         } catch (Exception e) {
             e.printStackTrace();
