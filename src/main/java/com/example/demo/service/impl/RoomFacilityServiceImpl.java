@@ -30,4 +30,14 @@ public class RoomFacilityServiceImpl implements RoomFacilityService {
         roomFacilityRepository.deleteRoomFacilitiesByRoom(room);
     }
 
+    @Override
+    public RoomFacility getById(String id) {
+        return roomFacilityRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public void delete(RoomFacility roomFacility) {
+        roomFacilityRepository.delete(roomFacility);
+    }
+
 }

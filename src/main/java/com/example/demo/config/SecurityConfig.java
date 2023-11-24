@@ -59,6 +59,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/payment-method/**").permitAll()
                 .requestMatchers("/api/service-used/**").permitAll()
                 .requestMatchers("/api/combo-used/**").permitAll()
+                .requestMatchers("/api/room-facility/**").permitAll()
                 .requestMatchers("/api/room/**").permitAll()
                 .requestMatchers("/api/access-denied").permitAll()// với endpoint /hello thì sẽ được cho qua
                 .requestMatchers("/api/home/**").permitAll()
