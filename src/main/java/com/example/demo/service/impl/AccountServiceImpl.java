@@ -98,18 +98,6 @@ public class AccountServiceImpl implements AccountService {
         return code.toString();
     }
 
-    public String generateRandomPassword(int length) {
-        Random random = new Random();
-        StringBuilder password = new StringBuilder();
-
-        for (int i = 0; i < length; i++) {
-            int digit = random.nextInt(10); // Generate a random digit from 0 to 9
-            password.append(digit);
-        }
-
-        return password.toString();
-    }
-
     @Override
     public boolean existsByEmail(String email) {
         return accountRepository.existsByEmail(email);

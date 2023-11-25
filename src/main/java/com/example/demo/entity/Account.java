@@ -53,7 +53,7 @@ public class Account {
     private String password;
 
     @Column(name = "fullname")
-    @NotBlank(message = "Họ tên không được để trống!!")
+//    @NotBlank(message = "Họ tên không được để trống!!")
     private String fullname;
 
     @Column(name = "gender")
@@ -61,36 +61,36 @@ public class Account {
 
     @Column(name = "birthday")
     @JsonFormat(pattern = "dd/MM/yyyy")
-    @NotNull(message = "Ngày sinh không được để trống!!")
-    @MinAge(value = 18, message = "Bạn phải ít nhất 18 tuổi!!")
+//    @NotNull(message = "Ngày sinh không được để trống!!")
+//    @MinAge(value = 18, message = "Bạn phải ít nhất 18 tuổi!!")
     private Date birthday;
 
     @Column(name = "email")
-    @NotBlank(message = "Email không được để trống!!")
+//    @NotBlank(message = "Email không được để trống!!")
     @Email(message = "Email không đúng định dạng!!")
 
     private String email;
 
     @Column(name = "phone_number")
-    @NotBlank(message = "Số điện thoại không được để trống!!")
-    @Pattern(regexp = "^(\\+84|0)[35789][0-9]{8}$", message = "Số điện thoại không đúng định dạng!!")
+//    @NotBlank(message = "Số điện thoại không được để trống!!")
+//    @Pattern(regexp = "^(\\+84|0)[35789][0-9]{8}$", message = "Số điện thoại không đúng định dạng!!")
     private String phoneNumber;
 
     @Column(name = "citizen_id")
-    @NotBlank(message = "Căn cước công dân không được để trống!!")
-    @Pattern(regexp = "\\d{12}", message = "Căn cước công dân không đúng định dạng!!")
+//    @NotBlank(message = "Căn cước công dân không được để trống!!")
+//    @Pattern(regexp = "\\d{12}", message = "Căn cước công dân không đúng định dạng!!")
     private String citizenId;
 
     @Column(name = "provinces")
-    @NotBlank(message = "Địa chỉ  không được để trống!!")
+//    @NotBlank(message = "Địa chỉ  không được để trống!!")
     private String provinces;
 
     @Column(name = "districts")
-    @NotBlank(message = "Địa chỉ  không được để trống!!")
+//    @NotBlank(message = "Địa chỉ  không được để trống!!")
     private String districts;
 
     @Column(name = "wards")
-    @NotBlank(message = "Địa chỉ  không được để trống!!")
+//    @NotBlank(message = "Địa chỉ  không được để trống!!")
     private String wards;
 
     @Column(name = "create_at")
