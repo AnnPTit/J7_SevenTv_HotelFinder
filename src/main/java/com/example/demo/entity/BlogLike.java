@@ -16,17 +16,10 @@ public class BlogLike {
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
-
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "id_custom", nullable = false)
-    private Customer customer;
-
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "id_blog", nullable = false)
-    private Blog blog;
-
+    @Column(name = "id_custom", nullable = false)
+    private String customer;
+    @Column(name = "id_blog", nullable = false)
+    private String blog;
     @Column(name = "status")
     private Integer status;
 }

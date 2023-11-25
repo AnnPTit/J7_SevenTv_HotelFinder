@@ -39,10 +39,8 @@ public class Photo {
     @JoinColumn(name = "room_id", nullable = false)
     private Room room;
 
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "blog_id", nullable = false)
-    private Blog blog;
+    @Column(name = "blog_id", nullable = false)
+    private String blog;
 
     @Column(name = "url")
     private String url;
@@ -70,6 +68,6 @@ public class Photo {
 
     @Column(name = "status")
     private Integer status;
-    // Todo : Them moi quan he voi bang blog va them cot blog_id
+
 
 }
