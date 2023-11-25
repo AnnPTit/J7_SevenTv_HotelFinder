@@ -49,13 +49,6 @@ public class Blog {
     @Column(name = "status")
     private Integer status;
 
-    //    @JsonIgnore
-    @OneToMany(mappedBy = "blog", fetch = FetchType.LAZY)
-    private List<Photo> photoList;
-
-    @JsonIgnore
-    @OneToMany(mappedBy = "blog", fetch = FetchType.LAZY)
-    private List<BlogLike> blogLikes;
 
 
 }

@@ -94,7 +94,7 @@ public class BlogController {
 
                 Photo photo = new Photo();
                 photo.setUrl(imageUrl);
-                photo.setBlog(blog);
+                photo.setBlog(blog.getId());
                 photo.setCreateAt(new Date());
                 photo.setUpdateAt(new Date());
                 photo.setStatus(Constant.COMMON_STATUS.ACTIVE);
