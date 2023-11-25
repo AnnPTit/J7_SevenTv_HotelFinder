@@ -13,4 +13,8 @@ public interface RoomFacilityService {
 
     void deleteRoomFacilitiesByRoom(Room room);
 
+    RoomFacility getById(String id);
+
+    void delete(RoomFacility roomFacility);
+
 }
