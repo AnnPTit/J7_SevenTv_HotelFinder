@@ -1,7 +1,10 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.BlogDTO;
 import com.example.demo.entity.Blog;
+import com.example.demo.entity.BlogLike;
+import com.example.demo.repository.BlogLikeRepository;
 import com.example.demo.repository.BlogRepository;
 import com.example.demo.service.BlogService;
 import com.example.demo.service.PhotoService;
@@ -20,6 +23,8 @@ public class BlogServiceImpl implements BlogService {
 
     private final PhotoService photoService;
 
+    private final BlogLikeRepository blogLikeRepository;
+
 
     @Override
     public Blog save(Blog blog) {
@@ -33,7 +38,67 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Page<BlogDTO> getPaginate(Pageable pageable) {
-        return blogRepository.findAll(pageable).map(item->toDto(item));
+        return blogRepository.findAll(pageable).map(item -> toDto(item));
+    }
+
+    @Override
+    public void like(String blogId, String customerId) {
+        BlogLike blogLike = new BlogLike();
+        blogLike.setBlog(blogId);
+        if (customerId != null) {
+            blogLike.setCustomer(customerId);
+        }
+        blogLike.setStatus(Constant.COMMON_STATUS.ACTIVE);
+        blogLikeRepository.save(blogLike);
+    }
+
+    @Override
+    public Blog findOne(String blogId) {
+        return blogRepository.getOne(blogId);
+    }
+
+    @Override
+    public Integer countLike(String blogId) {
+        return blogLikeRepository.countLike(blogId);
+    }
+
+    @Override
+    public void updateView(String blogId, Integer view) {
+        blogRepository.updateView(blogId, view);
+    }
+
+    @Override
+    public void updateLike(String blogId, Integer like) {
+        blogRepository.updateLike(blogId, like);
+    }
+
+    @Override
+    public Integer countView(String blogId) {
+        Blog blog = blogRepository.getOne(blogId);
+        if (blog != null) {
+            blog.setCountView(blog.getCountView() + 1);
+            blogRepository.save(blog);
+            return blog.getCountView();
+        }
+        return 0;
+    }
+
+    @Override
+    public void unLike(String blogId, String customId) {
+        if (customId == null) {
+            List<BlogLike> likeList = blogLikeRepository.anonymousLike(blogId);
+            if (likeList.size() != 0) {
+                BlogLike blogLike = likeList.get(0);
+                blogLikeRepository.delete(blogLike);
+            }
+        } else {
+            List<BlogLike> likeList = blogLikeRepository.customLike(blogId, customId);
+            if (likeList.size() != 0) {
+                BlogLike blogLike = likeList.get(0);
+                blogLikeRepository.delete(blogLike);
+            }
+        }
+
     }
 
     public BlogDTO toDto(Blog entity) {

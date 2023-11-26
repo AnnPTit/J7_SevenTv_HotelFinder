@@ -3,15 +3,15 @@ package com.example.demo.controller;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.*;
 import com.example.demo.entity.*;
-import com.example.demo.service.*;
 import com.example.demo.service.ComboService;
+import com.example.demo.service.*;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
@@ -110,7 +110,7 @@ public class HomeController {
     }
 
     @PostMapping("/customer/save")
-    public ResponseEntity<Customer> add( @RequestBody Customer customer,
+    public ResponseEntity<Customer> add(@RequestBody Customer customer,
                                         BindingResult result) {
         customer.setCustomerCode(customerService.generateCustomerCode());
         customer.setCreateAt(new Date());
@@ -203,8 +203,14 @@ public class HomeController {
 
     @GetMapping("/load/blog")
     public Page<BlogDTO> load(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
-        Pageable pageable = PageRequest.of(current_page, 5);
+        Pageable pageable = PageRequest.of(current_page, 6);
         return blogService.getPaginate(pageable);
+    }
+
+    //?blogId=${id}&&customerId=${customer.id}
+    @GetMapping("/view")
+    public Integer likeBlog(@RequestParam("blogId") String blogId) {
+        return blogService.countView(blogId);
     }
 
 

@@ -677,34 +677,13 @@
                     <textFieldExpression><![CDATA["- Tiền cọc :  " + $P{deposit} +"VND"]]></textFieldExpression>
                 </textField>
                 <textField textAdjust="StretchHeight">
-                    <reportElement stretchType="RelativeToTallestObject" x="257" y="0" width="243" height="13" uuid="e6324f92-cbbd-4a50-bb90-051d7baf5bdd">
+                    <reportElement stretchType="RelativeToTallestObject" x="257" y="0" width="243" height="14" uuid="e6324f92-cbbd-4a50-bb90-051d7baf5bdd">
                         <property name="com.jaspersoft.studio.unit.width" value="px"/>
                     </reportElement>
                     <textElement>
                         <font fontName="Times New Roman" size="11"/>
                     </textElement>
                     <textFieldExpression><![CDATA["- VAT  " + $P{vat} +"VND"]]></textFieldExpression>
-                </textField>
-            </band>
-            <band height="16">
-                <property name="com.jaspersoft.studio.unit.height" value="px"/>
-                <textField textAdjust="StretchHeight">
-                    <reportElement stretchType="RelativeToTallestObject" x="-21" y="2" width="271" height="13" uuid="70a96854-a142-45ed-b7cc-5f59459bcadb">
-                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
-                    </reportElement>
-                    <textElement>
-                        <font fontName="Times New Roman" size="11"/>
-                    </textElement>
-                    <textFieldExpression><![CDATA["- Tiền khách đưa " + $P{monneyCustom}+"VND"]]></textFieldExpression>
-                </textField>
-                <textField textAdjust="StretchHeight">
-                    <reportElement stretchType="RelativeToTallestObject" x="257" y="0" width="243" height="13" uuid="3236aa65-3d69-4a69-9ea7-3e212add3e83">
-                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
-                    </reportElement>
-                    <textElement>
-                        <font fontName="Times New Roman" size="11"/>
-                    </textElement>
-                    <textFieldExpression><![CDATA["- Tiền thừa  " +$P{excessMoney}+"VND"]]></textFieldExpression>
                 </textField>
             </band>
             <band height="16">
@@ -741,6 +720,27 @@
                         <font fontName="Times New Roman" size="11"/>
                     </textElement>
                     <textFieldExpression><![CDATA["- Tổng số tiền viết bằng số :  " + $P{totalNumberPrice}+"VND"]]></textFieldExpression>
+                </textField>
+            </band>
+            <band height="16">
+                <property name="com.jaspersoft.studio.unit.height" value="px"/>
+                <textField textAdjust="StretchHeight">
+                    <reportElement stretchType="RelativeToTallestObject" x="-21" y="2" width="271" height="13" uuid="70a96854-a142-45ed-b7cc-5f59459bcadb">
+                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
+                    </reportElement>
+                    <textElement>
+                        <font fontName="Times New Roman" size="11"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["- Tiền khách đưa " + $P{monneyCustom}+"VND"]]></textFieldExpression>
+                </textField>
+                <textField textAdjust="StretchHeight">
+                    <reportElement stretchType="RelativeToTallestObject" x="257" y="0" width="243" height="15" uuid="3236aa65-3d69-4a69-9ea7-3e212add3e83">
+                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
+                    </reportElement>
+                    <textElement>
+                        <font fontName="Times New Roman" size="11"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["- Tiền thừa  " +$P{excessMoney}+"VND"]]></textFieldExpression>
                 </textField>
             </band>
             <band height="46">

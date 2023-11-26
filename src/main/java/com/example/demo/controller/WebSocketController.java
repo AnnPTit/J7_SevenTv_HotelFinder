@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
+import com.example.demo.dto.LikeDTO;
 import com.example.demo.dto.PayloadObject;
 import com.example.demo.model.Mail;
 import com.example.demo.service.MailService;
@@ -8,6 +9,7 @@ import com.example.demo.dto.RoomData;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
 import com.example.demo.util.DataUtil;
+import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -39,6 +41,7 @@ public class WebSocketController {
     private final OrderTimelineService orderTimelineService;
 
     private final OrderDetailService orderDetailService;
+
     private final InformationCustomerService informationCustomerService;
 
     private final AccountService accountService;
@@ -47,6 +50,8 @@ public class WebSocketController {
     private final MailService mailService;
 
     private final DepositService depositService;
+
+    private final BlogService blogService;
 
     @AllArgsConstructor
     @NoArgsConstructor
@@ -167,7 +172,7 @@ public class WebSocketController {
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setOrderDetailCode("HDCT" + randomNumber);
                 orderDetail.setRoomPrice(payload.getTotalPriceRoom());
-                if(roomData.getGuestCount() > room.getTypeRoom().getCapacity()){
+                if (roomData.getGuestCount() > room.getTypeRoom().getCapacity()) {
                     return new Response("Số khách vượt quá sức chứa  !",
                             Constant.COMMON_STATUS.ACTIVE, idsRoom);
                 }
@@ -228,4 +233,34 @@ public class WebSocketController {
             return null;
         }
     }
+
+    @MessageMapping("/likes")
+    @SendTo("/topic/like")
+    public Integer like(String message) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        Integer countLike = 0;
+        try {
+            LikeDTO payload = objectMapper.readValue(message, LikeDTO.class);
+            // Them like
+            countLike = blogService.countLike(payload.getBlogId());
+            // Update like
+            Blog blog = blogService.findOne(payload.getBlogId());
+            if (payload.isIslike()) {
+                blogService.like(payload.getBlogId(), payload.getCustomerId());
+                blog.setCountLike(countLike + 1);
+            } else {
+                blogService.unLike(payload.getBlogId(), payload.getCustomerId());
+                blog.setCountLike(countLike - 1);
+            }
+            blogService.save(blog);
+            if (payload.isIslike()) {
+                return countLike + 1;
+            }
+            return countLike - 1;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return 0;
+        }
+    }
+
 }
