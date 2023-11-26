@@ -5,7 +5,6 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
 import com.example.demo.service.ComboService;
-import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -14,14 +13,11 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 
 import org.springframework.validation.BindingResult;
-import org.springframework.validation.FieldError;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 @CrossOrigin("*")
 @RestController
@@ -121,6 +117,19 @@ public class HomeController {
         customer.setUpdateAt(new Date());
         customer.setStatus(1);
 
+        customerService.add(customer);
+        return new ResponseEntity<Customer>(customer, HttpStatus.OK);
+    }
+
+    @PutMapping("/changePassWord/{id}")
+    public ResponseEntity<Customer> changePassWord(
+            @PathVariable("id") String id,
+            @RequestBody ChangePasswordData changePasswordData
+            ) {
+        String newPassword = changePasswordData.getPassword();
+        Customer customer = customerService.findById(id);
+        customer.setPassword(newPassword);
+        customer.setUpdateAt(new Date());
         customerService.add(customer);
         return new ResponseEntity<Customer>(customer, HttpStatus.OK);
     }
