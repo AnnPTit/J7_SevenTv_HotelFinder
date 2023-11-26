@@ -117,12 +117,12 @@ public class AccountController {
         Mail mail = new Mail();
         mail.setMailFrom("nguyenvantundz2003@gmail.com");
         mail.setMailTo(account.getEmail());
-        mail.setMailSubject("Password Reset");
+        mail.setMailSubject("Đặt lại mật khẩu");
         mail.setMailContent(
                 "Dear: " + account.getFullname() + "\n" +
-                        "Your password has been reset. Your new password is: 123456\n" +
-                        "Please change your password after logging in.\n" +
-                        "This is an automated email. Please do not reply <3");
+                        "Mật khẩu của bạn đã được thiết lập lại. Mật khẩu mới của bạn là: 123456\n" +
+                        "Vui lòng thay đổi mật khẩu của bạn sau khi đăng nhập.\n" +
+                        "Đây là một email tự động. Vui lòng không trả lời <3");
         mailService.sendEmail(mail);
 
         accountService.add(account);
@@ -140,14 +140,14 @@ public class AccountController {
         account.setUpdateAt(new Date());
 
         Mail mail = new Mail();
-        mail.setMailFrom("phamthanhanzwz@gmail.com");
+        mail.setMailFrom("nguyenvantundz2003@gmail.com");
         mail.setMailTo(account.getEmail());
         mail.setMailSubject("Đổi mật khẩu");
         mail.setMailContent(
                 "Dear: " + account.getFullname() + "\n" +
-                        "Your password has been reset. Your new password is: " +account.getPassword() + "\n"+
-                        "Please change your password after logging in.\n" +
-                        "This is an automated email. Please do not reply <3");
+                        "\n" +
+                        "Mật khẩu của bạn đã được thay đổi. mật khẩu mới của bạn là: " +newPassword + "\n"+
+                        "Đây là một email tự động. Vui lòng không trả lời <3");
         mailService.sendEmail(mail);
         accountService.add(account);
         return new ResponseEntity<Account>(account, HttpStatus.OK);
