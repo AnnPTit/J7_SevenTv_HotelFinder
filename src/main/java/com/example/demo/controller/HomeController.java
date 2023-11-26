@@ -3,19 +3,20 @@ package com.example.demo.controller;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.*;
 import com.example.demo.entity.*;
-import com.example.demo.service.*;
 import com.example.demo.service.ComboService;
+import com.example.demo.service.*;
+import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +40,8 @@ public class HomeController {
     private HomeService homeService;
     @Autowired
     private BlogService blogService;
+    @Autowired
+    private BlogCommentService blogCommentService;
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -110,7 +113,7 @@ public class HomeController {
     }
 
     @PostMapping("/customer/save")
-    public ResponseEntity<Customer> add( @RequestBody Customer customer,
+    public ResponseEntity<Customer> add(@RequestBody Customer customer,
                                         BindingResult result) {
         customer.setCustomerCode(customerService.generateCustomerCode());
         customer.setCreateAt(new Date());
@@ -125,7 +128,7 @@ public class HomeController {
     public ResponseEntity<Customer> changePassWord(
             @PathVariable("id") String id,
             @RequestBody ChangePasswordData changePasswordData
-            ) {
+    ) {
         String newPassword = changePasswordData.getPassword();
         Customer customer = customerService.findById(id);
         customer.setPassword(newPassword);
@@ -203,8 +206,41 @@ public class HomeController {
 
     @GetMapping("/load/blog")
     public Page<BlogDTO> load(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
-        Pageable pageable = PageRequest.of(current_page, 5);
+        Pageable pageable = PageRequest.of(current_page, 6);
         return blogService.getPaginate(pageable);
+    }
+
+    //?blogId=${id}&&customerId=${customer.id}
+    @GetMapping("/view")
+    public Integer likeBlog(@RequestParam("blogId") String blogId) {
+        return blogService.countView(blogId);
+    }
+
+    @GetMapping("/blog/comment")
+    public List<BlogCommentDTO> getComment(@RequestParam("blogId") String blogId,
+                                           @RequestParam(name = "currentPage" , defaultValue = "0") Integer currentPage) {
+        return getListComment(currentPage, blogId);
+    }
+
+    private List<BlogCommentDTO> getListComment(Integer currentPage, String blogId) {
+        Pageable pageable = PageRequest.of(currentPage, 15);
+        Page<BlogComment> page = blogCommentService.getPaginate(blogId, pageable);
+        List<BlogComment> list = page.getContent();
+        List<BlogCommentDTO> commentDTOList = new ArrayList<>();
+        for (BlogComment cm : list) {
+            commentDTOList.add(fromEntity(cm));
+        }
+        return commentDTOList;
+    }
+
+    private static BlogCommentDTO fromEntity(BlogComment entity) {
+        BlogCommentDTO dto = new BlogCommentDTO();
+        dto.setId(entity.getId());
+        dto.setUsername(entity.getUsername());
+        dto.setContent(entity.getContent());
+        dto.setIdBlog(entity.getIdBlog());
+        dto.setCreatedAt(entity.getCreateAt());
+        return dto;
     }
 
 
