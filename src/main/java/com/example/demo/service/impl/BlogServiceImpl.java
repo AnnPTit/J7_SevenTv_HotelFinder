@@ -3,6 +3,7 @@ package com.example.demo.service.impl;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.BlogDTO;
 import com.example.demo.entity.Blog;
+import com.example.demo.entity.BlogComment;
 import com.example.demo.entity.BlogLike;
 import com.example.demo.repository.BlogLikeRepository;
 import com.example.demo.repository.BlogRepository;
@@ -24,6 +25,8 @@ public class BlogServiceImpl implements BlogService {
     private final PhotoService photoService;
 
     private final BlogLikeRepository blogLikeRepository;
+
+//    private final BLo blogLikeRepository;
 
 
     @Override
@@ -99,6 +102,11 @@ public class BlogServiceImpl implements BlogService {
             }
         }
 
+    }
+
+    @Override
+    public Page<BlogComment> getComment(String blogId) {
+        return null;
     }
 
     public BlogDTO toDto(Blog entity) {

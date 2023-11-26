@@ -5,6 +5,8 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.Date;
+
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
@@ -23,8 +25,8 @@ public class BlogComment {
     private String content;
 
     @Column(name = "id_blog")
-    private String id_blog;
+    private String idBlog;
 
     @Column(name = "create_at")
-    private String createAt;
+    private Date createAt;
 }

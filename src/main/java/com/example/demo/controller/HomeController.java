@@ -16,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
@@ -39,6 +40,8 @@ public class HomeController {
     private HomeService homeService;
     @Autowired
     private BlogService blogService;
+    @Autowired
+    private BlogCommentService blogCommentService;
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -125,7 +128,7 @@ public class HomeController {
     public ResponseEntity<Customer> changePassWord(
             @PathVariable("id") String id,
             @RequestBody ChangePasswordData changePasswordData
-            ) {
+    ) {
         String newPassword = changePasswordData.getPassword();
         Customer customer = customerService.findById(id);
         customer.setPassword(newPassword);
@@ -211,6 +214,33 @@ public class HomeController {
     @GetMapping("/view")
     public Integer likeBlog(@RequestParam("blogId") String blogId) {
         return blogService.countView(blogId);
+    }
+
+    @GetMapping("/blog/comment")
+    public List<BlogCommentDTO> getComment(@RequestParam("blogId") String blogId,
+                                           @RequestParam(name = "currentPage" , defaultValue = "0") Integer currentPage) {
+        return getListComment(currentPage, blogId);
+    }
+
+    private List<BlogCommentDTO> getListComment(Integer currentPage, String blogId) {
+        Pageable pageable = PageRequest.of(currentPage, 15);
+        Page<BlogComment> page = blogCommentService.getPaginate(blogId, pageable);
+        List<BlogComment> list = page.getContent();
+        List<BlogCommentDTO> commentDTOList = new ArrayList<>();
+        for (BlogComment cm : list) {
+            commentDTOList.add(fromEntity(cm));
+        }
+        return commentDTOList;
+    }
+
+    private static BlogCommentDTO fromEntity(BlogComment entity) {
+        BlogCommentDTO dto = new BlogCommentDTO();
+        dto.setId(entity.getId());
+        dto.setUsername(entity.getUsername());
+        dto.setContent(entity.getContent());
+        dto.setIdBlog(entity.getIdBlog());
+        dto.setCreatedAt(entity.getCreateAt());
+        return dto;
     }
 
 

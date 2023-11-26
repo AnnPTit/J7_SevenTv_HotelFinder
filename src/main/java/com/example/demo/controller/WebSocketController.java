@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
+import com.example.demo.dto.BlogCommentDTO;
 import com.example.demo.dto.LikeDTO;
 import com.example.demo.dto.PayloadObject;
 import com.example.demo.model.Mail;
@@ -16,6 +17,9 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.CrossOrigin;
@@ -52,6 +56,8 @@ public class WebSocketController {
     private final DepositService depositService;
 
     private final BlogService blogService;
+
+    private final BlogCommentService blogCommentService;
 
     @AllArgsConstructor
     @NoArgsConstructor
@@ -261,6 +267,47 @@ public class WebSocketController {
             e.printStackTrace();
             return 0;
         }
+    }
+
+
+    @MessageMapping("/comments")
+    @SendTo("/topic/comment")
+    public List<BlogCommentDTO> comment(String message) throws JsonProcessingException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        try {
+            List<BlogCommentDTO> commentDTOList = new ArrayList<>();
+            BlogCommentDTO payload = objectMapper.readValue(message, BlogCommentDTO.class);
+            if (payload.getIsCreate()) {
+                // Them comment ở đây
+                BlogComment blogComment = new BlogComment();
+                blogComment.setIdBlog(payload.getIdBlog());
+                blogComment.setContent(payload.getContent());
+                blogComment.setUsername(payload.getUsername());
+                blogComment.setCreateAt(new Date());
+                blogCommentService.save(blogComment);
+                Pageable pageable = PageRequest.of(0, 15);
+                Page<BlogComment> page = blogCommentService.getPaginate(payload.getIdBlog(), pageable);
+                List<BlogComment> list = page.getContent();
+                for (BlogComment cm : list) {
+                    commentDTOList.add(fromEntity(cm));
+                }
+
+            }
+            return commentDTOList;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static BlogCommentDTO fromEntity(BlogComment entity) {
+        BlogCommentDTO dto = new BlogCommentDTO();
+        dto.setId(entity.getId());
+        dto.setUsername(entity.getUsername());
+        dto.setContent(entity.getContent());
+        dto.setIdBlog(entity.getIdBlog());
+        dto.setCreatedAt(entity.getCreateAt());
+        return dto;
     }
 
 }

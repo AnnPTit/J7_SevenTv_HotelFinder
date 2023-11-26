@@ -2,6 +2,7 @@ package com.example.demo.service;
 
 import com.example.demo.dto.BlogDTO;
 import com.example.demo.entity.Blog;
+import com.example.demo.entity.BlogComment;
 import io.swagger.models.auth.In;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -24,5 +25,7 @@ public interface BlogService {
     Integer countView(String blogId);
 
     void unLike(String blogId, String customId);
+
+    Page<BlogComment> getComment(String blogId);
 
 }
