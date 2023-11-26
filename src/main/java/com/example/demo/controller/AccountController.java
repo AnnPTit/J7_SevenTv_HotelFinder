@@ -101,7 +101,9 @@ public class AccountController {
         mail.setMailContent(
                         "Dear: " + account.getFullname() + "\n" +
                         "Email của bạn là: " + account.getEmail() + "\n" +
-                        "password: " + account.getPassword() + "\n"+ "\n" +
+                        "password: " + account.getPassword() + "\n"+
+                        "Đăng nhập trang web: http://localhost:3000/auth/login "  + "\n"+ "\n"+
+
                         "Đây là email tự động xin vui lòng không trả lời <3");
         accountService.add(account);
         mailService.sendEmail(mail);
@@ -122,6 +124,7 @@ public class AccountController {
                 "Dear: " + account.getFullname() + "\n" +
                         "Mật khẩu của bạn đã được thiết lập lại. Mật khẩu mới của bạn là: 123456\n" +
                         "Vui lòng thay đổi mật khẩu của bạn sau khi đăng nhập.\n" +
+                        "Đăng nhập trang web: http://localhost:3000/auth/login "  + "\n"+  "\n"+
                         "Đây là một email tự động. Vui lòng không trả lời <3");
         mailService.sendEmail(mail);
 
@@ -147,6 +150,7 @@ public class AccountController {
                 "Dear: " + account.getFullname() + "\n" +
                         "\n" +
                         "Mật khẩu của bạn đã được thay đổi. mật khẩu mới của bạn là: " +newPassword + "\n"+
+                        "Đăng nhập trang web: http://localhost:3000/auth/login "  + "\n"+ "\n"+
                         "Đây là một email tự động. Vui lòng không trả lời <3");
         mailService.sendEmail(mail);
         accountService.add(account);
