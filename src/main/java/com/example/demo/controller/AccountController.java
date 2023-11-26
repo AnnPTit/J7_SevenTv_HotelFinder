@@ -1,5 +1,7 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
+import com.example.demo.dto.ChangePasswordData;
 import com.example.demo.entity.Account;
 import com.example.demo.model.Mail;
 import com.example.demo.service.AccountService;
@@ -88,29 +90,77 @@ public class AccountController {
         account.setAccountCode(accountService.generateAccountCode());
         account.setCreateAt(new Date());
         account.setUpdateAt(new Date());
-        account.setStatus(1);
-        account.setPassword(accountService.generateRandomPassword(3));
+        account.setStatus(Constant.COMMON_STATUS.ACTIVE);
+        account.setPassword("12345");
         account.setPosition(positionService.getIdPosition());
 
-//        Mail mail = new Mail();
-//         mail.setMailFrom("nguyenvantundz2003@gmail.com");
-//        mail.setMailTo(account.getEmail());
-//        mail.setMailSubject("Thông tin tài khoản website");
-//        mail.setMailContent(
-//                        "Dear: " + account.getFullname() + "\n" +
-//                        "Email của bạn là: " + account.getEmail() + "\n" +
-//                        "password: " + account.getPassword() + "\n"+ "\n" +
-//                        "Đây là email tự động xin vui lòng không trả lời <3");
+        Mail mail = new Mail();
+        mail.setMailFrom("nguyenvantundz2003@gmail.com");
+        mail.setMailTo(account.getEmail());
+        mail.setMailSubject("Thông tin tài khoản website");
+        mail.setMailContent(
+                        "Dear: " + account.getFullname() + "\n" +
+                        "Email của bạn là: " + account.getEmail() + "\n" +
+                        "password: " + account.getPassword() + "\n"+
+                        "Đăng nhập trang web: http://localhost:3000/auth/login "  + "\n"+ "\n"+
+
+                        "Đây là email tự động xin vui lòng không trả lời <3");
         accountService.add(account);
-//        mailService.sendEmail(mail);
+        mailService.sendEmail(mail);
         return new ResponseEntity<Account>(account, HttpStatus.OK);
     }
 
+    @PutMapping("/resetPassword/{id}")
+    public ResponseEntity<Account> resetPassword(@PathVariable("id") String id) {
+        Account account = accountService.findById(id);
+        account.setPassword("123456");
+        account.setUpdateAt(new Date());
+
+        Mail mail = new Mail();
+        mail.setMailFrom("nguyenvantundz2003@gmail.com");
+        mail.setMailTo(account.getEmail());
+        mail.setMailSubject("Đặt lại mật khẩu");
+        mail.setMailContent(
+                "Dear: " + account.getFullname() + "\n" +
+                        "Mật khẩu của bạn đã được thiết lập lại. Mật khẩu mới của bạn là: 123456\n" +
+                        "Vui lòng thay đổi mật khẩu của bạn sau khi đăng nhập.\n" +
+                        "Đăng nhập trang web: http://localhost:3000/auth/login "  + "\n"+  "\n"+
+                        "Đây là một email tự động. Vui lòng không trả lời <3");
+        mailService.sendEmail(mail);
+
+        accountService.add(account);
+        return new ResponseEntity<Account>(account, HttpStatus.OK);
+    }
+
+    @PutMapping("/changePassword/{id}")
+    public ResponseEntity<Account> changePassword(@PathVariable("id") String id, @RequestBody ChangePasswordData changePasswordData) {
+
+        String newPassword = changePasswordData.getPassword();
+        Account account = accountService.findById(id);
+
+        account.setId(id);
+        account.setPassword(newPassword);
+        account.setUpdateAt(new Date());
+
+        Mail mail = new Mail();
+        mail.setMailFrom("nguyenvantundz2003@gmail.com");
+        mail.setMailTo(account.getEmail());
+        mail.setMailSubject("Đổi mật khẩu");
+        mail.setMailContent(
+                "Dear: " + account.getFullname() + "\n" +
+                        "\n" +
+                        "Mật khẩu của bạn đã được thay đổi. mật khẩu mới của bạn là: " +newPassword + "\n"+
+                        "Đăng nhập trang web: http://localhost:3000/auth/login "  + "\n"+ "\n"+
+                        "Đây là một email tự động. Vui lòng không trả lời <3");
+        mailService.sendEmail(mail);
+        accountService.add(account);
+        return new ResponseEntity<Account>(account, HttpStatus.OK);
+    }
 
     @DeleteMapping("/delete/{id}")
-    public ResponseEntity<?> delete(@PathVariable("id") String id) {
+    public ResponseEntity<Account> delete(@PathVariable("id") String id) {
         Account account = accountService.findById(id);
-        account.setStatus(0);
+        account.setStatus(Constant.COMMON_STATUS.UNACTIVE);
         accountService.add(account);
         return new ResponseEntity("Deleted", HttpStatus.OK);
     }

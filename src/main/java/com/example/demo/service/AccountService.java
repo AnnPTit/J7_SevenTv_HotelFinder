@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.entity.Account;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
-import org.springframework.data.repository.query.Param;
 
 import java.util.List;
 import java.util.Optional;
@@ -27,8 +26,6 @@ public interface AccountService {
     Account getAccountByCode();
 
     String generateAccountCode();
-
-    String generateRandomPassword(int length);
 
     boolean existsByEmail(String email);
 
