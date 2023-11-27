@@ -45,6 +45,13 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public Page<BlogDTO> loadAndSearch(String title, Pageable pageable) {
+        return blogRepository.loadAndSearch((title != null && !title.isEmpty()) ? "%" + title + "%" : null, pageable).map(item -> toDto(item));
+    }
+
+
+
+    @Override
     public void like(String blogId, String customerId) {
         BlogLike blogLike = new BlogLike();
         blogLike.setBlog(blogId);
@@ -58,6 +65,11 @@ public class BlogServiceImpl implements BlogService {
     @Override
     public Blog findOne(String blogId) {
         return blogRepository.getOne(blogId);
+    }
+
+    @Override
+    public Blog findById(String id) {
+        return blogRepository.findById(id).orElse(null);
     }
 
     @Override
