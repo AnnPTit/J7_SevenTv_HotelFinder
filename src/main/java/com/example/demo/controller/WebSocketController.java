@@ -94,7 +94,7 @@ public class WebSocketController {
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
             // Kiểm tra ngày đặt nằm trong khoảng 1 tháng tới
-            if (!DataUtil.isInOneMonth(payload.getDayStart())) {
+            if (!DataUtil.isInOneMonth(payload.getDayStart()) && !DataUtil.isInOneMonth(payload.getDayEnd())) {
                 return new Response("Vui lòng đặt phòng trong vòng 30 ngày !",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }

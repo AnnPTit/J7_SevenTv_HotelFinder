@@ -3,15 +3,19 @@ package com.example.demo.service.impl;
 import com.example.demo.entity.OrderDetail;
 import com.example.demo.repository.OrderDetailRepository;
 import com.example.demo.service.OrderDetailService;
+import com.example.demo.util.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class OrderDetailServiceImpl implements OrderDetailService {
@@ -90,5 +94,30 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     public Integer getBooking() {
         return orderDetailRepository.getBooking();
     }
+
+    @Override
+    public List<String> getOrderByRoomIds(List<String> roomId) {
+        List<String> disableDate = new ArrayList<>();
+        for (String id : roomId) {
+            List<OrderDetail> list = orderDetailRepository.getOrderByRoomId(id);
+
+            for (OrderDetail orderDetail : list) {
+                List<LocalDate> dateList = DataUtil.getDateRange(DataUtil.convertToLocalDate(orderDetail.getCheckInDatetime()), DataUtil.convertToLocalDate(orderDetail.getCheckOutDatetime()));
+                disableDate.addAll(localDateToString(dateList));
+            }
+
+
+        }
+        return disableDate;
+    }
+
+    private List<String> localDateToString(List<LocalDate> dateList) {
+        List<String> dateStrings = new ArrayList<>();
+        for (LocalDate localDate : dateList) {
+            dateStrings.add(localDate.toString());
+        }
+        return dateStrings;
+    }
+
 
 }

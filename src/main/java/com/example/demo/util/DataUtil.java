@@ -12,12 +12,12 @@ import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
-import java.time.LocalDateTime;
-import java.time.ZoneId;
-import java.time.ZonedDateTime;
+import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+import java.util.List;
 
 public class DataUtil {
     private static final char KEY_ESCAPE = '\\';
@@ -163,5 +163,35 @@ public class DataUtil {
         fos.write(file.getBytes());
         fos.close();
         return convFile;
+    }
+
+    public static List<LocalDate> getDateRange(LocalDate startDate, LocalDate endDate) {
+        List<LocalDate> dateRange = new ArrayList<>();
+        LocalDate currentDate = startDate;
+
+        while (!currentDate.isAfter(endDate)) {
+            dateRange.add(currentDate);
+            currentDate = currentDate.plusDays(1);
+        }
+
+        return dateRange;
+    }
+
+    public static LocalDate convertToLocalDate(Date dateToConvert) {
+        return Instant.ofEpochMilli(dateToConvert.getTime())
+                .atZone(ZoneId.systemDefault())
+                .toLocalDate();
+    }
+
+    public static List<String> cutStringIntoParts(String inputString, int partLength) {
+        List<String> result = new ArrayList<>();
+        int len = inputString.length();
+
+        for (int i = 0; i < len; i += partLength) {
+            int end = Math.min(i + partLength, len);
+            result.add(inputString.substring(i, end));
+        }
+
+        return result;
     }
 }
