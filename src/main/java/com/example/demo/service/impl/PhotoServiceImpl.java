@@ -34,6 +34,11 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
+    public List<Photo> getPhotoByBlog(String id) {
+        return photoRepository.getPhotoByBlog(id);
+    }
+
+    @Override
     public void delete(String id) {
         try {
             photoRepository.deleteById(id);
