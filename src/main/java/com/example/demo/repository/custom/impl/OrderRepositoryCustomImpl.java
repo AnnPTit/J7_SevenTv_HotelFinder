@@ -102,7 +102,8 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
                 "s.service_name as service ,\n" +
                 "su.quantity as quantity2,\n" +
                 "s.price ,\n" +
-                "(su.quantity* s.price) as total2\n" +
+                "(su.quantity* s.price) as total2 ,\n" +
+                " su.create_at as createAt\n" +
                 "from order_detail od \n" +
                 "inner join room r on r.id = od.room_id \n" +
                 "inner join `order` o on o.id = od.order_id \n" +
@@ -118,18 +119,25 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 
     @Override
     public List<ServiceUsedInvoiceDTO> getCombo(String orderId) {
-        String sql = "select \n" +
-                "r.room_name as roomName1 ,\n" +
-                "c.combo_name  as service ,\n" +
-                "cu.quantity as quantity2,\n" +
-                "c.price ,\n" +
-                "(cu.quantity* c.price) as total2\n" +
-                "from order_detail od \n" +
-                "inner join room r on r.id = od.room_id \n" +
-                "inner join `order` o on o.id = od.order_id \n" +
-                "inner  join combo_used cu  on cu.order_detail_id = od.id \n" +
-                "left join combo c on c.id = cu.combo_id  \n" +
-                "where o.id =:orderId";
+        String sql = "select\n" +
+                " r.room_name as roomName1 ,\n" +
+                " c.combo_name as service ,\n" +
+                " cu.quantity as quantity2,\n" +
+                " c.price ,\n" +
+                " (cu.quantity * c.price) as total2, \n" +
+                " cu.create_at as createAt\n" +
+                "from\n" +
+                " order_detail od\n" +
+                "inner join room r on\n" +
+                " r.id = od.room_id\n" +
+                "inner join `order` o on\n" +
+                " o.id = od.order_id\n" +
+                "inner join combo_used cu on\n" +
+                " cu.order_detail_id = od.id\n" +
+                "left join combo c on\n" +
+                " c.id = cu.combo_id\n" +
+                "where\n" +
+                " o.id =:orderId";
         Query query = entityManager.createNativeQuery(sql, "serviceResult");
         query.setParameter("orderId", orderId);
         @SuppressWarnings("unchecked")

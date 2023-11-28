@@ -85,6 +85,7 @@
         <field name="quantity2" class="java.lang.Integer"/>
         <field name="price" class="java.lang.String"/>
         <field name="total2" class="java.lang.String"/>
+        <field name="createAt" class="java.lang.String"/>
     </subDataset>
     <parameter name="dataTable" class="net.sf.jasperreports.engine.data.JRBeanCollectionDataSource"/>
     <parameter name="logoPath" class="java.io.InputStream"/>
@@ -533,11 +534,11 @@
                                 </textField>
                             </jr:detailCell>
                         </jr:column>
-                        <jr:column width="80" uuid="557b73b6-3c33-4a2a-b010-9ed2a2aa3e71">
+                        <jr:column width="70" uuid="557b73b6-3c33-4a2a-b010-9ed2a2aa3e71">
                             <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column3"/>
                             <jr:tableHeader style="Table_TH" height="60" rowSpan="1">
                                 <staticText>
-                                    <reportElement x="0" y="0" width="80" height="60" uuid="4fd6913a-0173-4dd3-80e3-68706bd8613a"/>
+                                    <reportElement x="0" y="0" width="70" height="60" uuid="4fd6913a-0173-4dd3-80e3-68706bd8613a"/>
                                     <textElement textAlignment="Center" verticalAlignment="Middle">
                                         <font fontName="Times New Roman" size="11" isBold="true"/>
                                     </textElement>
@@ -546,7 +547,7 @@
                             </jr:tableHeader>
                             <jr:tableFooter style="Table_CH" height="30" rowSpan="1">
                                 <staticText>
-                                    <reportElement x="0" y="0" width="80" height="30" uuid="27dc1371-aa46-4305-b8da-2c32d89be933"/>
+                                    <reportElement x="0" y="0" width="70" height="30" uuid="27dc1371-aa46-4305-b8da-2c32d89be933"/>
                                     <textElement textAlignment="Center" verticalAlignment="Middle">
                                         <font fontName="Times New Roman" size="11" isBold="true"/>
                                     </textElement>
@@ -555,7 +556,7 @@
                             </jr:tableFooter>
                             <jr:detailCell style="Table_TD" height="30">
                                 <textField>
-                                    <reportElement x="0" y="0" width="80" height="30" uuid="0c350fe6-19b9-485a-9ed7-fb945d9c1f73"/>
+                                    <reportElement x="0" y="0" width="70" height="30" uuid="0c350fe6-19b9-485a-9ed7-fb945d9c1f73"/>
                                     <textElement textAlignment="Center" verticalAlignment="Middle">
                                         <font fontName="Times New Roman" size="11"/>
                                     </textElement>
@@ -563,11 +564,11 @@
                                 </textField>
                             </jr:detailCell>
                         </jr:column>
-                        <jr:column width="100" uuid="7c13f428-ea24-404b-8a56-99e9ff266b8d">
+                        <jr:column width="90" uuid="7c13f428-ea24-404b-8a56-99e9ff266b8d">
                             <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column4"/>
                             <jr:tableHeader style="Table_TH" height="60" rowSpan="1">
                                 <staticText>
-                                    <reportElement x="0" y="0" width="100" height="60" uuid="c1c7e512-fcaa-4141-abf0-79485add4d57"/>
+                                    <reportElement x="0" y="0" width="90" height="60" uuid="c1c7e512-fcaa-4141-abf0-79485add4d57"/>
                                     <textElement textAlignment="Center" verticalAlignment="Middle">
                                         <font fontName="Times New Roman" size="11" isBold="true"/>
                                     </textElement>
@@ -577,7 +578,7 @@
                             <jr:tableFooter style="Table_CH" height="30" rowSpan="1"/>
                             <jr:detailCell style="Table_TD" height="30">
                                 <textField>
-                                    <reportElement x="0" y="0" width="100" height="30" uuid="169543e9-2af6-4055-92a5-365aedd8c0d6"/>
+                                    <reportElement x="0" y="0" width="90" height="30" uuid="169543e9-2af6-4055-92a5-365aedd8c0d6"/>
                                     <textElement textAlignment="Center" verticalAlignment="Middle">
                                         <font fontName="Times New Roman" size="11"/>
                                     </textElement>
@@ -607,11 +608,33 @@
                                 </textField>
                             </jr:detailCell>
                         </jr:column>
-                        <jr:column width="140" uuid="17b7066f-5e4b-4494-8d22-4bcf546ec739">
+                        <jr:column width="100" uuid="a3f7d679-81df-49a1-8664-2b31ca810661">
+                            <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column5"/>
+                            <jr:tableHeader style="Table_TH" height="60" rowSpan="1">
+                                <staticText>
+                                    <reportElement x="0" y="0" width="100" height="60" uuid="b0d55024-89a7-4a46-83a9-26dcc1225c59"/>
+                                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                                        <font fontName="Times New Roman" size="11" isBold="true"/>
+                                    </textElement>
+                                    <text><![CDATA[Ngày sử dụng]]></text>
+                                </staticText>
+                            </jr:tableHeader>
+                            <jr:tableFooter style="Table_CH" height="30" rowSpan="1"/>
+                            <jr:detailCell style="Table_TD" height="30">
+                                <textField>
+                                    <reportElement x="0" y="0" width="100" height="30" uuid="09f7af58-b77a-4a2d-8a3c-fc4f5c78bda4"/>
+                                    <textElement textAlignment="Center" verticalAlignment="Middle">
+                                        <font fontName="Times New Roman" size="11"/>
+                                    </textElement>
+                                    <textFieldExpression><![CDATA[$F{createAt}]]></textFieldExpression>
+                                </textField>
+                            </jr:detailCell>
+                        </jr:column>
+                        <jr:column width="90" uuid="17b7066f-5e4b-4494-8d22-4bcf546ec739">
                             <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column6"/>
                             <jr:tableHeader style="Table_TH" height="60" rowSpan="1">
                                 <staticText>
-                                    <reportElement x="0" y="0" width="140" height="60" uuid="0ed5aa65-fbe1-455f-a5de-9772b9e41de4"/>
+                                    <reportElement x="0" y="0" width="90" height="60" uuid="0ed5aa65-fbe1-455f-a5de-9772b9e41de4"/>
                                     <textElement textAlignment="Center" verticalAlignment="Middle">
                                         <font fontName="Times New Roman" size="11" isBold="true"/>
                                     </textElement>
@@ -621,7 +644,7 @@
                             <jr:tableFooter style="Table_CH" height="30" rowSpan="1"/>
                             <jr:detailCell style="Table_TD" height="30">
                                 <textField>
-                                    <reportElement x="0" y="0" width="140" height="30" uuid="adadcfe3-6d73-4dbd-8a28-c4c6f8f01451"/>
+                                    <reportElement x="0" y="0" width="90" height="30" uuid="adadcfe3-6d73-4dbd-8a28-c4c6f8f01451"/>
                                     <textElement textAlignment="Center" verticalAlignment="Middle">
                                         <font fontName="Times New Roman" size="11"/>
                                     </textElement>
@@ -629,11 +652,11 @@
                                 </textField>
                             </jr:detailCell>
                         </jr:column>
-                        <jr:column width="129" uuid="f9cb325c-c64e-409b-aa3a-f5d9a30bbbca">
+                        <jr:column width="100" uuid="f9cb325c-c64e-409b-aa3a-f5d9a30bbbca">
                             <property name="com.jaspersoft.studio.components.table.model.column.name" value="Column7"/>
                             <jr:tableHeader style="Table_TH" height="60" rowSpan="1">
                                 <staticText>
-                                    <reportElement x="0" y="0" width="129" height="60" uuid="343cf5ee-c232-4845-908b-d982ec4965e7"/>
+                                    <reportElement x="0" y="0" width="100" height="60" uuid="343cf5ee-c232-4845-908b-d982ec4965e7"/>
                                     <textElement textAlignment="Center" verticalAlignment="Middle">
                                         <font fontName="Times New Roman" size="11" isBold="true"/>
                                     </textElement>
@@ -642,7 +665,7 @@
                             </jr:tableHeader>
                             <jr:tableFooter style="Table_CH" height="30" rowSpan="1">
                                 <textField>
-                                    <reportElement x="0" y="0" width="129" height="30" uuid="f4cbc101-5f27-48dd-bf48-072ccca897e3"/>
+                                    <reportElement x="0" y="0" width="100" height="30" uuid="f4cbc101-5f27-48dd-bf48-072ccca897e3"/>
                                     <textElement textAlignment="Center" verticalAlignment="Middle">
                                         <font fontName="Times New Roman" size="11"/>
                                     </textElement>
@@ -651,7 +674,7 @@
                             </jr:tableFooter>
                             <jr:detailCell style="Table_TD" height="30">
                                 <textField>
-                                    <reportElement x="0" y="0" width="129" height="30" uuid="ebcc1feb-7540-4e81-b1da-8a08a0338b5a"/>
+                                    <reportElement x="0" y="0" width="100" height="30" uuid="ebcc1feb-7540-4e81-b1da-8a08a0338b5a"/>
                                     <textElement textAlignment="Center" verticalAlignment="Middle">
                                         <font fontName="Times New Roman" size="11"/>
                                     </textElement>
@@ -784,29 +807,11 @@ phiếu
                 <text><![CDATA[KHÁCH SẠN ARMANI HOTEL]]></text>
             </staticText>
             <staticText>
-                <reportElement x="250" y="-1" width="249" height="19" uuid="e402ccb5-82b6-46a7-af01-bbf642e2c2dc">
-                    <property name="com.jaspersoft.studio.unit.height" value="px"/>
-                </reportElement>
-                <textElement textAlignment="Center">
-                    <font fontName="Times New Roman" size="11" isBold="true"/>
-                </textElement>
-                <text><![CDATA[Mẫu số 02 - VT]]></text>
-            </staticText>
-            <staticText>
-                <reportElement x="250" y="19" width="249" height="19" uuid="eb9a9e40-e4b6-4dce-9c08-4e54288caf05">
-                    <property name="com.jaspersoft.studio.unit.height" value="px"/>
-                </reportElement>
-                <textElement textAlignment="Center">
-                    <font fontName="Times New Roman" size="11" isBold="false" isItalic="true"/>
-                </textElement>
-                <text><![CDATA[(Ban hành theo Thông tư số 133/2016/TT-BTC ]]></text>
-            </staticText>
-            <staticText>
                 <reportElement x="-20" y="19" width="270" height="19" uuid="afa2c135-618a-4397-88d0-165e2da6bc9d"/>
                 <textElement textAlignment="Left" verticalAlignment="Top">
                     <font fontName="Times New Roman" size="11" isBold="false"/>
                 </textElement>
-                <text><![CDATA[Số 87 Bùi Thị Xuân, Phường Nguyễn Du, Quận Hai]]></text>
+                <text><![CDATA[]]></text>
             </staticText>
             <staticText>
                 <reportElement x="-20" y="38" width="270" height="19" uuid="468d3f9e-ca68-4ccc-9b39-4c317f31947e"/>
@@ -814,15 +819,6 @@ phiếu
                     <font fontName="Times New Roman" size="11" isBold="false"/>
                 </textElement>
                 <text><![CDATA[Bà Trưng, Thành phố Hà Nội, Việt Nam]]></text>
-            </staticText>
-            <staticText>
-                <reportElement x="250" y="38" width="249" height="19" uuid="38865552-1ef2-458e-ae9b-16101d1c696a">
-                    <property name="com.jaspersoft.studio.unit.height" value="px"/>
-                </reportElement>
-                <textElement textAlignment="Center">
-                    <font fontName="Times New Roman" size="11" isBold="false" isItalic="true"/>
-                </textElement>
-                <text><![CDATA[Ngày 26/08/2016 của Bộ Tài chính)]]></text>
             </staticText>
         </band>
     </title>
