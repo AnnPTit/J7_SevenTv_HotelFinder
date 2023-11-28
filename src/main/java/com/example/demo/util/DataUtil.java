@@ -144,11 +144,11 @@ public class DataUtil {
 
 
     public static void sendMailCommon(String mailTo, String subject, String content, MailService mailService) {
+        // Create a Mail object and send the email
         Mail mail = new Mail();
         mail.setMailFrom("nguyenvantundz2003@gmail.com");
         mail.setMailTo(mailTo);
         mail.setMailSubject(subject);
-        mail.setMailContent(content);
         mailService.sendEmail(mail);
     }
 
