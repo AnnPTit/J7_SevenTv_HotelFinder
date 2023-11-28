@@ -19,6 +19,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @RestController
@@ -42,6 +43,9 @@ public class HomeController {
     private BlogService blogService;
     @Autowired
     private BlogCommentService blogCommentService;
+
+    @Autowired
+    private OrderDetailService orderDetailService;
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -218,7 +222,7 @@ public class HomeController {
 
     @GetMapping("/blog/comment")
     public List<BlogCommentDTO> getComment(@RequestParam("blogId") String blogId,
-                                           @RequestParam(name = "currentPage" , defaultValue = "0") Integer currentPage) {
+                                           @RequestParam(name = "currentPage", defaultValue = "0") Integer currentPage) {
         return getListComment(currentPage, blogId);
     }
 
@@ -241,6 +245,12 @@ public class HomeController {
         dto.setIdBlog(entity.getIdBlog());
         dto.setCreatedAt(entity.getCreateAt());
         return dto;
+    }
+
+    @PostMapping("/date-booked")
+    public List<String> getDateBooked(@RequestBody List<RoomId> dates) {
+        List<String> roomIds = dates.stream().map(item -> item.getId()).collect(Collectors.toList());
+        return orderDetailService.getOrderByRoomIds(roomIds);
     }
 
 
