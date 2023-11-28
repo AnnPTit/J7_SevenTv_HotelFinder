@@ -13,6 +13,8 @@ public interface PhotoService {
 
     List<Photo> getPhotoByRoomId(String id);
 
+    List<Photo> getPhotoByBlog(String id);
+
     void delete(String id);
 
     Photo getPhotoById(String id);
