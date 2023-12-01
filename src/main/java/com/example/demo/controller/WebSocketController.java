@@ -85,16 +85,16 @@ public class WebSocketController {
             String dateStringEnd = payload.getDayEnd().toString().substring(0, 11);
             String todayString = today.toString().substring(0, 11);
             if (dateString.equals(todayString)) {
-                return new Response("Ngày checkIn phải lớn hơn ngày hôm nay !",
+                return new Response(payload.getKeyToken()+"Ngày checkIn phải lớn hơn ngày hôm nay ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
             if (dateString.equals(dateStringEnd)) {
-                return new Response("Số ngày đặt phải lớn hơn 1 ",
+                return new Response(payload.getKeyToken()+"Số ngày đặt phải lớn hơn 1 [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
             // Kiểm tra ngày đặt nằm trong khoảng 1 tháng tới
             if (!DataUtil.isInOneMonth(payload.getDayStart()) && !DataUtil.isInOneMonth(payload.getDayEnd())) {
-                return new Response("Vui lòng đặt phòng trong vòng 30 ngày !",
+                return new Response(payload.getKeyToken()+"Vui lòng đặt phòng trong vòng 30 ngày ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
             List<String> orderDetailIds = orderDetailService.checkRoomIsBooked(DataUtil.dateToStringSql(payload.getDayStart()),
@@ -104,8 +104,8 @@ public class WebSocketController {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String startDate = sdf.format(payload.getDayStart());
                 String endDate = sdf.format(payload.getDayEnd());
-                return new Response("Phòng đã được đặt trong khoảng :  "
-                        + startDate + "   đến ngày :    " + endDate + "  !" + ". Vui lòng chọn ngày khác !",
+                return new Response(payload.getKeyToken()+"Phòng đã được đặt trong khoảng :  "
+                        + startDate + "   đến ngày :    " + endDate + "  !" + ". Vui lòng chọn ngày khác ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
             Random random = new Random();
@@ -132,7 +132,7 @@ public class WebSocketController {
                 newCustomer.setFullname(payload.getUser().getHoVaTen());
                 newCustomer.setPassword(customerCode + "12345");
                 newCustomer.setPhoneNumber(payload.getUser().getSoDienThoai());
-                customer= customerService.add(newCustomer);
+                customer = customerService.add(newCustomer);
             }
             // B2 : Lấy account
             Account account = accountService.getAccountByCode();
@@ -178,7 +178,7 @@ public class WebSocketController {
                 orderDetail.setOrderDetailCode("HDCT" + randomNumber);
                 orderDetail.setRoomPrice(payload.getTotalPriceRoom());
                 if (roomData.getGuestCount() > room.getTypeRoom().getCapacity()) {
-                    return new Response("Số khách vượt quá sức chứa  !",
+                    return new Response(payload.getKeyToken()+"Số khách vượt quá sức chứa  ! [",
                             Constant.COMMON_STATUS.ACTIVE, idsRoom);
                 }
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
@@ -210,7 +210,7 @@ public class WebSocketController {
                     "Thông tin đơn hàng của bạn : \n" +
                     "Mã hóa đơn : " + orderCode + "\n" +
                     "Tên khách hàng : " + payload.getUser().getHoVaTen() + "\n" +
-                    "Số điện thoại : " +  payload.getUser().getSoDienThoai() + "\n" +
+                    "Số điện thoại : " + payload.getUser().getSoDienThoai() + "\n" +
                     "Ngày đặt : " + DataUtil.convertDateToString(order.getCreateAt()) + "\n" +
                     "Ngày CheckIn : " + DataUtil.convertDateToString(order.getBookingDateStart()) + "\n" +
                     "Ngày CheckOut : " + DataUtil.convertDateToString(order.getBookingDateEnd()) + "\n" +
@@ -235,7 +235,7 @@ public class WebSocketController {
             List<RoomData> roomDataList = payload.getRooms();
             List<String> roomIds = roomDataList.stream().map(item -> item.getId()).collect(Collectors.toList());
             List<String> dates = orderDetailService.getOrderByRoomIds(roomIds);
-            return new Response("Đặt phòng thành công" +dates, Constant.COMMON_STATUS.ACTIVE, idsRoom);
+            return new Response(payload.getKeyToken() + "Đặt phòng thành công" + dates, Constant.COMMON_STATUS.ACTIVE, idsRoom);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
