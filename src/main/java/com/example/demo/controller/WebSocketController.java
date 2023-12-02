@@ -85,16 +85,16 @@ public class WebSocketController {
             String dateStringEnd = payload.getDayEnd().toString().substring(0, 11);
             String todayString = today.toString().substring(0, 11);
             if (dateString.equals(todayString)) {
-                return new Response(payload.getKeyToken()+"Ngày checkIn phải lớn hơn ngày hôm nay ! [",
+                return new Response(payload.getKeyToken() + "Ngày checkIn phải lớn hơn ngày hôm nay ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
             if (dateString.equals(dateStringEnd)) {
-                return new Response(payload.getKeyToken()+"Số ngày đặt phải lớn hơn 1 [",
+                return new Response(payload.getKeyToken() + "Số ngày đặt phải lớn hơn 1 [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
             // Kiểm tra ngày đặt nằm trong khoảng 1 tháng tới
             if (!DataUtil.isInOneMonth(payload.getDayStart()) && !DataUtil.isInOneMonth(payload.getDayEnd())) {
-                return new Response(payload.getKeyToken()+"Vui lòng đặt phòng trong vòng 30 ngày ! [",
+                return new Response(payload.getKeyToken() + "Vui lòng đặt phòng trong vòng 30 ngày ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
             List<String> orderDetailIds = orderDetailService.checkRoomIsBooked(DataUtil.dateToStringSql(payload.getDayStart()),
@@ -104,7 +104,7 @@ public class WebSocketController {
                 SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
                 String startDate = sdf.format(payload.getDayStart());
                 String endDate = sdf.format(payload.getDayEnd());
-                return new Response(payload.getKeyToken()+"Phòng đã được đặt trong khoảng :  "
+                return new Response(payload.getKeyToken() + "Phòng đã được đặt trong khoảng :  "
                         + startDate + "   đến ngày :    " + endDate + "  !" + ". Vui lòng chọn ngày khác ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
@@ -178,7 +178,7 @@ public class WebSocketController {
                 orderDetail.setOrderDetailCode("HDCT" + randomNumber);
                 orderDetail.setRoomPrice(payload.getTotalPriceRoom());
                 if (roomData.getGuestCount() > room.getTypeRoom().getCapacity()) {
-                    return new Response(payload.getKeyToken()+"Số khách vượt quá sức chứa  ! [",
+                    return new Response(payload.getKeyToken() + "Số khách vượt quá sức chứa  ! [",
                             Constant.COMMON_STATUS.ACTIVE, idsRoom);
                 }
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
@@ -274,7 +274,7 @@ public class WebSocketController {
 
     @MessageMapping("/comments")
     @SendTo("/topic/comment")
-    public List<BlogCommentDTO> comment(String message) throws JsonProcessingException {
+    public List<BlogCommentDTO> comment(String message) {
         ObjectMapper objectMapper = new ObjectMapper();
         try {
             List<BlogCommentDTO> commentDTOList = new ArrayList<>();
