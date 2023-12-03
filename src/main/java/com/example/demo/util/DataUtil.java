@@ -148,6 +148,7 @@ public class DataUtil {
         Mail mail = new Mail();
         mail.setMailFrom("nguyenvantundz2003@gmail.com");
         mail.setMailTo(mailTo);
+        mail.setMailContent(content);
         mail.setMailSubject(subject);
         mailService.sendEmail(mail);
     }

@@ -133,6 +133,9 @@ public class Order {
     @Column(name = "deleted")
     private String deleted;
 
+    @Column(name = "discount_program")
+    private String discountProgram;
+
     @Column(name = "status")
     private Integer status;
     @Column(name = "refuse_reason")
