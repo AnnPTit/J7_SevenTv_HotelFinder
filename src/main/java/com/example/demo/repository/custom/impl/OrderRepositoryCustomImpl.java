@@ -20,29 +20,30 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
     @Override
     public OrderExportDTO getData(String orderId) {
         String sql = "select\n" +
-                "o.order_code as code,\n" +
-                "o.create_by as creater,\n" +
-                "c.fullname as customer ,\n" +
-                "o.create_at as bookingDay,\n" +
-                "o.booking_date_start as checkIn ,\n" +
-                "o.booking_date_end as checkOut ,\n" +
-                "o.note ,\n" +
-                "coalesce(o.money_given_by_customer, 0) as monneyCustom ,\n" +
-                "coalesce(o.deposit, 0) as deposit ,\n" +
-                "coalesce(o.vat, 0) as vat ,\n" +
-                "coalesce(o.total_money, 0) as totalMoney ,\n" +
-                "coalesce(o.excess_money, 0) as excessMoney,\n" +
-                "coalesce(o.surcharge , 0) as surcharge\n" +
+                " o.order_code as code,\n" +
+                " o.create_by as creater,\n" +
+                " c.fullname as customer ,\n" +
+                " o.create_at as bookingDay,\n" +
+                " o.booking_date_start as checkIn ,\n" +
+                " o.booking_date_end as checkOut ,\n" +
+                " o.note ,\n" +
+                " coalesce(o.money_given_by_customer, 0) as monneyCustom ,\n" +
+                " coalesce(o.deposit, 0) as deposit ,\n" +
+                " coalesce(o.vat, 0) as vat ,\n" +
+                " coalesce(o.total_money, 0) as totalMoney ,\n" +
+                " coalesce(o.excess_money, 0) as excessMoney,\n" +
+                " coalesce(o.surcharge , 0) as surcharge,\n" +
+                " coalesce(o.discount , 0) as discount \n" +
                 "from\n" +
-                "`order` o\n" +
+                " `order` o\n" +
                 "inner join account a on\n" +
-                "a.id = o.account_id\n" +
-                "and a.status = 1\n" +
+                " a.id = o.account_id\n" +
+                " and a.status = 1\n" +
                 "inner join customer c on\n" +
-                "c.id = o.customer_id\n" +
-                "and c.status = 1\n" +
+                " c.id = o.customer_id\n" +
+                " and c.status = 1\n" +
                 "where\n" +
-                "o.id =:orderId";
+                " o.id =:orderId";
         Query query = entityManager.createNativeQuery(sql, "orderResult");
         query.setParameter("orderId", orderId);
         @SuppressWarnings("unchecked")

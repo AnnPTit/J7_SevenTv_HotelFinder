@@ -298,6 +298,7 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("totalNumberPrice", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
         parameters.put("total", DataUtil.currencyFormat(totalPriceRoom));
         parameters.put("vat", DataUtil.currencyFormat(orderExportDTO.getVat()));
+        parameters.put("discount", DataUtil.currencyFormat(orderExportDTO.getVat()));
         parameters.put("Parameter1", new JRBeanCollectionDataSource(serviceUsedInvoiceDTOS));
         parameters.put("dataTable", new JRBeanCollectionDataSource(dataTable));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());

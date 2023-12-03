@@ -44,6 +44,7 @@ import java.util.List;
                                                 @ColumnResult(name = "totalMoney", type = BigDecimal.class),
                                                 @ColumnResult(name = "excessMoney", type = BigDecimal.class),
                                                 @ColumnResult(name = "surcharge", type = BigDecimal.class),
+                                                @ColumnResult(name = "discount", type = BigDecimal.class),
                                         }
                                 ),
                         }

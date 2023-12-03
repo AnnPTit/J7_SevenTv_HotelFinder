@@ -115,12 +115,13 @@
     <parameter name="totalMoney" class="java.lang.String"/>
     <parameter name="excessMoney" class="java.lang.String"/>
     <parameter name="surcharge" class="java.lang.String"/>
+    <parameter name="discount" class="java.lang.String"/>
     <group name="Group1">
         <groupFooter>
             <band height="16">
                 <property name="com.jaspersoft.studio.unit.height" value="px"/>
                 <textField textAdjust="StretchHeight">
-                    <reportElement stretchType="RelativeToTallestObject" x="-20" y="0" width="520" height="13" uuid="79bb17cc-9813-4fc3-a4be-5c9eb48d6298">
+                    <reportElement stretchType="RelativeToTallestObject" x="-21" y="0" width="520" height="13" uuid="79bb17cc-9813-4fc3-a4be-5c9eb48d6298">
                         <property name="com.jaspersoft.studio.unit.width" value="px"/>
                         <property name="com.jaspersoft.studio.unit.height" value="px"/>
                     </reportElement>
@@ -688,7 +689,7 @@
             <band height="16">
                 <property name="com.jaspersoft.studio.unit.height" value="px"/>
             </band>
-            <band height="16">
+            <band height="15">
                 <property name="com.jaspersoft.studio.unit.height" value="px"/>
                 <textField textAdjust="StretchHeight">
                     <reportElement stretchType="RelativeToTallestObject" x="-21" y="2" width="271" height="13" uuid="f5de8dc6-40ad-44ae-be34-021d75063412">
@@ -706,10 +707,10 @@
                     <textElement>
                         <font fontName="Times New Roman" size="11"/>
                     </textElement>
-                    <textFieldExpression><![CDATA["- VAT  " + $P{vat} +"VND"]]></textFieldExpression>
+                    <textFieldExpression><![CDATA["- VAT : " + $P{vat} +"VND"]]></textFieldExpression>
                 </textField>
             </band>
-            <band height="16">
+            <band height="15">
                 <property name="com.jaspersoft.studio.unit.height" value="px"/>
                 <textField textAdjust="StretchHeight">
                     <reportElement stretchType="RelativeToTallestObject" x="-21" y="2" width="271" height="13" uuid="5d8dcc76-017f-42f5-925c-5431002b0800">
@@ -718,7 +719,16 @@
                     <textElement>
                         <font fontName="Times New Roman" size="11"/>
                     </textElement>
-                    <textFieldExpression><![CDATA["- Phụ thu " + $P{surcharge}+"VND"]]></textFieldExpression>
+                    <textFieldExpression><![CDATA["- Phụ thu : " + $P{surcharge}+"VND"]]></textFieldExpression>
+                </textField>
+                <textField textAdjust="StretchHeight">
+                    <reportElement stretchType="RelativeToTallestObject" x="257" y="0" width="243" height="14" uuid="baf0ce67-4102-4075-ae17-0803208acec9">
+                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
+                    </reportElement>
+                    <textElement>
+                        <font fontName="Times New Roman" size="11"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["- Giảm giá  : " + $P{discount} +"VND"]]></textFieldExpression>
                 </textField>
             </band>
             <band height="16">
@@ -754,7 +764,7 @@
                     <textElement>
                         <font fontName="Times New Roman" size="11"/>
                     </textElement>
-                    <textFieldExpression><![CDATA["- Tiền khách đưa " + $P{monneyCustom}+"VND"]]></textFieldExpression>
+                    <textFieldExpression><![CDATA["- Tiền khách đưa  : " + $P{monneyCustom}+"VND"]]></textFieldExpression>
                 </textField>
                 <textField textAdjust="StretchHeight">
                     <reportElement stretchType="RelativeToTallestObject" x="257" y="0" width="243" height="15" uuid="3236aa65-3d69-4a69-9ea7-3e212add3e83">
@@ -763,7 +773,7 @@
                     <textElement>
                         <font fontName="Times New Roman" size="11"/>
                     </textElement>
-                    <textFieldExpression><![CDATA["- Tiền thừa  " +$P{excessMoney}+"VND"]]></textFieldExpression>
+                    <textFieldExpression><![CDATA["- Tiền thừa : " +$P{excessMoney}+"VND"]]></textFieldExpression>
                 </textField>
             </band>
             <band height="46">
