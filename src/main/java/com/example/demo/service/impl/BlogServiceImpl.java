@@ -63,6 +63,23 @@ public class BlogServiceImpl implements BlogService {
     }
 
     @Override
+    public void unLike(String blogId, String customId) {
+        if (customId == null) {
+            List<BlogLike> likeList = blogLikeRepository.anonymousLike(blogId);
+            if (likeList.size() != 0) {
+                BlogLike blogLike = likeList.get(0);
+                blogLikeRepository.delete(blogLike);
+            }
+        } else {
+            List<BlogLike> likeList = blogLikeRepository.customLike(blogId, customId);
+            if (likeList.size() != 0) {
+                BlogLike blogLike = likeList.get(0);
+                blogLikeRepository.delete(blogLike);
+            }
+        }
+
+    }
+    @Override
     public Blog findOne(String blogId) {
         return blogRepository.getOne(blogId);
     }
@@ -98,23 +115,7 @@ public class BlogServiceImpl implements BlogService {
         return 0;
     }
 
-    @Override
-    public void unLike(String blogId, String customId) {
-        if (customId == null) {
-            List<BlogLike> likeList = blogLikeRepository.anonymousLike(blogId);
-            if (likeList.size() != 0) {
-                BlogLike blogLike = likeList.get(0);
-                blogLikeRepository.delete(blogLike);
-            }
-        } else {
-            List<BlogLike> likeList = blogLikeRepository.customLike(blogId, customId);
-            if (likeList.size() != 0) {
-                BlogLike blogLike = likeList.get(0);
-                blogLikeRepository.delete(blogLike);
-            }
-        }
 
-    }
 
     @Override
     public Page<BlogComment> getComment(String blogId) {
