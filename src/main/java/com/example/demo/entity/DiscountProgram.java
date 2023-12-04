@@ -30,6 +30,9 @@ public class DiscountProgram {
     @Column(name = "name")
     private String name;
 
+    @Column(name = "code")
+    private String code;
+
     @Column(name = "minimum_invoice")
     private BigDecimal minimumInvoice;
 
