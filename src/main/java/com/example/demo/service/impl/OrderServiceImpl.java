@@ -4,6 +4,7 @@ import com.example.demo.constant.Constant;
 import com.example.demo.dto.*;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Order;
+import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.OrderTimeline;
 import com.example.demo.errors.BadRequestAlertException;
 import com.example.demo.model.Mail;
@@ -46,6 +47,7 @@ public class OrderServiceImpl implements OrderService {
     @Autowired
     private OrderTimelineRepository orderTimelineRepository;
     private NumToViet numToViet;
+    private final MailService mailService;
 
     @Override
     public List<Order> getList() {
@@ -62,7 +64,6 @@ public class OrderServiceImpl implements OrderService {
         return orderRepository.findAllByStatus(pageable);
     }
 
-    private final MailService mailService;
 
     @Override
     public Page<Order> loadAndSearch(String orderCode, Boolean typeOfOrder, Integer status, String customerFullname, Date startDate, Date endDate, Pageable pageable) {
@@ -150,8 +151,7 @@ public class OrderServiceImpl implements OrderService {
         // kiểm tra căn cước công dân trùng nhau
         Customer customer1 = customerRepository.getCustomerById(confirmOrderDTO.getCustomerId());
         // Kiểm tra trống
-        if (customer1.getCitizenId().equals(Constant.citizenId) &&
-                DataUtil.isNull(confirmOrderDTO.getCitizenId())) {
+        if (DataUtil.isNull(confirmOrderDTO.getCitizenId())) {
             ConfirmOrderDTO confirmOrderDTO1 = new ConfirmOrderDTO();
             confirmOrderDTO1.setMessage("Căn cước công dân không được để trống !");
             return confirmOrderDTO1;
@@ -162,7 +162,7 @@ public class OrderServiceImpl implements OrderService {
             confirmOrderDTO1.setMessage("Căn cước công dân không đúng định dạng !");
             return confirmOrderDTO1;
         }
-        if (customer1.getCitizenId().equals(Constant.citizenId) && customer1.getCitizenId().equals(confirmOrderDTO.getCitizenId())) {
+        if (customer1.getCitizenId() != null && customer1.getCitizenId().equals(confirmOrderDTO.getCitizenId()) && confirmOrderDTO.getIsNewCustomer() == true) {
             // kiểm tra -> không được trùng
             ConfirmOrderDTO confirmOrderDTO1 = new ConfirmOrderDTO();
             confirmOrderDTO1.setMessage("Căn cước công dân không được trùng nhau !");
@@ -200,6 +200,44 @@ public class OrderServiceImpl implements OrderService {
         customer.setGender(confirmOrderDTO.isGender());
         customer.setCitizenId(confirmOrderDTO.getCitizenId());
         customerRepository.save(customer);
+        // Gui mail
+        List<OrderDetail> orderDetails = order.getOrderDetailList();
+        String mailTo = customer.getEmail();
+        String subJect = "Xác Nhận Đơn Đặt Phòng của Quý Khách tại Khách Sạn Armani";
+        String subContent = "";
+        for (OrderDetail orderDetail : orderDetails) {
+            subContent = subContent + " \n Loại phòng: " + orderDetail.getRoom().getTypeRoom().getTypeRoomName() + "\n" +
+                    "Số lượng khách: " + orderDetail.getCustomerQuantity() + "\n";
+        }
+        String content = "Kính gửi Quý Khách,\n" +
+                "\n" +
+                "Chúng tôi xin chân thành cảm ơn Quý Khách đã chọn Khách Sạn Armani là điểm đến lưu trú của mình. Để đảm bảo rằng trải nghiệm của Quý Khách sẽ được chu đáo và không gian lưu trú tuyệt vời, chúng tôi xác nhận thông tin đơn đặt phòng như sau:\n" +
+                "\n" +
+                "Thông tin đặt phòng:\n" +
+                "\n" +
+                "Tên Khách hàng: " + customer.getFullname() + "\n" +
+                "Ngày nhận phòng: " + DataUtil.dateToString(order.getBookingDateStart()) + "\n" +
+                "Ngày trả phòng: " + DataUtil.dateToString(order.getBookingDateEnd()) + "\n" +
+                "Chi Tiết : " +
+                subContent +
+                " \nThông tin liên hệ:\n" +
+                "\n" +
+                "Địa chỉ email: " + customer.getEmail() + "\n" +
+                "Số điện thoại liên lạc: " + customer.getPhoneNumber() + "\n" +
+                "Ghi chú đặc biệt (nếu có):\n" +
+                order.getNote() + "\n" +
+                "\n" +
+                "Chúng tôi đã nhận được thanh toán của Quý Khách và đang chấp nhận đơn đặt phòng của Quý Khách.\n" +
+                "\n" +
+                "Để giúp Quý Khách có trải nghiệm lưu trú tuyệt vời nhất, chúng tôi mong muốn được phục vụ các yêu cầu đặc biệt nếu có. Xin vui lòng liên hệ với chúng tôi qua email hoặc số điện thoại trước ngày nhận phòng nếu có bất kỳ thay đổi hoặc điều chỉnh nào.\n" +
+                "\n" +
+                "Chúng tôi rất mong đợi được phục vụ Quý Khách tại Khách Sạn Armani và hy vọng rằng chuyến đi của Quý Khách sẽ trở thành một kỷ niệm đáng nhớ.\n" +
+                "\n" +
+                "Trân trọng,\n" +
+                "[Armani Hotel]\n" +
+                "Khách Sạn Armani\n";
+
+        DataUtil.sendMailCommon(mailTo, subJect, content, mailService);
         return confirmOrderDTO;
     }
 
@@ -260,6 +298,7 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("totalNumberPrice", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
         parameters.put("total", DataUtil.currencyFormat(totalPriceRoom));
         parameters.put("vat", DataUtil.currencyFormat(orderExportDTO.getVat()));
+        parameters.put("discount", DataUtil.currencyFormat(orderExportDTO.getVat()));
         parameters.put("Parameter1", new JRBeanCollectionDataSource(serviceUsedInvoiceDTOS));
         parameters.put("dataTable", new JRBeanCollectionDataSource(dataTable));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());

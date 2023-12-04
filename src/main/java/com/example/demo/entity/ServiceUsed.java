@@ -36,6 +36,7 @@ import java.util.UUID;
                                                 @ColumnResult(name = "quantity2", type = Integer.class),
                                                 @ColumnResult(name = "price", type = BigDecimal.class),
                                                 @ColumnResult(name = "total2", type = BigDecimal.class),
+                                                @ColumnResult(name = "createAt", type = Date.class),
                                         }
                                 ),
                         }

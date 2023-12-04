@@ -12,9 +12,13 @@ public interface BlogService {
 
     Page<BlogDTO> getPaginate(Pageable pageable);
 
+    Page<BlogDTO> loadAndSearch(String title, Pageable pageable);
+
     void like(String blogId, String customerId);
 
     Blog findOne(String blogId);
+
+    Blog findById(String Id);
 
     Integer countLike(String blogId);
 

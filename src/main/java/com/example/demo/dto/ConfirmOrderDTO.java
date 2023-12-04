@@ -16,4 +16,5 @@ public class ConfirmOrderDTO {
     private String orderId;
     private String customerId;
     private String message;
+    private Boolean isNewCustomer;
 }
