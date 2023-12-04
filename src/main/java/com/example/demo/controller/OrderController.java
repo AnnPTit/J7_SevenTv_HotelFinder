@@ -2,24 +2,11 @@ package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.ConfirmOrderDTO;
+import com.example.demo.dto.DiscountCbbDTO;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.RevenueDTO;
-import com.example.demo.entity.Account;
-import com.example.demo.entity.Customer;
-import com.example.demo.entity.HistoryTransaction;
-import com.example.demo.entity.Order;
-import com.example.demo.entity.OrderDetail;
-import com.example.demo.entity.OrderTimeline;
-import com.example.demo.entity.PaymentMethod;
-import com.example.demo.entity.Room;
-import com.example.demo.service.AccountService;
-import com.example.demo.service.CustomerService;
-import com.example.demo.service.HistoryTransactionService;
-import com.example.demo.service.OrderDetailService;
-import com.example.demo.service.OrderService;
-import com.example.demo.service.OrderTimelineService;
-import com.example.demo.service.PaymentMethodService;
-import com.example.demo.service.RoomService;
+import com.example.demo.entity.*;
+import com.example.demo.service.*;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -28,22 +15,14 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
-import java.io.IOException;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -69,6 +48,7 @@ public class OrderController {
     private HistoryTransactionService historyTransactionService;
     @Autowired
     private OrderTimelineService orderTimelineService;
+    private List<DiscountCbbDTO> discountCbbDTOS;
 
     @GetMapping("/load")
     public Page<Order> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
@@ -288,10 +268,12 @@ public class OrderController {
         order.setTotalMoney(orderDTO.getTotalMoney());
         order.setVat(orderDTO.getVat());
         order.setMoneyGivenByCustomer(orderDTO.getMoneyGivenByCustomer());
-        order.setExcessMoney(orderDTO.getExcessMoney());
+        order.setExcessMoney(orderDTO.getMoneyGivenByCustomer().subtract(orderDTO.getTotalMoney()));
         order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
+        order.setDiscountProgram(orderDTO.getDiscountProgram());
         order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
+        order.setDiscount(orderDTO.getDiscountMonney());
         orderService.add(order);
 
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
@@ -465,6 +447,28 @@ public class OrderController {
     @PostMapping("/confirm-order")
     public ResponseEntity<ConfirmOrderDTO> confirmOrder(@RequestBody ConfirmOrderDTO confirmOrderDTO) {
         return new ResponseEntity<>(orderService.confirmOrder(confirmOrderDTO), HttpStatus.OK);
+    }
+
+    // TODO : Fake data đoạn này -> Truyền giá tiền và lấy ra  những CTGG thỏa mãn
+    @GetMapping("/discount-program")
+    private List<DiscountCbbDTO> getDiscountCbb(@RequestParam("totalMoney") BigDecimal totalMoney) {
+        System.out.println("totalMoney" + totalMoney);
+        DiscountCbbDTO discountCbbDTO = new DiscountCbbDTO();
+        discountCbbDTO.setName("CTGG 1");
+        discountCbbDTO.setId("2757f090-423f-40b6-81b0-9913bfe67515");
+        discountCbbDTO.setNumberOfApplication(10);
+        discountCbbDTO.setMinimumInvoice(new BigDecimal("2300000"));
+        discountCbbDTO.setReduceValue(new BigDecimal("10"));
+        discountCbbDTO.setMaximumDiscountMoney(new BigDecimal("300000"));
+        List<DiscountCbbDTO> discountCbbDTOS = new ArrayList<>();
+        List<DiscountCbbDTO> listFinal = new ArrayList<>();
+        discountCbbDTOS.add(discountCbbDTO);
+        for (DiscountCbbDTO discountCbbDTO1 : discountCbbDTOS) {
+            if (discountCbbDTO1.getMinimumInvoice().compareTo(totalMoney) < 0) {
+                listFinal.add(discountCbbDTO1);
+            }
+        }
+        return listFinal;
     }
 
 }

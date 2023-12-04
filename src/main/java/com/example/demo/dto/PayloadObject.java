@@ -17,4 +17,5 @@ public class PayloadObject {
     private BigDecimal deposit;
     private BigDecimal totalPriceRoom;
     private String note;
+    private String keyToken;
 }

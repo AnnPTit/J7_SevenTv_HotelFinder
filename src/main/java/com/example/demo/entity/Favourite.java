@@ -1,6 +1,5 @@
 package com.example.demo.entity;
 
-import com.fasterxml.jackson.annotation.JsonBackReference;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -17,15 +16,11 @@ public class Favourite {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "id_custom", nullable = false)
-    private Customer customer;
+    @Column(name = "id_custom")
+    private String customer;
 
-    @ManyToOne
-    @JsonBackReference
-    @JoinColumn(name = "id_room", nullable = false)
-    private Room room;
+    @Column(name = "id_room")
+    private String room;
 
     @Column(name = "status")
     private Integer status;

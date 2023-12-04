@@ -43,9 +43,10 @@ public class HomeController {
     private BlogService blogService;
     @Autowired
     private BlogCommentService blogCommentService;
-
     @Autowired
     private OrderDetailService orderDetailService;
+    @Autowired
+    private FavouriteService favouriteService;
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -251,6 +252,15 @@ public class HomeController {
     public List<String> getDateBooked(@RequestBody List<RoomId> dates) {
         List<String> roomIds = dates.stream().map(item -> item.getId()).collect(Collectors.toList());
         return orderDetailService.getOrderByRoomIds(roomIds);
+    }
+
+
+    @GetMapping("/check-love")
+    public ResponseEntity<Boolean> checkLove(@RequestParam("idCustom") String idCustom,
+                                             @RequestParam("idRoom") String idRoom) {
+        System.out.println("Ok");
+//        return new ResponseEntity<>(favouriteService.isLove(idCustom, idRoom), HttpStatus.OK);
+        return new ResponseEntity<>(true, HttpStatus.OK);
     }
 
 

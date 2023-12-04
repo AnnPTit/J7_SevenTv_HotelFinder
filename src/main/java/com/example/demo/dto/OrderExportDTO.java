@@ -25,6 +25,7 @@ public class OrderExportDTO {
     private BigDecimal totalMoney;
     private BigDecimal excessMoney;
     private BigDecimal surcharge;
+    private BigDecimal discount;
 
 
     public String getMonneyCustom() {
