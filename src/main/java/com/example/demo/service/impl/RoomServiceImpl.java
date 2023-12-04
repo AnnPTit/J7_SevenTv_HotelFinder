@@ -116,6 +116,11 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
+    public List<Room> loadRoomByCondition(Integer capacity, Integer adult, Integer children, Date dayStart, Date dayEnd) {
+        return roomRepository.loadRoomByCondition(capacity, adult, children, dayStart, dayEnd);
+    }
+
+    @Override
     public Page<Room> findRoomsOrderByOrderDetailCountDesc(Pageable pageable) {
         return roomRepository.findRoomsOrderByOrderDetailCountDesc(pageable);
     }

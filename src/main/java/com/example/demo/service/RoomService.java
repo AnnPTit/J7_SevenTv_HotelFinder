@@ -40,6 +40,8 @@ public interface RoomService {
 
     List<Room> loadAndSearchBookRoom(String roomCode, String roomName, String floorId, String typeRoomId, BigDecimal start, BigDecimal end, Date dayStart, Date dayEnd);
 
+    List<Room> loadRoomByCondition(Integer capacity, Integer adult, Integer children, Date dayStart, Date dayEnd);
+
     Room getRoomById(String id);
 
     Room add(Room room);

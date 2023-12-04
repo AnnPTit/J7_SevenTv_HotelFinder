@@ -161,18 +161,28 @@ public class OrderDetailController {
         orderDetail.setStatus(Constant.ORDER_DETAIL.WAIT_CONFIRM);
         orderDetailService.add(orderDetail);
 
-        Room room = orderDetailDTO.getRoom();
-        room.setStatus(Constant.ROOM.EMPTY);
-        roomService.add(room);
-
         return new ResponseEntity<OrderDetail>(orderDetail, HttpStatus.OK);
     }
 
     @PutMapping("/update/{id}")
-    public ResponseEntity<OrderDetail> save(@PathVariable("id") String id, @RequestBody OrderDetail orderDetail) {
-        orderDetail.setId(id);
+    public ResponseEntity<OrderDetail> update(@PathVariable("id") String id, @RequestBody OrderDetailDTO orderDetailDTO) {
+        OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
+
+        Room room = orderDetail.getRoom();
+        room.setStatus(Constant.ROOM.EMPTY);
+        roomService.add(room);
+
+        orderDetail.setRoom(orderDetailDTO.getRoom());
+        orderDetail.setRoomPrice(orderDetailDTO.getRoomPrice());
+        orderDetail.setNote(orderDetailDTO.getNote());
         orderDetail.setUpdateAt(new Date());
+        orderDetail.setUpdatedBy(orderDetailDTO.getUpdatedBy());
         orderDetailService.add(orderDetail);
+
+        Room updatedRoom = orderDetail.getRoom();
+        updatedRoom.setStatus(Constant.ROOM.ACTIVE);
+        roomService.add(updatedRoom);
+
         return new ResponseEntity<OrderDetail>(orderDetail, HttpStatus.OK);
     }
 

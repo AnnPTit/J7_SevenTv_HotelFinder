@@ -101,6 +101,25 @@ public interface RoomRepository extends JpaRepository<Room, String>, RoomReposit
                                      @Param("dayStart") Date dayStart,
                                      @Param("dayEnd") Date dayEnd);
 
+    @Query(value = "SELECT r.*\n" +
+            "FROM room r\n" +
+            "JOIN type_room tr ON tr.id = r.type_room_id\n" +
+            "LEFT JOIN order_detail od ON r.id = od.room_id\n" +
+            "WHERE \n" +
+            "    tr.capacity >= :capacity AND tr.adult >= :adult AND tr.children >= :children AND \n" +
+            "    (\n" +
+            "        (od.check_in_datetime IS NULL OR od.check_in_datetime NOT BETWEEN :dayStart AND :dayEnd) AND\n" +
+            "        (od.check_out_datetime IS NULL OR od.check_out_datetime NOT BETWEEN :dayStart AND :dayEnd)\n" +
+            "    )\n" +
+            "    AND r.status IN (1, 2)\n" +
+            "GROUP BY r.id\n" +
+            "ORDER BY r.update_at DESC", nativeQuery = true)
+    List<Room> loadRoomByCondition(@Param("capacity") Integer capacity,
+                                   @Param("adult") Integer adult,
+                                   @Param("children") Integer children,
+                                   @Param("dayStart") Date dayStart,
+                                   @Param("dayEnd") Date dayEnd);
+
 //    @Query(value = "SELECT DISTINCT r.id, r.floor_id, r.type_room_id, r.room_code, r.room_name, r.note, r.create_at, r.create_by," +
 //            " r.update_at, r.updated_by, r.deleted, r.status, tr.price_per_day \n" +
 //            "FROM room r JOIN type_room tr ON r.type_room_id = tr.id\n" +
