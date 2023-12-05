@@ -141,18 +141,24 @@ public class BlogController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
-        if (blog.getTitle().trim().isEmpty()) {
-            return new ResponseEntity("Tiêu đề không được để trống!!", HttpStatus.BAD_REQUEST);
-        }
-        if (blog.getContent().trim().isEmpty()) {
-            return new ResponseEntity("Nội dung hông được để trống!!", HttpStatus.BAD_REQUEST);
-        }
+//        if (blog.getTitle().trim().isEmpty()) {
+//            return new ResponseEntity("Tiêu đề không được để trống!!", HttpStatus.BAD_REQUEST);
+//        }
+//        if (blog.getContent().trim().isEmpty()) {
+//            return new ResponseEntity("Nội dung hông được để trống!!", HttpStatus.BAD_REQUEST);
+//        }
+        Blog existingBlog = blogService.findOne(id);
 
+        if (existingBlog == null) {
+            return new ResponseEntity("Không tìm thấy blog có ID: " + id, HttpStatus.NOT_FOUND);
+        }
+        // Cập nhật chỉ những trường cần thiết
+        existingBlog.setTitle(blog.getTitle());
+        existingBlog.setContent(blog.getContent());
+        existingBlog.setUpdateAt(new Date());
+        existingBlog.setUpdatedBy(baseService.getCurrentUser().getFullname());
+        blogService.save(existingBlog);
         try {
-            blog.setId(id);
-            blog.setUpdateAt(new Date());
-            blog.setStatus(Constant.COMMON_STATUS.ACTIVE);
-            blogService.save(blog);
             if (photos != null) {
                 for (MultipartFile file : photos) {
                     File fileObj = DataUtil.convertMultiPartToFile(file);
@@ -174,7 +180,6 @@ public class BlogController {
                     photo.setStatus(Constant.COMMON_STATUS.ACTIVE);
                     photoService.add(photo);
                 }
-                System.out.println("Thêm thành công");
             }
         } catch (IOException e) {
             e.printStackTrace();
