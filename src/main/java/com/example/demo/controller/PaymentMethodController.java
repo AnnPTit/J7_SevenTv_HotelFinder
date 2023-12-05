@@ -10,6 +10,7 @@ import com.example.demo.entity.OrderDetail;
 import com.example.demo.entity.OrderTimeline;
 import com.example.demo.entity.PaymentMethod;
 import com.example.demo.entity.Room;
+import com.example.demo.service.DiscountProgramService;
 import com.example.demo.service.HistoryTransactionService;
 import com.example.demo.service.OrderDetailService;
 import com.example.demo.service.OrderService;
@@ -40,6 +41,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
@@ -86,6 +88,8 @@ public class PaymentMethodController {
     private HistoryTransactionService historyTransactionService;
     @Autowired
     private OrderTimelineService orderTimelineService;
+    @Autowired
+    private DiscountProgramService discountProgramService;
 
     @GetMapping("/loadAndSearch")
     public Page<PaymentMethod> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -102,11 +106,14 @@ public class PaymentMethodController {
 
     @PostMapping("/payment-vnpay/{id}")
     @ResponseBody
-    public ResponseEntity<?> vnPayPost(HttpServletRequest req, @PathVariable("id") String id) throws UnsupportedEncodingException {
+    public ResponseEntity<?> vnPayPost(HttpServletRequest req, @PathVariable("id") String id, @RequestBody Map<String, Object> requestBody) throws UnsupportedEncodingException {
         Order order = orderService.getOrderById(id);
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        long amount = ((order.getTotalMoney().longValue() - order.getDeposit().longValue()) * 100);
+        long amount = ((Integer) requestBody.get("amount")).longValue() * 100;
+        long discount = ((Integer) requestBody.get("discount")).longValue() * 100;
+        String idDiscount = (String) requestBody.get("idDiscount");
+        System.out.println(order.getId() + idDiscount);
 
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         String vnp_IpAddr = VNPayConfig.getIpAddress(req);
@@ -119,9 +126,13 @@ public class PaymentMethodController {
         vnp_Params.put("vnp_Amount", String.valueOf(amount));
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_BankCode", "");
-        vnp_Params.put("vnp_TxnRef", order.getId());
-        vnp_Params.put("vnp_OrderInfo", "Thanh toan don hang:" + order.getOrderCode());
-        vnp_Params.put("vnp_OrderType", "billpayment1231");
+        if (idDiscount != null) {
+            vnp_Params.put("vnp_TxnRef", order.getId() + idDiscount);
+        } else {
+            vnp_Params.put("vnp_TxnRef", order.getId());
+        }
+        vnp_Params.put("vnp_OrderInfo", String.valueOf(discount));
+        vnp_Params.put("vnp_OrderType", "billpayment1321");
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_Returnurl);
         vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
@@ -173,13 +184,30 @@ public class PaymentMethodController {
     public ResponseEntity<String> vnPayDone(HttpServletRequest request, HttpServletResponse response) throws IOException {
         // Xác định xem thanh toán đã thành công hay chưa
         String vnp_ResponseCode = request.getParameter("vnp_ResponseCode");
+        String amount = request.getParameter("vnp_Amount");
+        String discount = request.getParameter("vnp_OrderInfo");
         String orderId = request.getParameter("vnp_TxnRef"); // Lấy mã đơn hàng từ VNPay
+        String idRedirect = orderId.substring(0, 36);
+        String idOrder = "";
+        String idDiscount = "";
+        if (orderId.length() > 36) {
+            idOrder = orderId.substring(0, 36);
+            idDiscount = orderId.substring(36);
+        } else {
+            idOrder = idRedirect;
+        }
         if (vnp_ResponseCode != null && vnp_ResponseCode.equals("00")) { // Mã 00 thường tượng trưng cho thanh toán thành công
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
-            Order order = orderService.getOrderById(orderId);
+            Order order = orderService.getOrderById(idOrder);
             if (order != null) {
-                order.setMoneyGivenByCustomer(order.getTotalMoney().subtract(order.getDeposit()));                order.setExcessMoney(BigDecimal.valueOf(0));
+                order.setMoneyGivenByCustomer(BigDecimal.valueOf(Long.parseLong(amount) / 100));
+                order.setExcessMoney(BigDecimal.valueOf(0));
+                order.setDiscount(BigDecimal.valueOf(Long.parseLong(discount) / 100));
                 order.setNote("Khách thanh toán bằng tài khoản ngân hàng");
+                if (!idDiscount.trim().isEmpty()) {
+                    order.setDiscountProgram(idDiscount);
+                    discountProgramService.updateNumberOfApplication(idDiscount);
+                }
                 order.setUpdateAt(new Date());
                 order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
                 orderService.add(order);
@@ -231,20 +259,20 @@ public class PaymentMethodController {
                 orderTimeline.setCreateAt(new Date());
                 orderTimelineService.add(orderTimeline);
             }
-            String redirectUrl = "http://localhost:3000/orders?id=" + orderId;
+            String redirectUrl = "http://localhost:3000/order-detail?id=" + idOrder;
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         } else {
-            String redirectUrl = "http://localhost:3000/room-service?id=" + orderId;
+            String redirectUrl = "http://localhost:3000/booking?id=" + idRedirect;
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         }
     }
 
     @PostMapping("/payment-momo/{id}")
-    public Map<String, Object> createPaymentMomo(@PathVariable("id") String id) throws InvalidKeyException, NoSuchAlgorithmException, IOException {
+    public Map<String, Object> createPaymentMomo(@PathVariable("id") String id, @RequestBody Map<String, Object> requestBody) throws InvalidKeyException, NoSuchAlgorithmException, IOException {
         Order order = orderService.getOrderById(id);
-        Long amount = (order.getTotalMoney().longValue() - order.getDeposit().longValue());
+        Long amount = ((Integer) requestBody.get("amount")).longValue();
         JSONObject json = new JSONObject();
         String partnerCode = MomoConfig.PARTNER_CODE;
         String accessKey = MomoConfig.ACCESS_KEY;
@@ -265,7 +293,7 @@ public class PaymentMethodController {
         String data = "partnerCode=" + partnerCode
                 + "&accessKey=" + accessKey
                 + "&requestId=" + json.get("requestId")
-                + "&amount=" + amount.toString()
+                + "&amount=" + json.get("amount")
                 + "&orderId=" + json.get("orderId")
                 + "&orderInfo=" + json.get("orderInfo")
                 + "&returnUrl=" + returnUrl
@@ -301,7 +329,7 @@ public class PaymentMethodController {
             kq.put("signature", result.get("signature"));
             kq.put("requestId", result.get("requestId"));
             kq.put("errorCode", result.get("errorCode"));
-            kq.put("message", result.get("message"));
+            kq.put("message", amount.toString());
             kq.put("localMessage", result.get("localMessage"));
         } else {
             kq.put("requestType", result.get("requestType"));
@@ -392,6 +420,7 @@ public class PaymentMethodController {
     @GetMapping("/payment-momo/success")
     public ResponseEntity<String> paymentMomoSuccess(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String errorCode = request.getParameter("errorCode");
+        String amount = request.getParameter("message");
         String orderId = request.getParameter("orderId"); // Lấy mã đơn hàng từ VNPay
         if (orderId.length() > 36) {
             orderId = orderId.substring(0, 36);
@@ -400,7 +429,7 @@ public class PaymentMethodController {
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
             Order order = orderService.getOrderById(orderId);
             if (order != null) {
-                order.setMoneyGivenByCustomer(order.getTotalMoney().subtract(order.getDeposit()));
+                order.setMoneyGivenByCustomer(BigDecimal.valueOf(Long.parseLong(amount)));
                 order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setNote("Khách thanh toán bằng Momo");
                 order.setUpdateAt(new Date());
@@ -454,12 +483,12 @@ public class PaymentMethodController {
                 orderTimeline.setCreateAt(new Date());
                 orderTimelineService.add(orderTimeline);
             }
-            String redirectUrl = "http://localhost:3000/orders?id=" + orderId;
+            String redirectUrl = "http://localhost:3000/order-detail?id=" + orderId;
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         } else {
             // Thanh toán không thành công, xử lý theo logic của bạn
-            String redirectUrl = "http://localhost:3000/room-service?id=" + orderId;
+            String redirectUrl = "http://localhost:3000/booking?id=" + orderId;
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment failed. Back to page.");
         }
@@ -712,7 +741,7 @@ public class PaymentMethodController {
                 orderTimelineService.add(orderTimeline);
             }
 
-            String redirectUrl = "http://localhost:3000/orders?id=" + orderId;
+            String redirectUrl = "http://localhost:3000/order-detail?id=" + orderId;
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         } else {

@@ -90,7 +90,7 @@ public interface OrderRepository extends JpaRepository<Order, String>, OrderRepo
     Order getByCode(@Param("code") String code);
 
     @Query(value = "SELECT SUM(total_money) FROM `order` " +
-            "WHERE MONTH(update_at) = MONTH(CURRENT_DATE()) AND `status` = 3", nativeQuery = true)
+            "WHERE DATE(update_at) = DATE(CURRENT_DATE()) AND `status` = 3", nativeQuery = true)
     BigDecimal getRevenueMonth();
 
     @Query(value = "SELECT SUM(total_money) FROM `order` " +

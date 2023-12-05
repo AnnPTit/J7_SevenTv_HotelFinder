@@ -173,6 +173,32 @@ public class RoomController {
         return roomService.loadAndSearchBookRoom(key, key, floorId, typeRoomId, start, end, startDay, endDay);
     }
 
+    @GetMapping("/loadByCondition")
+    public List<Room> loadByCondition(@RequestParam(name = "capacity", defaultValue = "0") Integer capacity,
+                                    @RequestParam(name = "adult", defaultValue = "0") Integer adult,
+                                    @RequestParam(name = "children", defaultValue = "0") Integer children,
+                                    @RequestParam(name = "dayStart", defaultValue = "") String dayStart,
+                                    @RequestParam(name = "dayEnd", defaultValue = "") String dayEnd) {
+        Date startDay = null;
+        Date endDay = null;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            if (!dayStart.isEmpty()) {
+                startDay = dateFormat.parse(dayStart);
+            }
+
+            if (!dayEnd.isEmpty()) {
+                endDay = dateFormat.parse(dayEnd);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
+        return roomService.loadRoomByCondition(capacity, adult, children, startDay, endDay);
+    }
+
     @PostMapping("upload")
     public void uploadFile(@RequestParam("file") MultipartFile[] files) {
         try {

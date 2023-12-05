@@ -139,8 +139,10 @@ public class Order {
 
     @Column(name = "status")
     private Integer status;
+
     @Column(name = "refuse_reason")
     private String refuseReason;
+
     @JsonIgnore
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<HistoryTransaction> historyTransactionList;

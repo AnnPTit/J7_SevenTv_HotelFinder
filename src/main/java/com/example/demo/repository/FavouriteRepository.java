@@ -13,4 +13,5 @@ public interface FavouriteRepository extends JpaRepository<Favourite, String> {
 
     @Query(value = "select * from favourite  where id_custom = :idCustom and  id_room =:idRoom ", nativeQuery = true)
     List<Favourite> findByIdCustomAndIdRoom(@Param("idCustom") String idCustom, @Param("idRoom") String idRoom);
+
 }

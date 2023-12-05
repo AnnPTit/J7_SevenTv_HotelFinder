@@ -48,7 +48,8 @@ public class OrderController {
     private HistoryTransactionService historyTransactionService;
     @Autowired
     private OrderTimelineService orderTimelineService;
-    private List<DiscountCbbDTO> discountCbbDTOS;
+    @Autowired
+    private DiscountProgramService discountProgramService;
 
     @GetMapping("/load")
     public Page<Order> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
@@ -271,10 +272,15 @@ public class OrderController {
         order.setExcessMoney(orderDTO.getMoneyGivenByCustomer().subtract(orderDTO.getTotalMoney()));
         order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
-        order.setDiscountProgram(orderDTO.getDiscountProgram());
+        if (orderDTO.getDiscountProgram() != null) {
+            order.setDiscountProgram(orderDTO.getDiscountProgram());
+            discountProgramService.updateNumberOfApplication(orderDTO.getDiscountProgram());
+        }
         order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
-        order.setDiscount(orderDTO.getDiscountMonney());
+        order.setDiscount(orderDTO.getDiscountMoney());
         orderService.add(order);
+
+
 
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
         for (OrderDetail orderDetail : orderDetails) {
@@ -451,21 +457,12 @@ public class OrderController {
 
     // TODO : Fake data đoạn này -> Truyền giá tiền và lấy ra  những CTGG thỏa mãn
     @GetMapping("/discount-program")
-    private List<DiscountCbbDTO> getDiscountCbb(@RequestParam("totalMoney") BigDecimal totalMoney) {
-        System.out.println("totalMoney" + totalMoney);
-        DiscountCbbDTO discountCbbDTO = new DiscountCbbDTO();
-        discountCbbDTO.setName("CTGG 1");
-        discountCbbDTO.setId("2757f090-423f-40b6-81b0-9913bfe67515");
-        discountCbbDTO.setNumberOfApplication(10);
-        discountCbbDTO.setMinimumInvoice(new BigDecimal("2300000"));
-        discountCbbDTO.setReduceValue(new BigDecimal("10"));
-        discountCbbDTO.setMaximumDiscountMoney(new BigDecimal("300000"));
-        List<DiscountCbbDTO> discountCbbDTOS = new ArrayList<>();
-        List<DiscountCbbDTO> listFinal = new ArrayList<>();
-        discountCbbDTOS.add(discountCbbDTO);
-        for (DiscountCbbDTO discountCbbDTO1 : discountCbbDTOS) {
-            if (discountCbbDTO1.getMinimumInvoice().compareTo(totalMoney) < 0) {
-                listFinal.add(discountCbbDTO1);
+    private List<DiscountProgram> loadDiscount(@RequestParam("totalMoney") BigDecimal totalMoney) {
+        List<DiscountProgram> discountProgramList = discountProgramService.loadDiscountByCondition();
+        List<DiscountProgram> listFinal = new ArrayList<>();
+        for (DiscountProgram discountProgram : discountProgramList) {
+            if (discountProgram.getMinimumInvoice().compareTo(totalMoney) < 0) {
+                listFinal.add(discountProgram);
             }
         }
         return listFinal;
