@@ -9,41 +9,44 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import jakarta.persistence.Table;
 import lombok.AllArgsConstructor;
-import lombok.Builder;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
-import org.hibernate.annotations.GenericGenerator;
 
+import java.math.BigDecimal;
 import java.util.Date;
-import java.util.UUID;
 
+@Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Getter
-@Setter
 @Entity
-@Table(name = "deposit")
-public class Deposit {
+@Table(name = "discount_program")
+public class DiscountProgram {
 
     @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "deposit_code")
-    private String depositCode;
+    @Column(name = "name")
+    private String name;
 
-    @Column(name = "deposit_name")
-    private String depositName;
+    @Column(name = "minimum_invoice")
+    private BigDecimal minimumInvoice;
 
-    @Column(name = "pile_value")
-    private Integer pileValue;
+    @Column(name = "reduce_value")
+    private Integer reduceValue;
 
-    @ManyToOne
-    @JoinColumn(name = "unit", nullable = false)
-    private Unit unit;
+    @Column(name = "maximum_discount")
+    private BigDecimal maximumDiscount;
+
+    @Column(name = "number_of_application")
+    private Integer numberOfApplication;
+
+    @Column(name = "start_day")
+    private Date startDay;
+
+    @Column(name = "end_date")
+    private Date endDate;
 
     @Column(name = "create_at")
     private Date createAt;

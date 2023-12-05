@@ -37,6 +37,6 @@ public class OrderDTO {
     private String deleted;
     private List<OrderDetail> orderDetailList;
     private String discountProgram;
-    private BigDecimal discountMonney;
+    private BigDecimal discountMoney;
 
 }
