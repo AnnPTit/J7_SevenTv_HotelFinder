@@ -50,6 +50,12 @@ public class Constant {
         public static Integer LEAVE_EARLY = 7;
     }
 
+    public static final class DISCOUNT_PROGRAM {
+        public static String NOT_EFFECTIVE_YET = "Chờ triển khai";
+        public static String ON_GOING = "Đang triển khai";
+        public static String EXPIRED = "Quá hạn";
+    }
+
     public static final String PROBLEM_BASE_URL = "https://www.jhipster.tech/problem";
     public static final URI DEFAULT_TYPE = URI.create(PROBLEM_BASE_URL + "/problem-with-message");
 

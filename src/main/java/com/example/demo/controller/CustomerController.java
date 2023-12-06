@@ -1,9 +1,11 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.CustomerLoginDTO;
 import com.example.demo.entity.Customer;
 import com.example.demo.service.CustomerService;
 import com.example.demo.service.MailService;
+import com.example.demo.util.BaseService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -39,6 +41,9 @@ public class CustomerController {
 
     @Autowired
     private MailService mailService;
+
+    @Autowired
+    private BaseService baseService;
 
     @GetMapping("/load")
     public Page<Customer> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
@@ -86,9 +91,11 @@ public class CustomerController {
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
         customer.setCustomerCode(customerService.generateCustomerCode());
+        customer.setStatus(Constant.COMMON_STATUS.ACTIVE);
         customer.setCreateAt(new Date());
         customer.setUpdateAt(new Date());
-        customer.setStatus(1);
+        customer.setCreateBy(baseService.getCurrentUser().getFullname());
+        customer.setUpdatedBy(baseService.getCurrentUser().getFullname());
 
 //        Mail mail = new Mail();
 //         mail.setMailFrom("nguyenvantundz2003@gmail.com");
@@ -108,7 +115,7 @@ public class CustomerController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Customer> delete(@PathVariable("id") String id) {
         Customer customer = customerService.findById(id);
-        customer.setStatus(0);
+        customer.setStatus(Constant.COMMON_STATUS.UNACTIVE);
         customerService.add(customer);
         return new ResponseEntity("Deleted", HttpStatus.OK);
     }
@@ -134,6 +141,7 @@ public class CustomerController {
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
         customer.setUpdateAt(new Date());
+        customer.setUpdatedBy(baseService.getCurrentUser().getFullname());
         customerService.add(customer);
         return new ResponseEntity<Customer>(customer, HttpStatus.OK);
     }
