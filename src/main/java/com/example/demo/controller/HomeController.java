@@ -5,7 +5,6 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.*;
 import com.example.demo.service.ComboService;
 import com.example.demo.service.*;
-import io.swagger.models.auth.In;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -258,9 +257,13 @@ public class HomeController {
     @GetMapping("/check-love")
     public ResponseEntity<Boolean> checkLove(@RequestParam("idCustom") String idCustom,
                                              @RequestParam("idRoom") String idRoom) {
-        System.out.println("Ok");
-//        return new ResponseEntity<>(favouriteService.isLove(idCustom, idRoom), HttpStatus.OK);
-        return new ResponseEntity<>(true, HttpStatus.OK);
+        return new ResponseEntity<>(favouriteService.isLove(idCustom, idRoom), HttpStatus.OK);
+    }
+
+    @GetMapping("/set-love")
+    public ResponseEntity<Boolean> setLove(@RequestParam("idCustom") String idCustom,
+                                             @RequestParam("idRoom") String idRoom) {
+        return new ResponseEntity<>(favouriteService.setLove(idCustom, idRoom), HttpStatus.OK);
     }
 
 
