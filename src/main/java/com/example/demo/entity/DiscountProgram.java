@@ -39,8 +39,8 @@ public class DiscountProgram {
     @Column(name = "reduce_value")
     private Integer reduceValue;
 
-    @Column(name = "maximum_discount")
-    private BigDecimal maximumDiscount;
+    @Column(name = "maximum_reduction_value")
+    private BigDecimal maxiumumReductionValue;
 
     @Column(name = "number_of_application")
     private Integer numberOfApplication;

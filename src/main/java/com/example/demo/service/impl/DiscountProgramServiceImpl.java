@@ -62,7 +62,7 @@ public class DiscountProgramServiceImpl implements DiscountProgramService {
         dto.setMinimumInvoice(entity.getMinimumInvoice());
         dto.setReduceValue(entity.getReduceValue());
         dto.setNumberOfApplication(entity.getNumberOfApplication());
-        dto.setMaximumReductionValue(entity.getMaximumReductionValue());
+        dto.setMaximumReductionValue(entity.getMaxiumumReductionValue());
         dto.setStartDay(entity.getStartDay());
         dto.setEndDate(entity.getEndDate());
         dto.setCreateAt(entity.getCreateAt());

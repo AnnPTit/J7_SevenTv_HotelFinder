@@ -26,7 +26,7 @@ public class DiscountProgramDTO {
     private String code;
     private BigDecimal minimumInvoice;
     private BigDecimal maximumReductionValue;
-    private Double reduceValue;
+    private Integer reduceValue;
     private Integer numberOfApplication;
     private Date startDay;
     private Date endDate;
