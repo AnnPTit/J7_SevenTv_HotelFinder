@@ -99,10 +99,10 @@ public class AccountController {
         mail.setMailTo(account.getEmail());
         mail.setMailSubject("Thông tin tài khoản website");
         mail.setMailContent(
-                        "Dear: " + account.getFullname() + "\n" +
+                "Dear: " + account.getFullname() + "\n" +
                         "Email của bạn là: " + account.getEmail() + "\n" +
-                        "password: " + account.getPassword() + "\n"+
-                        "Đăng nhập trang web: http://localhost:3000/auth/login "  + "\n"+ "\n"+
+                        "password: " + account.getPassword() + "\n" +
+                        "Đăng nhập trang web: http://localhost:3000/auth/login " + "\n" + "\n" +
 
                         "Đây là email tự động xin vui lòng không trả lời <3");
         accountService.add(account);
@@ -124,7 +124,7 @@ public class AccountController {
                 "Dear: " + account.getFullname() + "\n" +
                         "Mật khẩu của bạn đã được thiết lập lại. Mật khẩu mới của bạn là: 123456\n" +
                         "Vui lòng thay đổi mật khẩu của bạn sau khi đăng nhập.\n" +
-                        "Đăng nhập trang web: http://localhost:3000/auth/login "  + "\n"+  "\n"+
+                        "Đăng nhập trang web: http://localhost:3000/auth/login " + "\n" + "\n" +
                         "Đây là một email tự động. Vui lòng không trả lời <3");
         mailService.sendEmail(mail);
 
@@ -133,29 +133,46 @@ public class AccountController {
     }
 
     @PutMapping("/changePassword/{id}")
-    public ResponseEntity<Account> changePassword(@PathVariable("id") String id, @RequestBody ChangePasswordData changePasswordData) {
+    public ResponseEntity<Account> changePassword(@PathVariable("id") String id,
+                                                  @RequestBody ChangePasswordData changePasswordData) {
+        try {
+            String newPassword = changePasswordData.getPassword();
 
-        String newPassword = changePasswordData.getPassword();
-        Account account = accountService.findById(id);
+            // Lấy tài khoản hiện tại từ cơ sở dữ liệu
+            Account account = accountService.findById(id);
 
-        account.setId(id);
-        account.setPassword(newPassword);
-        account.setUpdateAt(new Date());
+            if (account == null) {
+                return new ResponseEntity("Không tìm thấy tài khoản có ID: " + id, HttpStatus.NOT_FOUND);
+            }
 
-        Mail mail = new Mail();
-        mail.setMailFrom("nguyenvantundz2003@gmail.com");
-        mail.setMailTo(account.getEmail());
-        mail.setMailSubject("Đổi mật khẩu");
-        mail.setMailContent(
-                "Dear: " + account.getFullname() + "\n" +
-                        "\n" +
-                        "Mật khẩu của bạn đã được thay đổi. mật khẩu mới của bạn là: " +newPassword + "\n"+
-                        "Đăng nhập trang web: http://localhost:3000/auth/login "  + "\n"+ "\n"+
-                        "Đây là một email tự động. Vui lòng không trả lời <3");
-        mailService.sendEmail(mail);
-        accountService.add(account);
-        return new ResponseEntity<Account>(account, HttpStatus.OK);
+            // Cập nhật chỉ mật khẩu
+            account.setPassword(newPassword);
+            account.setUpdateAt(new Date());
+
+            // Lưu lại tài khoản đã được cập nhật
+            accountService.add(account);
+
+            // Gửi email thông báo thay đổi mật khẩu
+            Mail mail = new Mail();
+            mail.setMailFrom("nguyenvantundz2003@gmail.com");
+            mail.setMailTo(account.getEmail());
+            mail.setMailSubject("Đổi mật khẩu");
+            mail.setMailContent(
+                    "Dear: " + account.getFullname() + "\n" +
+                            "\n" +
+                            "Mật khẩu của bạn đã được thay đổi. Mật khẩu mới của bạn là: " + newPassword + "\n" +
+                            "Đăng nhập trang web: http://localhost:3000/auth/login " + "\n" + "\n" +
+                            "Đây là một email tự động. Vui lòng không trả lời <3");
+            mailService.sendEmail(mail);
+
+            System.out.println("Cập nhật mật khẩu thành công");
+            return new ResponseEntity<Account>(account, HttpStatus.OK);
+        } catch (Exception e) {
+            e.printStackTrace();
+            return new ResponseEntity("Lỗi khi cập nhật mật khẩu", HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
 
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Account> delete(@PathVariable("id") String id) {
