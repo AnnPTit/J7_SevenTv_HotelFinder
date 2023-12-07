@@ -272,7 +272,9 @@ public class PaymentMethodController {
     @PostMapping("/payment-momo/{id}")
     public Map<String, Object> createPaymentMomo(@PathVariable("id") String id, @RequestBody Map<String, Object> requestBody) throws InvalidKeyException, NoSuchAlgorithmException, IOException {
         Order order = orderService.getOrderById(id);
-        Long amount = ((Integer) requestBody.get("amount")).longValue();
+        long amount = ((Integer) requestBody.get("amount")).longValue();
+        long discount = ((Integer) requestBody.get("discount")).longValue();
+        String idDiscount = (String) requestBody.get("idDiscount");
         JSONObject json = new JSONObject();
         String partnerCode = MomoConfig.PARTNER_CODE;
         String accessKey = MomoConfig.ACCESS_KEY;
@@ -282,9 +284,13 @@ public class PaymentMethodController {
         json.put("partnerCode", partnerCode);
         json.put("accessKey", accessKey);
         json.put("requestId", String.valueOf(System.currentTimeMillis()));
-        json.put("amount", amount.toString());
-        json.put("orderId", order.getId() + generateRandomNumber(1, 100));
-        json.put("orderInfo", "Thanh toan don hang #" + order.getOrderCode());
+        json.put("amount", Long.toString(amount));
+        if (idDiscount != null) {
+            json.put("orderId", order.getId() + idDiscount + generateRandomNumber(1, 100));
+        } else {
+            json.put("orderId", order.getId() + generateRandomNumber(1, 100));
+        }
+        json.put("orderInfo", Long.toString(discount));
         json.put("returnUrl", returnUrl);
         json.put("notifyUrl", notifyUrl);
         json.put("requestType", "captureMoMoWallet");
@@ -329,7 +335,7 @@ public class PaymentMethodController {
             kq.put("signature", result.get("signature"));
             kq.put("requestId", result.get("requestId"));
             kq.put("errorCode", result.get("errorCode"));
-            kq.put("message", amount.toString());
+            kq.put("message", Long.toString(amount));
             kq.put("localMessage", result.get("localMessage"));
         } else {
             kq.put("requestType", result.get("requestType"));
@@ -341,6 +347,93 @@ public class PaymentMethodController {
             kq.put("localMessage", result.get("localMessage"));
         }
         return kq;
+    }
+
+    @GetMapping("/payment-momo/success")
+    public ResponseEntity<String> paymentMomoSuccess(HttpServletRequest request, HttpServletResponse response) throws IOException {
+        String errorCode = request.getParameter("errorCode");
+        String amount = request.getParameter("amount");
+        String discount = request.getParameter("orderInfo");
+        String orderId = request.getParameter("orderId");
+        String idOrder = "";
+        String idDiscount = "";
+        if (orderId.length() > 72) {
+            idOrder = orderId.substring(0, 36);
+            idDiscount = orderId.substring(36, 72);
+        } else {
+            idOrder = orderId.substring(0, 36);
+        }
+        if (errorCode != null && errorCode.equals("0")) { // Mã 00 thường tượng trưng cho thanh toán thành công
+            // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
+            Order order = orderService.getOrderById(idOrder);
+            if (order != null) {
+                order.setMoneyGivenByCustomer(BigDecimal.valueOf(Long.parseLong(amount)));
+                order.setExcessMoney(BigDecimal.valueOf(0));
+                order.setDiscount(BigDecimal.valueOf(Long.parseLong(discount)));
+                order.setNote("Khách thanh toán bằng Momo");
+                if (!idDiscount.trim().isEmpty()) {
+                    order.setDiscountProgram(idDiscount);
+                    discountProgramService.updateNumberOfApplication(idDiscount);
+                }
+                order.setUpdateAt(new Date());
+                order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
+                orderService.add(order);
+
+                List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
+                for (OrderDetail orderDetail : orderDetails) {
+                    orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_OUT);
+                    orderDetailService.add(orderDetail);
+                    Room room = orderDetail.getRoom();
+                    room.setStatus(Constant.ROOM.EMPTY);
+                    roomService.add(room);
+                }
+
+                PaymentMethod paymentMethod = new PaymentMethod();
+                paymentMethod.setOrder(order);
+                LocalDate currentDate = LocalDate.now();
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+                String formattedDate = currentDate.format(formatter);
+                Random random = new Random();
+                int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
+                String paymentMethodCode = "PT" + formattedDate + randomDigits;
+                paymentMethod.setPaymentMethodCode(paymentMethodCode);
+                paymentMethod.setMethod(false);
+                paymentMethod.setTotalMoney(order.getMoneyGivenByCustomer());
+                paymentMethod.setNote(order.getNote());
+                paymentMethod.setCreateAt(new Date());
+                paymentMethod.setCreateBy(order.getCreateBy());
+                paymentMethod.setUpdateAt(new Date());
+                paymentMethod.setUpdatedBy(order.getUpdatedBy());
+                paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
+                paymentMethodService.add(paymentMethod);
+
+                HistoryTransaction historyTransaction = new HistoryTransaction();
+                historyTransaction.setOrder(order);
+                historyTransaction.setTotalMoney(order.getMoneyGivenByCustomer());
+                historyTransaction.setNote(order.getNote());
+                historyTransaction.setCreateAt(new Date());
+                historyTransaction.setCreateBy(order.getCreateBy());
+                historyTransaction.setUpdateAt(new Date());
+                historyTransaction.setUpdatedBy(order.getUpdatedBy());
+                historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
+                historyTransactionService.add(historyTransaction);
+
+                OrderTimeline orderTimeline = new OrderTimeline();
+                orderTimeline.setOrder(order);
+                orderTimeline.setAccount(order.getAccount());
+                orderTimeline.setType(Constant.ORDER_TIMELINE.CHECKED_OUT);
+                orderTimeline.setNote("Khách chuyển khoản để thanh toán");
+                orderTimeline.setCreateAt(new Date());
+                orderTimelineService.add(orderTimeline);
+            }
+            String redirectUrl = "http://localhost:3000/order-detail?id=" + idOrder;
+            response.sendRedirect(redirectUrl);
+            return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
+        } else {
+            String redirectUrl = "http://localhost:3000/booking?id=" + idOrder;
+            response.sendRedirect(redirectUrl);
+            return ResponseEntity.ok("Payment failed. Back to page.");
+        }
     }
 
     @PostMapping("/payment-momo/online/{code}")
@@ -417,83 +510,6 @@ public class PaymentMethodController {
         return kq;
     }
 
-    @GetMapping("/payment-momo/success")
-    public ResponseEntity<String> paymentMomoSuccess(HttpServletRequest request, HttpServletResponse response) throws IOException {
-        String errorCode = request.getParameter("errorCode");
-        String amount = request.getParameter("message");
-        String orderId = request.getParameter("orderId"); // Lấy mã đơn hàng từ VNPay
-        if (orderId.length() > 36) {
-            orderId = orderId.substring(0, 36);
-        }
-        if (errorCode != null && errorCode.equals("0")) { // Mã 00 thường tượng trưng cho thanh toán thành công
-            // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
-            Order order = orderService.getOrderById(orderId);
-            if (order != null) {
-                order.setMoneyGivenByCustomer(BigDecimal.valueOf(Long.parseLong(amount)));
-                order.setExcessMoney(BigDecimal.valueOf(0));
-                order.setNote("Khách thanh toán bằng Momo");
-                order.setUpdateAt(new Date());
-                order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
-                orderService.add(order);
-
-                List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
-                for (OrderDetail orderDetail : orderDetails) {
-                    orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_OUT);
-                    orderDetailService.add(orderDetail);
-                    Room room = orderDetail.getRoom();
-                    room.setStatus(Constant.ROOM.EMPTY);
-                    roomService.add(room);
-                }
-
-                PaymentMethod paymentMethod = new PaymentMethod();
-                paymentMethod.setOrder(order);
-                LocalDate currentDate = LocalDate.now();
-                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
-                String formattedDate = currentDate.format(formatter);
-                Random random = new Random();
-                int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
-                String paymentMethodCode = "PT" + formattedDate + randomDigits;
-                paymentMethod.setPaymentMethodCode(paymentMethodCode);
-                paymentMethod.setMethod(false);
-                paymentMethod.setTotalMoney(order.getMoneyGivenByCustomer());
-                paymentMethod.setNote(order.getNote());
-                paymentMethod.setCreateAt(new Date());
-                paymentMethod.setCreateBy(order.getCreateBy());
-                paymentMethod.setUpdateAt(new Date());
-                paymentMethod.setUpdatedBy(order.getUpdatedBy());
-                paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
-                paymentMethodService.add(paymentMethod);
-
-                HistoryTransaction historyTransaction = new HistoryTransaction();
-                historyTransaction.setOrder(order);
-                historyTransaction.setTotalMoney(order.getMoneyGivenByCustomer());
-                historyTransaction.setNote(order.getNote());
-                historyTransaction.setCreateAt(new Date());
-                historyTransaction.setCreateBy(order.getCreateBy());
-                historyTransaction.setUpdateAt(new Date());
-                historyTransaction.setUpdatedBy(order.getUpdatedBy());
-                historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
-                historyTransactionService.add(historyTransaction);
-
-                OrderTimeline orderTimeline = new OrderTimeline();
-                orderTimeline.setOrder(order);
-                orderTimeline.setAccount(order.getAccount());
-                orderTimeline.setType(Constant.ORDER_TIMELINE.CHECKED_OUT);
-                orderTimeline.setNote("Khách chuyển khoản để thanh toán");
-                orderTimeline.setCreateAt(new Date());
-                orderTimelineService.add(orderTimeline);
-            }
-            String redirectUrl = "http://localhost:3000/order-detail?id=" + orderId;
-            response.sendRedirect(redirectUrl);
-            return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
-        } else {
-            // Thanh toán không thành công, xử lý theo logic của bạn
-            String redirectUrl = "http://localhost:3000/booking?id=" + orderId;
-            response.sendRedirect(redirectUrl);
-            return ResponseEntity.ok("Payment failed. Back to page.");
-        }
-    }
-
     @GetMapping("/payment-momo/success/online")
     public ResponseEntity<String> paymentMomoSuccessOnline(HttpServletRequest request, HttpServletResponse response) throws IOException {
         String errorCode = request.getParameter("errorCode");
@@ -553,6 +569,8 @@ public class PaymentMethodController {
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         } else {
             // Thanh toán không thành công, xử lý theo logic của bạn
+            String redirectUrl = "http://localhost:3001/";
+            response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         }
     }
