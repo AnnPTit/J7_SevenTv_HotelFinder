@@ -46,6 +46,8 @@ public interface OrderService {
 
     ConfirmOrderDTO confirmOrder(ConfirmOrderDTO confirmOrderDTO);
 
+    ConfirmOrderDTO updateSurcharge(ConfirmOrderDTO confirmOrderDTO);
+
     BigDecimal getRevenueMonth();
 
     BigDecimal getRevenueYear();
