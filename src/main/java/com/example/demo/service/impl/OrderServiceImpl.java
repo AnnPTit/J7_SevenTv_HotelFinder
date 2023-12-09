@@ -242,6 +242,14 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public ConfirmOrderDTO updateSurcharge(ConfirmOrderDTO confirmOrderDTO) {
+        Order order = orderRepository.getById(confirmOrderDTO.getOrderId());
+        order.setSurcharge(confirmOrderDTO.getSurcharge());
+        orderRepository.save(order);
+        return confirmOrderDTO;
+    }
+
+    @Override
     public BigDecimal getRevenueMonth() {
         return orderRepository.getRevenueMonth();
     }

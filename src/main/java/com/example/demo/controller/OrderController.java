@@ -280,8 +280,6 @@ public class OrderController {
         order.setDiscount(orderDTO.getDiscountMoney());
         orderService.add(order);
 
-
-
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
         for (OrderDetail orderDetail : orderDetails) {
             orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_OUT);
@@ -453,6 +451,11 @@ public class OrderController {
     @PostMapping("/confirm-order")
     public ResponseEntity<ConfirmOrderDTO> confirmOrder(@RequestBody ConfirmOrderDTO confirmOrderDTO) {
         return new ResponseEntity<>(orderService.confirmOrder(confirmOrderDTO), HttpStatus.OK);
+    }
+
+    @PutMapping("/update-surcharge")
+    public ResponseEntity<ConfirmOrderDTO> updateSurcharge(@RequestBody ConfirmOrderDTO confirmOrderDTO) {
+        return new ResponseEntity<>(orderService.updateSurcharge(confirmOrderDTO), HttpStatus.OK);
     }
 
     // TODO : Fake data đoạn này -> Truyền giá tiền và lấy ra  những CTGG thỏa mãn
