@@ -83,7 +83,8 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
                         "  p.room_id = r.id\n" +
                         "where\n" +
                         "  o.customer_id = :customId\n" +
-                        "  and o.status = :odStt\n" +
+                        "  and o.status = :odStt " +
+                        "  and o.type_of_order = 0\n" +
                         "group by\n" +
                         "  r.id,\n" +
                         "  r.room_name,\n" +

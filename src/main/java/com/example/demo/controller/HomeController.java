@@ -227,7 +227,7 @@ public class HomeController {
     }
 
     private List<BlogCommentDTO> getListComment(Integer currentPage, String blogId) {
-        Pageable pageable = PageRequest.of(currentPage, 15);
+        Pageable pageable = PageRequest.of(currentPage, 15000000);
         Page<BlogComment> page = blogCommentService.getPaginate(blogId, pageable);
         List<BlogComment> list = page.getContent();
         List<BlogCommentDTO> commentDTOList = new ArrayList<>();
@@ -236,6 +236,13 @@ public class HomeController {
         }
         return commentDTOList;
     }
+
+    @GetMapping("/blog/comment/{id}")
+    public ResponseEntity<Void> deleteComment(@PathVariable("id") String id) {
+        blogCommentService.deleteComment(id);
+        return ResponseEntity.ok(null);
+    }
+
 
     private static BlogCommentDTO fromEntity(BlogComment entity) {
         BlogCommentDTO dto = new BlogCommentDTO();
@@ -262,7 +269,7 @@ public class HomeController {
 
     @GetMapping("/set-love")
     public ResponseEntity<Boolean> setLove(@RequestParam("idCustom") String idCustom,
-                                             @RequestParam("idRoom") String idRoom) {
+                                           @RequestParam("idRoom") String idRoom) {
         return new ResponseEntity<>(favouriteService.setLove(idCustom, idRoom), HttpStatus.OK);
     }
 

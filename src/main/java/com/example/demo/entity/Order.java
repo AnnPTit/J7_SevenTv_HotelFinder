@@ -143,6 +143,9 @@ public class Order {
     @Column(name = "refuse_reason")
     private String refuseReason;
 
+    @Column(name = "payment_deadline")
+    private Date paymentDeadline;
+
     @JsonIgnore
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<HistoryTransaction> historyTransactionList;

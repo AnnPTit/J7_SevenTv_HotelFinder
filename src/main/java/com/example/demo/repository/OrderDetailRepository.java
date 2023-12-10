@@ -25,9 +25,9 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
             "                       where\n" +
             "                       od.room_id in :idsRoom\n" +
             "                       and (\n" +
-            "                       ((DATE(od.check_in_datetime)  between :dayStart and :dayEnd) and o.status  not in(0, 3, 6, 7))\n" +
+            "                       ((DATE(od.check_in_datetime)  between :dayStart and :dayEnd) and o.status  not in(0, 3, 6, 7,8))\n" +
             "                       and \n" +
-            "                       ((DATE(od.check_out_datetime)  between :dayStart and :dayEnd) and o.status not in(0, 3, 6, 7))\n" +
+            "                       ((DATE(od.check_out_datetime)  between :dayStart and :dayEnd) and o.status not in(0, 3, 6, 7,8))\n" +
             "                      )", nativeQuery = true)
     List<String> checkRoomIsBooked(@Param("dayStart") String dayStart, @Param("dayEnd") String dayEnd, @Param("idsRoom") List<String> idsRoom);
 
@@ -44,7 +44,7 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
     List<OrderDetail> getOrderByRoomIds(@Param("roomId") List<String> roomId);
 
     @Query(value = "select od.* from order_detail od \n" +
-            "inner join `order` o on o.id = od.order_id  and o.status not in (0,3,6,7)\n" +
+            "inner join `order` o on o.id = od.order_id  and o.status not in (0,3,6,7,8)\n" +
             "where od.room_id = :roomId and od.check_in_datetime > now() ", nativeQuery = true)
     List<OrderDetail> getOrderByRoomId(@Param("roomId") String roomId);
 
