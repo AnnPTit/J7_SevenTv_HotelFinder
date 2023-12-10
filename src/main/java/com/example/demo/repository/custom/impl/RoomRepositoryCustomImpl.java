@@ -121,8 +121,8 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
                         "inner join type_room tr on tr.id = r.type_room_id  \n" +
                         "left join order_detail od on od.room_id = r.id \n " +
                         "left join `order` o on o.id = od.order_id \n" +
-                        "where r.status = 1\n" +
-                        "and tr.status =1 \n "
+                        "where r.status <> 0 " +
+                        " and tr.status =1 \n "
         );
 
         if (request.getTypeRoom() != null && !("").equals(request.getTypeRoom())) {
@@ -190,7 +190,7 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
                         "LEFT JOIN `order` o ON\n" +
                         "    o.id = od.order_id\n" +
                         "WHERE\n" +
-                        "    r.status = 1\n" +
+                        "    r.status <> 0\n" +
                         "    AND tr.status = 1\n" +
                         "GROUP BY\n" +
                         "    r.id,\n" +

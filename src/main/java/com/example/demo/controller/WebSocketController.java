@@ -4,10 +4,9 @@ import com.example.demo.constant.Constant;
 import com.example.demo.dto.BlogCommentDTO;
 import com.example.demo.dto.LikeDTO;
 import com.example.demo.dto.PayloadObject;
-import com.example.demo.model.Mail;
-import com.example.demo.service.MailService;
 import com.example.demo.dto.RoomData;
 import com.example.demo.entity.*;
+import com.example.demo.model.Mail;
 import com.example.demo.service.*;
 import com.example.demo.util.DataUtil;
 import com.fasterxml.jackson.core.JsonProcessingException;
@@ -16,7 +15,6 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -24,7 +22,6 @@ import org.springframework.messaging.handler.annotation.MessageMapping;
 import org.springframework.messaging.handler.annotation.SendTo;
 import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
-
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
@@ -70,16 +67,15 @@ public class WebSocketController {
     @MessageMapping("/products")
     @SendTo("/topic/product")
     public Response broadcastNews(String message) {
-        // Todo : Số khách 100
         try {
             ObjectMapper objectMapper = new ObjectMapper();
             PayloadObject payload = objectMapper.readValue(message, PayloadObject.class);
             System.out.println(payload);
-            // Kiểm tra ngày check in có phải ngày hôm nay
-            // Kiểm tra ngày đặt đã trùng
             List<String> idsRoom = payload.getRooms().stream()
                     .map(RoomData::getId)
                     .collect(Collectors.toList());
+            // Kiểm tra ngày check in có phải ngày hôm nay
+            // Kiểm tra ngày đặt đã trùng
             Date today = new Date();
             String dateString = payload.getDayStart().toString().substring(0, 11);
             String dateStringEnd = payload.getDayEnd().toString().substring(0, 11);
@@ -106,6 +102,10 @@ public class WebSocketController {
                 String endDate = sdf.format(payload.getDayEnd());
                 return new Response(payload.getKeyToken() + "Phòng đã được đặt trong khoảng :  "
                         + startDate + "   đến ngày :    " + endDate + "  !" + ". Vui lòng chọn ngày khác ! [",
+                        Constant.COMMON_STATUS.ACTIVE, idsRoom);
+            }
+            if (validateDetail(payload, idsRoom)) {
+                return new Response(payload.getKeyToken() + "Số khách vượt quá sức chứa  ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
             Random random = new Random();
@@ -177,10 +177,6 @@ public class WebSocketController {
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setOrderDetailCode("HDCT" + randomNumber);
                 orderDetail.setRoomPrice(payload.getTotalPriceRoom());
-                if (roomData.getGuestCount() > room.getTypeRoom().getCapacity()) {
-                    return new Response(payload.getKeyToken() + "Số khách vượt quá sức chứa  ! [",
-                            Constant.COMMON_STATUS.ACTIVE, idsRoom);
-                }
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setCreateAt(new Date());
                 orderDetail.setUpdateAt(new Date());
@@ -240,6 +236,18 @@ public class WebSocketController {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private boolean validateDetail(PayloadObject payload, List<String> idsRoom) {
+
+        for (RoomData roomData : payload.getRooms()
+        ) {
+            Room room = roomService.getRoomById(roomData.getId());
+            if (roomData.getGuestCount() > room.getTypeRoom().getCapacity()) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @MessageMapping("/likes")

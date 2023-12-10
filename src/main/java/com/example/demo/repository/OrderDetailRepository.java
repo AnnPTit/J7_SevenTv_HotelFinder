@@ -43,7 +43,9 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
     @Query(value = "select * from order_detail od where od.room_id in :roomId ", nativeQuery = true)
     List<OrderDetail> getOrderByRoomIds(@Param("roomId") List<String> roomId);
 
-    @Query(value = "select * from order_detail od where od.room_id = :roomId and check_in_datetime > now()", nativeQuery = true)
+    @Query(value = "select od.* from order_detail od \n" +
+            "inner join `order` o on o.id = od.order_id  and o.status not in (0,3,6,7)\n" +
+            "where od.room_id = :roomId and od.check_in_datetime > now() ", nativeQuery = true)
     List<OrderDetail> getOrderByRoomId(@Param("roomId") String roomId);
 
 
