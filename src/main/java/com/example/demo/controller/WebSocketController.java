@@ -25,6 +25,8 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.Instant;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -174,9 +176,19 @@ public class WebSocketController {
                 OrderDetail orderDetail = new OrderDetail();
                 orderDetail.setRoom(room);
                 orderDetail.setOrder(order);
-                orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setOrderDetailCode("HDCT" + randomNumber);
-                orderDetail.setRoomPrice(payload.getTotalPriceRoom());
+                // Tính toán ngày và nhân với đơn giá
+                Date bookingStart = payload.getDayStart();
+                Date bookingEnd = payload.getDayEnd();
+                Instant startInstant = bookingStart.toInstant();
+                Instant endInstant = bookingEnd.toInstant();
+                // Calculate the duration between the two instants
+                Duration duration = Duration.between(startInstant, endInstant);
+                // Get the number of days
+                long days = duration.toDays();
+                BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
+                BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days));
+                orderDetail.setRoomPrice(totalCost);
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setCreateAt(new Date());
                 orderDetail.setUpdateAt(new Date());
