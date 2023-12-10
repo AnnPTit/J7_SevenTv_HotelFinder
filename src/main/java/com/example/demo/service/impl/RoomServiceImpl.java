@@ -209,7 +209,7 @@ public class RoomServiceImpl implements RoomService {
             }
         } else if (odStt.equals(Constant.ORDER_DETAIL.WAIT_CONFIRM)) {
             for (CartDTO cartDTO : roomRepository.getCart(customId, Constant.ORDER_DETAIL.WAIT_CONFIRM)) {
-                Date dateCheckIn = cartDTO.getBookingStart();
+                Date dateCheckIn = cartDTO.getBookingEnd();
                 if (dateCheckIn != null && dateCheckIn.after(new Date())) {
                     cartDTOS.add(cartDTO);
                 }

@@ -42,6 +42,8 @@ public interface OrderService {
 
     Order add(Order order);
 
+    List<Order> add(List<Order> orders);
+
     void delete(String id);
 
     ConfirmOrderDTO confirmOrder(ConfirmOrderDTO confirmOrderDTO);

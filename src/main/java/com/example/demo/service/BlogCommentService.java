@@ -8,4 +8,6 @@ public interface BlogCommentService {
     BlogComment save(BlogComment blogComment);
 
     Page<BlogComment> getPaginate(String blogId, Pageable pageable);
+
+    void deleteComment(String id);
 }

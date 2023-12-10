@@ -99,6 +99,21 @@ public class OrderController {
     public Page<Order> loadBookRoomOnline(@RequestParam(name = "key", defaultValue = "") String key,
                                           @RequestParam(name = "status", defaultValue = "") Integer status,
                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        // Kiểm tra các hóa đơn hết hạn -> set trạng thái
+
+        List<Order> listoOrders = orderService.getList();
+        List<Order> ordersSave = new ArrayList<>();
+        for (Order order : listoOrders) {
+            // Nếu hạn thanh toán <= hôm nay
+            Date date = new Date();
+            if (order.getPaymentDeadline()!=null && !order.getPaymentDeadline().after(date)) {
+                // Hết hạn thanh toán -> Set trạng thái hóa đơn về 8
+                order.setStatus(Constant.ORDER_STATUS.EXPIRED_PAYMENT);
+                ordersSave.add(order);
+            }
+        }
+        orderService.add(ordersSave);
+
         Pageable pageable = PageRequest.of(current_page, 5);
         return orderService.loadBookRoomOnline(key, key, key, key, status, pageable);
     }
