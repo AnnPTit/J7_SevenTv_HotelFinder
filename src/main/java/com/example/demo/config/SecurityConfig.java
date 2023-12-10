@@ -74,6 +74,7 @@ public class SecurityConfig {
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/account/delete/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/account/update/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/account/changePassword/**").permitAll()
+                .and().authorizeHttpRequests().requestMatchers("/api/admin/account/detail/**").permitAll()
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/floor/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/room/**").hasRole("ADMIN")
                 .and().authorizeHttpRequests().requestMatchers("/api/admin/type-room/**").hasRole("ADMIN")

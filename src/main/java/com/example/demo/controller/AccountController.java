@@ -91,7 +91,7 @@ public class AccountController {
         account.setCreateAt(new Date());
         account.setUpdateAt(new Date());
         account.setStatus(Constant.COMMON_STATUS.ACTIVE);
-        account.setPassword("12345");
+        account.setPassword("123");
         account.setPosition(positionService.getIdPosition());
 
         Mail mail = new Mail();
@@ -102,8 +102,8 @@ public class AccountController {
                 "Dear: " + account.getFullname() + "\n" +
                         "Email của bạn là: " + account.getEmail() + "\n" +
                         "password: " + account.getPassword() + "\n" +
+                        "Vui lòng thay đổi mật khẩu của bạn sau khi đăng nhập.\n" +
                         "Đăng nhập trang web: http://localhost:3000/auth/login " + "\n" + "\n" +
-
                         "Đây là email tự động xin vui lòng không trả lời <3");
         accountService.add(account);
         mailService.sendEmail(mail);
@@ -138,21 +138,16 @@ public class AccountController {
         try {
             String newPassword = changePasswordData.getPassword();
 
-            // Lấy tài khoản hiện tại từ cơ sở dữ liệu
             Account account = accountService.findById(id);
 
             if (account == null) {
                 return new ResponseEntity("Không tìm thấy tài khoản có ID: " + id, HttpStatus.NOT_FOUND);
             }
-
-            // Cập nhật chỉ mật khẩu
             account.setPassword(newPassword);
             account.setUpdateAt(new Date());
 
-            // Lưu lại tài khoản đã được cập nhật
             accountService.add(account);
 
-            // Gửi email thông báo thay đổi mật khẩu
             Mail mail = new Mail();
             mail.setMailFrom("nguyenvantundz2003@gmail.com");
             mail.setMailTo(account.getEmail());
