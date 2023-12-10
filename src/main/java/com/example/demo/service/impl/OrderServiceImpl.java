@@ -137,6 +137,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public List<Order> add(List<Order> orders) {
+        try {
+            return orderRepository.saveAll(orders);
+        } catch (Exception e) {
+            System.out.println("Add error!");
+            return null;
+        }
+    }
+
+    @Override
     public void delete(String id) {
         try {
             orderRepository.deleteById(id);
@@ -169,7 +179,16 @@ public class OrderServiceImpl implements OrderService {
             return confirmOrderDTO1;
         }
         // Cập nhật trạng thái order
+        // Thêm hạn thanh toán tiền cọc
+        // Hạn thanh toán sau ngày xác nhận 1 ngày
+        Date currentDate = new Date();
+        Calendar calendar = Calendar.getInstance();
+        calendar.setTime(currentDate);
+        calendar.add(Calendar.DAY_OF_MONTH, 1);
+        // Get the updated date
+        Date updatedDate = calendar.getTime();
         Order order = orderRepository.getById(confirmOrderDTO.getOrderId());
+        order.setPaymentDeadline(updatedDate);
         order.setStatus(Constant.ORDER_STATUS.WAIT_PAYMENT);
         orderRepository.save(order);
         // Tạo timeline
@@ -306,7 +325,7 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("totalNumberPrice", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
         parameters.put("total", DataUtil.currencyFormat(totalPriceRoom));
         parameters.put("vat", DataUtil.currencyFormat(orderExportDTO.getVat()));
-        parameters.put("discount", DataUtil.currencyFormat(orderExportDTO.getVat()));
+        parameters.put("discount", DataUtil.currencyFormat(orderExportDTO.getDiscount()));
         parameters.put("Parameter1", new JRBeanCollectionDataSource(serviceUsedInvoiceDTOS));
         parameters.put("dataTable", new JRBeanCollectionDataSource(dataTable));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());

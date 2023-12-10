@@ -14,6 +14,7 @@ public class Constant {
         public static Integer WAIT_CHECKIN = 5;
         public static Integer REFUSE = 6;
         public static Integer EXPIRED = 7;
+        public static Integer EXPIRED_PAYMENT = 8;
     }
 
     public static final class ORDER_DETAIL {

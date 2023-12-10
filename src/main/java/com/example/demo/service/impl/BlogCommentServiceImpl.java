@@ -22,4 +22,12 @@ public class BlogCommentServiceImpl implements BlogCommentService {
     public Page<BlogComment> getPaginate(String blogId, Pageable pageable) {
         return blogCommentRepository.getComment(blogId, pageable);
     }
+
+    @Override
+    public void deleteComment(String id) {
+        BlogComment blogComment = blogCommentRepository.findById(id).orElse(null);
+        if (blogComment != null) {
+            blogCommentRepository.delete(blogComment);
+        }
+    }
 }
