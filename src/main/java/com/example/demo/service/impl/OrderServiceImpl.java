@@ -13,6 +13,7 @@ import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.OrderTimelineRepository;
 import com.example.demo.service.MailService;
 import com.example.demo.service.OrderService;
+import com.example.demo.util.BaseService;
 import com.example.demo.util.DataUtil;
 import com.example.demo.util.NumToViet;
 import lombok.RequiredArgsConstructor;
@@ -48,6 +49,9 @@ public class OrderServiceImpl implements OrderService {
     private OrderTimelineRepository orderTimelineRepository;
     private NumToViet numToViet;
     private final MailService mailService;
+    @Autowired
+    private BaseService baseService;
+
 
     @Override
     public List<Order> getList() {
@@ -188,6 +192,7 @@ public class OrderServiceImpl implements OrderService {
         // Get the updated date
         Date updatedDate = calendar.getTime();
         Order order = orderRepository.getById(confirmOrderDTO.getOrderId());
+        order.setCreateBy(baseService.getCurrentUser().getFullname());
         order.setPaymentDeadline(updatedDate);
         order.setStatus(Constant.ORDER_STATUS.WAIT_PAYMENT);
         orderRepository.save(order);
