@@ -265,6 +265,12 @@ public class HomeController {
                                              @RequestParam("idRoom") String idRoom) {
         return new ResponseEntity<>(favouriteService.setLove(idCustom, idRoom), HttpStatus.OK);
     }
-
+    @GetMapping("/load/favourite/{customerId}")
+    public ResponseEntity<Page<FavouriteRoomDTO>> getFavouriteRoomsByCustomerId(@PathVariable String customerId,
+                                                                                @RequestParam(name = "current_page", defaultValue = "0") Integer current_page) {
+        Pageable pageable = PageRequest.of(current_page,  6);
+        Page<FavouriteRoomDTO> favouriteRooms = favouriteService.getFavouriteRoomsByCustomerId(customerId, pageable);
+        return ResponseEntity.ok(favouriteRooms);
+    }
 
 }
