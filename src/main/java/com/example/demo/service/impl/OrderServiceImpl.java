@@ -2,10 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.*;
-import com.example.demo.entity.Customer;
-import com.example.demo.entity.Order;
-import com.example.demo.entity.OrderDetail;
-import com.example.demo.entity.OrderTimeline;
+import com.example.demo.entity.*;
 import com.example.demo.errors.BadRequestAlertException;
 import com.example.demo.model.Mail;
 import com.example.demo.repository.CustomerRepository;
@@ -193,6 +190,9 @@ public class OrderServiceImpl implements OrderService {
         Date updatedDate = calendar.getTime();
         Order order = orderRepository.getById(confirmOrderDTO.getOrderId());
         order.setCreateBy(baseService.getCurrentUser().getFullname());
+        Account account = new Account();
+        account.setId(baseService.getCurrentUser().getId());
+        order.setAccount(account);
         order.setPaymentDeadline(updatedDate);
         order.setStatus(Constant.ORDER_STATUS.WAIT_PAYMENT);
         orderRepository.save(order);

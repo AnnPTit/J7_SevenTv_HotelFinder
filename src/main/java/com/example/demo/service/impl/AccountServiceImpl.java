@@ -63,6 +63,18 @@ public class AccountServiceImpl implements AccountService {
     }
 
     @Override
+    public Boolean update(Account account) {
+        try {
+            accountRepository.save(account);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
+
+    }
+
+    @Override
     public Boolean delete(String id) {
         try {
             accountRepository.deleteById(id);
