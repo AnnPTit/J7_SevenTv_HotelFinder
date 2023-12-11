@@ -19,6 +19,8 @@ public interface AccountService {
 
     Boolean add(Account account);
 
+    Boolean update(Account account);
+
     Boolean delete(String id);
 
     Optional<Account> findByEmail(String email);
