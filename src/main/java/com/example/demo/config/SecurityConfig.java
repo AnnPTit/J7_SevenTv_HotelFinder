@@ -61,6 +61,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/combo-used/**").permitAll()
                 .requestMatchers("/api/room-facility/**").permitAll()
                 .requestMatchers("/api/room/**").permitAll()
+                .requestMatchers("/api/general/**").permitAll()
                 .requestMatchers("/api/access-denied").permitAll()// với endpoint /hello thì sẽ được cho qua
                 .requestMatchers("/api/home/**").permitAll()
                 .requestMatchers("/ws/**").permitAll()

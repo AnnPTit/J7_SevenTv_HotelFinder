@@ -74,6 +74,23 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
             "WHERE od.id = ?1 AND ic.citizen_id IS NOT NULL ORDER BY c.update_at DESC", nativeQuery = true)
     List<Customer> getAllCustomerByOrderDetailId(String id);
 
+    @Query(value = "SELECT DISTINCT c.*\n" +
+            "FROM customer c\n" +
+            "INNER JOIN information_customer ic ON c.citizen_id = ic.citizen_id\n" +
+            "INNER JOIN order_detail od ON ic.order_detail_id = od.id\n" +
+            "INNER JOIN `order` o ON od.order_id = o.id\n" +
+            "WHERE o.id = ?1 AND ic.citizen_id IS NOT NULL\n" +
+            "AND c.id NOT IN (\n" +
+            "    SELECT DISTINCT c1.id\n" +
+            "    FROM customer c1\n" +
+            "    INNER JOIN information_customer ic1 ON c1.citizen_id = ic1.citizen_id\n" +
+            "    INNER JOIN order_detail od1 ON ic1.order_detail_id = od1.id\n" +
+            "    INNER JOIN `order` o ON o.id = od1.order_id\n" +
+            "    WHERE od1.id = ?2 AND ic1.citizen_id IS NOT NULL\n" +
+            ")\n" +
+            "ORDER BY c.update_at DESC;", nativeQuery = true)
+    List<Customer> getCustomerDifferentOrder(String orderId, String orderDetailId);
+
     @Query(value = "SELECT COUNT(cus.id) FROM Customer cus WHERE cus.status = 1")
     Long countCustomerByStatus();
 

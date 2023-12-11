@@ -347,7 +347,7 @@ public class OrderController {
     @PostMapping("/return/{id}")
     public ResponseEntity<Order> returnRoom(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
         Account account = accountService.findById(orderDTO.getAccount().getId());
-        Customer customer = customerService.getCustomerById(orderDTO.getCustomerId());
+        Customer customer = customerService.getCustomerById(orderDTO.getIdCustomerRepresent());
 
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
@@ -360,8 +360,6 @@ public class OrderController {
         order.setTypeOfOrder(true);
         order.setTotalMoney(orderDTO.getTotalMoney());
         order.setVat(orderDTO.getVat());
-        order.setMoneyGivenByCustomer(orderDTO.getMoneyGivenByCustomer());
-        order.setExcessMoney(orderDTO.getExcessMoney());
         order.setNote(orderDTO.getNote());
         order.setAccount(account);
         order.setCustomer(customer);
@@ -372,17 +370,27 @@ public class OrderController {
         order.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
         orderService.add(order);
 
-        Order or = orderService.getOrderById(orderDTO.getIdReturn());
-        or.setTotalMoney(or.getTotalMoney().subtract(orderDTO.getTotalMoney()));
-        orderService.add(or);
+        List<OrderTimeline> orderTimelineList = orderTimelineService.getOrderTimelineByOrderId(orderDTO.getIdReturn());
+        for (OrderTimeline orderTimeline : orderTimelineList) {
+            orderTimeline.setAccount(account);
+            orderTimelineService.add(orderTimeline);
+        }
 
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
-        orderTimeline.setAccount(order.getAccount());
+        orderTimeline.setAccount(account);
         orderTimeline.setType(Constant.ORDER_TIMELINE.WAIT_CONFIRM);
         orderTimeline.setNote("Tạo hóa đơn");
         orderTimeline.setCreateAt(new Date());
         orderTimelineService.add(orderTimeline);
+
+        Order or = orderService.getOrderById(orderDTO.getIdReturn());
+        Customer customerRepresent = customerService.getCustomerById(orderDTO.getCustomerId());
+        or.setTotalMoney(or.getTotalMoney().subtract(orderDTO.getTotalMoney()));
+        if (orderDTO.getCustomerId() != null) {
+            or.setCustomer(customerRepresent);
+        }
+        orderService.add(or);
 
         OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
         orderDetail.getRoom().setStatus(Constant.ROOM.ACTIVE);
@@ -392,7 +400,7 @@ public class OrderController {
 
         OrderTimeline timeline = new OrderTimeline();
         timeline.setOrder(order);
-        timeline.setAccount(order.getAccount());
+        timeline.setAccount(account);
         timeline.setType(Constant.ORDER_TIMELINE.CHECKED_IN);
         timeline.setNote(order.getNote());
         timeline.setCreateAt(new Date());

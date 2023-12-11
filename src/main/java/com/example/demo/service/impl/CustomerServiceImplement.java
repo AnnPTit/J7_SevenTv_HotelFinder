@@ -128,6 +128,11 @@ public class CustomerServiceImplement implements CustomerService {
     }
 
     @Override
+    public List<Customer> getCustomerDifferentOrder(String orderId, String orderDetailId) {
+        return customerRepository.getCustomerDifferentOrder(orderId, orderDetailId);
+    }
+
+    @Override
     public List<Customer> getCustomer() {
         return customerRepository.getAllCustomer();
     }

@@ -30,6 +30,7 @@ public class OrderDTO {
     private BigDecimal excessMoney;
     private BigDecimal deposit;
     private String customerId;
+    private String idCustomerRepresent;
     private String idReturn;
     private Integer status;
     private Customer customer;
