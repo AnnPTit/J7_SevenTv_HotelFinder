@@ -197,7 +197,7 @@ public class AccountController {
         }
         account.setId(id);
         account.setUpdateAt(new Date());
-        accountService.add(account);
+        accountService.update(account);
         return new ResponseEntity<Account>(account, HttpStatus.OK);
     }
 }
