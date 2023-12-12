@@ -347,7 +347,7 @@ public class OrderController {
     @PostMapping("/return/{id}")
     public ResponseEntity<Order> returnRoom(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
         Account account = accountService.findById(orderDTO.getAccount().getId());
-        Customer customer = customerService.getCustomerById(orderDTO.getCustomerId());
+        Customer customer = customerService.getCustomerById(orderDTO.getIdCustomerRepresent());
 
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
@@ -360,8 +360,6 @@ public class OrderController {
         order.setTypeOfOrder(true);
         order.setTotalMoney(orderDTO.getTotalMoney());
         order.setVat(orderDTO.getVat());
-        order.setMoneyGivenByCustomer(orderDTO.getMoneyGivenByCustomer());
-        order.setExcessMoney(orderDTO.getExcessMoney());
         order.setNote(orderDTO.getNote());
         order.setAccount(account);
         order.setCustomer(customer);
@@ -372,64 +370,44 @@ public class OrderController {
         order.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
         orderService.add(order);
 
-        Order or = orderService.getOrderById(orderDTO.getIdReturn());
-        or.setTotalMoney(or.getTotalMoney().subtract(orderDTO.getTotalMoney()));
-        orderService.add(or);
+        List<OrderTimeline> orderTimelineList = orderTimelineService.getOrderTimelineByOrderId(orderDTO.getIdReturn());
+        for (OrderTimeline orderTimeline : orderTimelineList) {
+            orderTimeline.setAccount(account);
+            orderTimelineService.add(orderTimeline);
+        }
 
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
-        orderTimeline.setAccount(order.getAccount());
+        orderTimeline.setAccount(account);
         orderTimeline.setType(Constant.ORDER_TIMELINE.WAIT_CONFIRM);
-        orderTimeline.setNote("Nhân viên tạo hóa đơn");
+        orderTimeline.setNote("Tạo hóa đơn");
         orderTimeline.setCreateAt(new Date());
         orderTimelineService.add(orderTimeline);
 
+        Order or = orderService.getOrderById(orderDTO.getIdReturn());
+        Customer customerRepresent = customerService.getCustomerById(orderDTO.getCustomerId());
+        or.setTotalMoney(or.getTotalMoney().subtract(orderDTO.getTotalMoney()));
+        if (orderDTO.getCustomerId() != null) {
+            or.setCustomer(customerRepresent);
+        }
+        orderService.add(or);
+
         OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
-        orderDetail.getRoom().setStatus(Constant.ROOM.EMPTY);
+        orderDetail.getRoom().setStatus(Constant.ROOM.ACTIVE);
         orderDetail.setOrder(order);
-        orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_OUT);
+        orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_IN);
         orderDetailService.add(orderDetail);
-
-        PaymentMethod paymentMethod = new PaymentMethod();
-        paymentMethod.setOrder(order);
-        LocalDate localDate = LocalDate.now();
-        DateTimeFormatter dateTimeFormatter = DateTimeFormatter.ofPattern("ddMMyyyy");
-        String formatDate = localDate.format(dateTimeFormatter);
-        Random randomPayment = new Random();
-        int randomCode = randomPayment.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
-        String paymentMethodCode = "PT" + formatDate + randomCode;
-        paymentMethod.setPaymentMethodCode(paymentMethodCode);
-        paymentMethod.setMethod(true);
-        paymentMethod.setTotalMoney(order.getTotalMoney());
-        paymentMethod.setNote(order.getNote());
-        paymentMethod.setCreateAt(new Date());
-        paymentMethod.setCreateBy(account.getFullname());
-        paymentMethod.setUpdateAt(new Date());
-        paymentMethod.setUpdatedBy(account.getFullname());
-        paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
-        paymentMethodService.add(paymentMethod);
-
-        HistoryTransaction historyTransaction = new HistoryTransaction();
-        historyTransaction.setOrder(order);
-        historyTransaction.setTotalMoney(order.getTotalMoney());
-        historyTransaction.setNote(order.getNote());
-        historyTransaction.setCreateAt(new Date());
-        historyTransaction.setCreateBy(account.getFullname());
-        historyTransaction.setUpdateAt(new Date());
-        historyTransaction.setUpdatedBy(account.getFullname());
-        historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
-        historyTransactionService.add(historyTransaction);
 
         OrderTimeline timeline = new OrderTimeline();
         timeline.setOrder(order);
-        timeline.setAccount(order.getAccount());
-        timeline.setType(Constant.ORDER_TIMELINE.LEAVE_EARLY);
+        timeline.setAccount(account);
+        timeline.setType(Constant.ORDER_TIMELINE.CHECKED_IN);
         timeline.setNote(order.getNote());
         timeline.setCreateAt(new Date());
         orderTimelineService.add(timeline);
 
         Order orderUpdate = orderService.getOrderById(order.getId());
-        orderUpdate.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
+        orderUpdate.setStatus(Constant.ORDER_STATUS.CHECKED_IN);
         orderService.add(orderUpdate);
 
         return new ResponseEntity<Order>(order, HttpStatus.OK);

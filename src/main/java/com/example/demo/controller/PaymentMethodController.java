@@ -564,17 +564,16 @@ public class PaymentMethodController {
                 orderTimeline.setCreateAt(new Date());
                 orderTimelineService.add(orderTimeline);
             }
-            String redirectUrl = "http://localhost:3001/";
+            String redirectUrl = "http://localhost:3001/cart";
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         } else {
             // Thanh toán không thành công, xử lý theo logic của bạn
-            String redirectUrl = "http://localhost:3001/";
+            String redirectUrl = "http://localhost:3001/cart";
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         }
     }
-
 
     // truy vấn lại trạng thái thanh toán
     @PostMapping("/transactionStatus")

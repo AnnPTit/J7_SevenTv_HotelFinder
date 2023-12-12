@@ -40,6 +40,8 @@ public interface CustomerService {
 
     List<Customer> getAllCustomerByOrderDetailId(String id);
 
+    List<Customer> getCustomerDifferentOrder(String orderId, String orderDetailId);
+
     List<Customer> getCustomer();
 
     Long countCustomerByStatus();
