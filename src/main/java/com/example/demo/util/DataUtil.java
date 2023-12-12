@@ -170,13 +170,14 @@ public class DataUtil {
         List<LocalDate> dateRange = new ArrayList<>();
         LocalDate currentDate = startDate;
 
-        while (!currentDate.isAfter(endDate)) {
+        while (!currentDate.isAfter(endDate.minusDays(1))) {
             dateRange.add(currentDate);
             currentDate = currentDate.plusDays(1);
         }
 
         return dateRange;
     }
+
 
     public static LocalDate convertToLocalDate(Date dateToConvert) {
         return Instant.ofEpochMilli(dateToConvert.getTime())

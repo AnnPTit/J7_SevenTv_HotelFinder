@@ -24,6 +24,7 @@ import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
@@ -82,6 +83,18 @@ public class WebSocketController {
             String dateString = payload.getDayStart().toString().substring(0, 11);
             String dateStringEnd = payload.getDayEnd().toString().substring(0, 11);
             String todayString = today.toString().substring(0, 11);
+            // Thêm validate ngày đặt phải lớn hơn ngày disable gần nhất 2 ngày
+            Date endCompare = DataUtil.setFixedTime(payload.getDayStart(), 14, 0, 0);
+            // lấy ra ngày bị disable gần nhất nhỏ hơn ngày đặt
+            List<RoomData> roomDataList = payload.getRooms();
+            List<String> roomIds = roomDataList.stream().map(item -> item.getId()).collect(Collectors.toList());
+            List<String> dates1 = orderDetailService.getOrderByRoomIds(roomIds);
+            SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+            Date startCompare = getNearestDate(endCompare, dates1, dateFormat);
+//            if (!isEndDateValid(startCompare, endCompare)) {
+//                return new Response(payload.getKeyToken() + "Bạn không được để một ngày bị trống ! [",
+//                        Constant.COMMON_STATUS.ACTIVE, idsRoom);
+//            }
             if (dateString.equals(todayString)) {
                 return new Response(payload.getKeyToken() + "Ngày checkIn phải lớn hơn ngày hôm nay ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
@@ -240,14 +253,53 @@ public class WebSocketController {
             mail.setMailSubject(subject);
             mail.setMailContent(content);
             mailService.sendEmail(mail);
-            List<RoomData> roomDataList = payload.getRooms();
-            List<String> roomIds = roomDataList.stream().map(item -> item.getId()).collect(Collectors.toList());
             List<String> dates = orderDetailService.getOrderByRoomIds(roomIds);
             return new Response(payload.getKeyToken() + "Đặt phòng thành công" + dates, Constant.COMMON_STATUS.ACTIVE, idsRoom);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
         }
+    }
+
+    private boolean isEndDateValid(Date startDate, Date endDate) {
+        // Kiểm tra nếu endDate lớn hơn startDate ít nhất 2 ngày
+        long twoDaysInMillis = 3 * 24 * 60 * 60 * 1000; // 2 ngày trong millis
+        return endDate.getTime() > startDate.getTime() + twoDaysInMillis;
+    }
+
+    public static Date getNearestDate(Date start, List<String> dates, SimpleDateFormat dateFormat)
+            throws ParseException {
+        Date nearestDate = null;
+        long minDifference = Long.MAX_VALUE;
+
+        for (String dateString : dates) {
+            Date currentDate = dateFormat.parse(dateString);
+
+            // Đặt giờ và phút của currentDate thành 14:00:00
+            currentDate.setHours(14);
+            currentDate.setMinutes(0);
+            currentDate.setSeconds(0);
+
+            // Tính độ chênh lệch giữa start và currentDate
+            long difference = Math.abs(currentDate.getTime() - start.getTime());
+
+            // Nếu độ chênh lệch nhỏ hơn minDifference, cập nhật nearestDate và minDifference
+            if (difference < minDifference) {
+                minDifference = difference;
+                nearestDate = currentDate;
+            }
+        }
+
+        // Nếu không có ngày trong danh sách, hoặc tất cả các ngày đều lớn hơn start,
+        // thì lấy mặc định là ngày hôm nay
+        if (nearestDate == null || start.before(nearestDate)) {
+            nearestDate = new Date();
+            nearestDate.setHours(14);
+            nearestDate.setMinutes(0);
+            nearestDate.setSeconds(0);
+        }
+
+        return nearestDate;
     }
 
     private boolean validateDetail(PayloadObject payload, List<String> idsRoom) {
