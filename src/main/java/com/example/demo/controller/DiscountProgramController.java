@@ -25,6 +25,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -71,6 +72,50 @@ public class DiscountProgramController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+
+        if (discountProgram.getName().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống tên!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (discountProgram.getMinimumInvoice() == null) {
+            return new ResponseEntity("Hoá đơn tối thiểu không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        if (discountProgram.getMinimumInvoice().compareTo(BigDecimal.ZERO) < 0) {
+            return new ResponseEntity("Hoá đơn tối thiểu phải lớn hơn 0!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (discountProgram.getReduceValue() == null) {
+            return new ResponseEntity("Giá trị giảm không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        if (discountProgram.getReduceValue() < 0 || discountProgram.getReduceValue() > 100) {
+            return new ResponseEntity("Giá trị giảm chỉ được trong khoảng từ 0 đến 100!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (discountProgram.getMaximumReductionValue() == null) {
+            return new ResponseEntity("Giá trị giảm tối đa không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        if (discountProgram.getMaximumReductionValue().compareTo(BigDecimal.ZERO) < 0) {
+            return new ResponseEntity("Giá trị giảm tối đa phải lớn hơn 0!", HttpStatus.BAD_REQUEST);
+        }
+        if (discountProgram.getMaximumReductionValue().compareTo(discountProgram.getMinimumInvoice()) > 0) {
+            return new ResponseEntity("Giá trị giảm tối đa không được vượt quá giá trị hóa đơn tối thiểu!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (discountProgram.getNumberOfApplication() == null) {
+            return new ResponseEntity("Số lượng hóa đơn áp dụng không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        if (discountProgram.getNumberOfApplication() <= 0) {
+            return new ResponseEntity("Số lượng hóa đơn áp dụng phải lớn hơn 0!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (discountProgram.getStartDay() == null) {
+            return new ResponseEntity("Không được bỏ trống ngày bắt đầu!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (discountProgram.getEndDate() == null) {
+            return new ResponseEntity("Không được bỏ trống ngày kết thúc!", HttpStatus.BAD_REQUEST);
+        }
+
         discountProgram.setCode(discountProgramService.generateDiscountProgramCode());
         discountProgram.setCreateAt(new Date());
         discountProgram.setUpdateAt(new Date());
@@ -95,6 +140,42 @@ public class DiscountProgramController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+
+        if (discountProgram.getName().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống tên!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (discountProgram.getMinimumInvoice() == null) {
+            return new ResponseEntity("Hoá đơn tối thiểu không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        if (discountProgram.getMinimumInvoice().compareTo(BigDecimal.ZERO) < 0) {
+            return new ResponseEntity("Hoá đơn tối thiểu phải lớn hơn 0!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (discountProgram.getReduceValue() == null) {
+            return new ResponseEntity("Giá trị giảm không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        if (discountProgram.getReduceValue() < 0 || discountProgram.getReduceValue() > 100) {
+            return new ResponseEntity("Giá trị giảm chỉ được trong khoảng từ 0 đến 100!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (discountProgram.getMaximumReductionValue() == null) {
+            return new ResponseEntity("Giá trị giảm tối đa không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        if (discountProgram.getMaximumReductionValue().compareTo(BigDecimal.ZERO) < 0) {
+            return new ResponseEntity("Giá trị giảm tối đa phải lớn hơn 0!", HttpStatus.BAD_REQUEST);
+        }
+        if (discountProgram.getMaximumReductionValue().compareTo(discountProgram.getMinimumInvoice()) > 0) {
+            return new ResponseEntity("Giá trị giảm tối đa không được vượt quá giá trị hóa đơn tối thiểu!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (discountProgram.getNumberOfApplication() == null) {
+            return new ResponseEntity("Số lượng hóa đơn áp dụng không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        if (discountProgram.getNumberOfApplication() <= 0) {
+            return new ResponseEntity("Số lượng hóa đơn áp dụng phải lớn hơn 0!", HttpStatus.BAD_REQUEST);
+        }
+
         discountProgram.setUpdateAt(new Date());
         discountProgram.setUpdatedBy(baseService.getCurrentUser().getFullname());
         discountProgramService.add(discountProgram);
