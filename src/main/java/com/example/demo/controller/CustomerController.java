@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.CustomerLoginDTO;
 import com.example.demo.entity.Customer;
+import com.example.demo.model.Mail;
 import com.example.demo.service.CustomerService;
 import com.example.demo.service.MailService;
 import com.example.demo.util.BaseService;
@@ -26,6 +27,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.util.Calendar;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -90,6 +92,70 @@ public class CustomerController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+
+        if (customer.getUsername().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Username", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getFullname().isBlank()) {
+            return new ResponseEntity("Full name không được bỏ trống", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getBirthday() == null) {
+            return new ResponseEntity("Ngày sinh không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        // Validate birthday against a regex pattern
+//        if (!customer.getBirthday().toString().matches("\\d{4}-\\d{2}-\\d{2}")) {
+//            return new ResponseEntity("Ngày sinh không đúng định dạng (yyyy-MM-dd)!!", HttpStatus.BAD_REQUEST);
+//        }
+        // Validate age against the minimum required age
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, -18);
+        if (customer.getBirthday().after(calendar.getTime())) {
+            return new ResponseEntity("Bạn phải ít nhất 18 tuổi!!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getEmail().isBlank()) {
+            return new ResponseEntity("Email không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")) {
+            return new ResponseEntity("Email không đúng định dạng!", HttpStatus.BAD_REQUEST);
+        }
+        if (customerService.existsByEmail(customer.getEmail())) {
+            return new ResponseEntity("Email đã tồn tại, Vui lòng nhập E-mail mới!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getPhoneNumber().isBlank()) {
+            return new ResponseEntity("Số điện thoại không được bỏ trống", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getPhoneNumber().matches("^(\\+84|0)[35789][0-9]{8}$")) {
+            return new ResponseEntity("Số điện thoại không đúng định dạng!!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getCitizenId().isBlank()) {
+            return new ResponseEntity("Căn cước công dân không được để trống!!", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getCitizenId().matches("\\d{12}")) {
+            return new ResponseEntity("Căn cước công dân không đúng định dạng!!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getPassword().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Password", HttpStatus.BAD_REQUEST);
+        }
+        if (customer.getPassword().length() < 5 || customer.getPassword().length() > 20) {
+            return new ResponseEntity("Password phải từ 5-20 kí tự.", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getProvinces().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Tỉnh.", HttpStatus.BAD_REQUEST);
+        }
+        if (customer.getDistricts().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Huyện.", HttpStatus.BAD_REQUEST);
+        }
+        if (customer.getWards().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Xã.", HttpStatus.BAD_REQUEST);
+        }
+
         customer.setCustomerCode(customerService.generateCustomerCode());
         customer.setStatus(Constant.COMMON_STATUS.ACTIVE);
         customer.setCreateAt(new Date());
@@ -97,17 +163,17 @@ public class CustomerController {
         customer.setCreateBy(baseService.getCurrentUser().getFullname());
         customer.setUpdatedBy(baseService.getCurrentUser().getFullname());
 
-//        Mail mail = new Mail();
-//         mail.setMailFrom("nguyenvantundz2003@gmail.com");
-//        mail.setMailTo(customer.getEmail());
-//        mail.setMailSubject("Thông tin tài khoản website");
-//        mail.setMailContent(
-//                "Dear: " + customer.getFullname() + "\n" +
-//                        "Email của bạn là: " + customer.getEmail() + "\n" +
-//                        "password: " + customer.getPassword() + "\n"+ "\n" +
-//                        "Đây là email tự động xin vui lòng không trả lời <3");
-//        customerService.add(customer);
-//        mailService.sendEmail(mail);
+        Mail mail = new Mail();
+        mail.setMailFrom("nguyenvantundz2003@gmail.com");
+        mail.setMailTo(customer.getEmail());
+        mail.setMailSubject("Thông tin tài khoản website");
+        mail.setMailContent(
+                "Dear: " + customer.getFullname() + "\n" +
+                        "Email của bạn là: " + customer.getEmail() + "\n" +
+                        "password: " + customer.getPassword() + "\n" + "\n" +
+                        "Đây là email tự động xin vui lòng không trả lời <3");
+        customerService.add(customer);
+        mailService.sendEmail(mail);
         customerService.add(customer);
         return new ResponseEntity<Customer>(customer, HttpStatus.OK);
     }
@@ -140,6 +206,67 @@ public class CustomerController {
             }
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
+
+        if (customer.getUsername().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Username", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getFullname().isBlank()) {
+            return new ResponseEntity("Full name không được bỏ trống", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getBirthday() == null) {
+            return new ResponseEntity("Ngày sinh không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        // Validate birthday against a regex pattern
+//        if (!customer.getBirthday().toString().matches("\\d{4}-\\d{2}-\\d{2}")) {
+//            return new ResponseEntity("Ngày sinh không đúng định dạng (yyyy-MM-dd)!!", HttpStatus.BAD_REQUEST);
+//        }
+        // Validate age against the minimum required age
+        Calendar calendar = Calendar.getInstance();
+        calendar.add(Calendar.YEAR, -18);
+        if (customer.getBirthday().after(calendar.getTime())) {
+            return new ResponseEntity("Bạn phải ít nhất 18 tuổi!!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getEmail().isBlank()) {
+            return new ResponseEntity("Email không được bỏ trống", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")) {
+            return new ResponseEntity("Email không đúng định dạng!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getPhoneNumber().isBlank()) {
+            return new ResponseEntity("Số điện thoại không được bỏ trống", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getPhoneNumber().matches("^(\\+84|0)[35789][0-9]{8}$")) {
+            return new ResponseEntity("Số điện thoại không đúng định dạng!!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getCitizenId().isBlank()) {
+            return new ResponseEntity("Căn cước công dân không được để trống!!", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getCitizenId().matches("\\d{12}")) {
+            return new ResponseEntity("Căn cước công dân không đúng định dạng!!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getPassword().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Password", HttpStatus.BAD_REQUEST);
+        }
+        if (customer.getPassword().length() < 5 || customer.getPassword().length() > 20) {
+            return new ResponseEntity("Password phải từ 5-20 kí tự.", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getProvinces().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Tỉnh.", HttpStatus.BAD_REQUEST);
+        }
+        if (customer.getDistricts().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Huyện.", HttpStatus.BAD_REQUEST);
+        }
+        if (customer.getWards().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Xã.", HttpStatus.BAD_REQUEST);
+        }
+
         customer.setUpdateAt(new Date());
         customer.setUpdatedBy(baseService.getCurrentUser().getFullname());
         customerService.add(customer);

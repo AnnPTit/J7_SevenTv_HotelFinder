@@ -155,5 +155,9 @@ public class CustomerServiceImplement implements CustomerService {
 
     }
 
+    @Override
+    public boolean existsByEmail(String email) {
+        return customerRepository.existsByEmail(email);
+    }
 
 }

@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -38,7 +39,7 @@ public class DiscountProgram {
     private Integer reduceValue;
 
     @Column(name = "maximum_reduction_value")
-    private BigDecimal maxiumumReductionValue;
+    private BigDecimal maximumReductionValue;
 
     @Column(name = "number_of_application")
     private Integer numberOfApplication;
