@@ -62,7 +62,7 @@ public class DiscountProgramServiceImpl implements DiscountProgramService {
         dto.setMinimumInvoice(entity.getMinimumInvoice());
         dto.setReduceValue(entity.getReduceValue());
         dto.setNumberOfApplication(entity.getNumberOfApplication());
-        dto.setMaximumReductionValue(entity.getMaxiumumReductionValue());
+        dto.setMaximumReductionValue(entity.getMaximumReductionValue());
         dto.setStartDay(entity.getStartDay());
         dto.setEndDate(entity.getEndDate());
         dto.setCreateAt(entity.getCreateAt());
@@ -73,9 +73,12 @@ public class DiscountProgramServiceImpl implements DiscountProgramService {
 
         // Tính toán và thiết lập trường trạng thái
         Date currentDate = new Date();
-        if (entity.getStartDay().after(currentDate)) {
+        Date startDay = entity.getStartDay();
+        Date endDate = entity.getEndDate();
+
+        if (startDay != null && startDay.after(currentDate)) {
             dto.setTextStatus(Constant.DISCOUNT_PROGRAM.NOT_EFFECTIVE_YET);
-        } else if (entity.getEndDate().after(currentDate) && entity.getStartDay().before(currentDate)) {
+        } else if (endDate != null && endDate.after(currentDate) && (startDay == null || startDay.before(currentDate))) {
             dto.setTextStatus(Constant.DISCOUNT_PROGRAM.ON_GOING);
         } else {
             dto.setTextStatus(Constant.DISCOUNT_PROGRAM.EXPIRED);
@@ -83,25 +86,6 @@ public class DiscountProgramServiceImpl implements DiscountProgramService {
 
         return dto;
     }
-
-//    private DiscountProgram toEntity(DiscountProgramDTO dto) {
-//        DiscountProgram entity = new DiscountProgram();
-//        entity.setId(dto.getId());
-//        entity.setName(dto.getName());
-//        entity.setCreateAt(dto.getCreateAt());
-//        entity.setCreateBy(dto.getCreateBy());
-//        entity.setStatus(dto.getStatus());
-//        entity.setUpdateAt(dto.getUpdateAt());
-//        entity.setUpdatedBy(dto.getUpdatedBy());
-//        entity.setEndDate(dto.getEndDate());
-//        entity.setStartDay(dto.getStartDay());
-//        entity.setMinimumInvoice(dto.getMinimumInvoice());
-//        entity.setNumberOfApplication(dto.getNumberOfApplication());
-//        entity.setReduceValue(dto.getReduceValue());
-//        entity.setDeleted(dto.getDeleted());
-//
-//        return entity;
-//    }
 
     @Override
     public List<DiscountProgram> loadDiscountByCondition() {

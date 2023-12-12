@@ -48,6 +48,6 @@ public interface CustomerService {
 
     Customer login(CustomerLoginDTO customerLoginDTO);
 
-
+    boolean existsByEmail(String email);
 
 }

@@ -94,4 +94,6 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
     @Query(value = "SELECT COUNT(cus.id) FROM Customer cus WHERE cus.status = 1")
     Long countCustomerByStatus();
 
+    boolean existsByEmail(String email);
+
 }
