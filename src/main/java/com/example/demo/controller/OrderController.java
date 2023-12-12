@@ -100,6 +100,7 @@ public class OrderController {
                                           @RequestParam(name = "status", defaultValue = "") Integer status,
                                           @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         // Kiểm tra các hóa đơn hết hạn -> set trạng thái
+        // Set thêm trạng thái cho hóa đơn chi tiết
 
         List<Order> listoOrders = orderService.getList();
         List<Order> ordersSave = new ArrayList<>();
@@ -109,6 +110,11 @@ public class OrderController {
             if (order.getPaymentDeadline()!=null && !order.getPaymentDeadline().after(date)) {
                 // Hết hạn thanh toán -> Set trạng thái hóa đơn về 8
                 order.setStatus(Constant.ORDER_STATUS.EXPIRED_PAYMENT);
+                for (OrderDetail orderDetail : order.getOrderDetailList()) {
+                    orderDetail.setStatus(Constant.ORDER_DETAIL.EXPIRED_PAYMENT);
+                    orderDetailService.add(orderDetail);
+                }
+
                 ordersSave.add(order);
             }
         }
