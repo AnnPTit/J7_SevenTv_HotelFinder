@@ -1,6 +1,8 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.Favourite;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -14,4 +16,5 @@ public interface FavouriteRepository extends JpaRepository<Favourite, String> {
     @Query(value = "select * from favourite  where id_custom = :idCustom and  id_room =:idRoom ", nativeQuery = true)
     List<Favourite> findByIdCustomAndIdRoom(@Param("idCustom") String idCustom, @Param("idRoom") String idRoom);
 
+    Page<Favourite> findByCustomer(String customerId, Pageable pageable);
 }
