@@ -6,6 +6,7 @@ import com.example.demo.entity.*;
 import com.example.demo.errors.BadRequestAlertException;
 import com.example.demo.model.Mail;
 import com.example.demo.repository.CustomerRepository;
+import com.example.demo.repository.OrderDetailRepository;
 import com.example.demo.repository.OrderRepository;
 import com.example.demo.repository.OrderTimelineRepository;
 import com.example.demo.service.MailService;
@@ -40,6 +41,8 @@ public class OrderServiceImpl implements OrderService {
 
     @Autowired
     private OrderRepository orderRepository;
+    @Autowired
+    private OrderDetailRepository orderDetailRepository;
     @Autowired
     private CustomerRepository customerRepository;
     @Autowired
@@ -369,6 +372,11 @@ public class OrderServiceImpl implements OrderService {
                 "Trân trọng,\n" +
                 "[Armani Hotel]\n";
         DataUtil.sendMailCommon(mailTo, subject, content, mailService);
+        // set hóa đơn chi tiết
+        for (OrderDetail orderDetail : order.getOrderDetailList()) {
+            orderDetail.setStatus(Constant.ORDER_DETAIL.REFUSE);
+            orderDetailRepository.save(orderDetail);
+        }
         orderRepository.updateStatus(id, stt, refuseReason);
     }
 

@@ -22,6 +22,8 @@ public class Constant {
         public static Integer WAIT_CONFIRM = 1;
         public static Integer CHECKED_IN = 2;
         public static Integer CHECKED_OUT = 3;
+        public static Integer EXPIRED_PAYMENT = 8;
+        public static Integer REFUSE = 6;
     }
 
     public static final class ROOM {
