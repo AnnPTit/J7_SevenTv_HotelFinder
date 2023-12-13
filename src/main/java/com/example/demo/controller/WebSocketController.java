@@ -28,6 +28,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -91,10 +92,10 @@ public class WebSocketController {
             List<String> dates1 = orderDetailService.getOrderByRoomIds(roomIds);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startCompare = getNearestDate(endCompare, dates1, dateFormat);
-//            if (!isEndDateValid(startCompare, endCompare)) {
-//                return new Response(payload.getKeyToken() + "Bạn không được để một ngày bị trống ! [",
-//                        Constant.COMMON_STATUS.ACTIVE, idsRoom);
-//            }
+            if (!isEndDateValid(startCompare, endCompare)) {
+                return new Response(payload.getKeyToken() + "Bạn không được để một ngày bị trống ! [",
+                        Constant.COMMON_STATUS.ACTIVE, idsRoom);
+            }
             if (dateString.equals(todayString)) {
                 return new Response(payload.getKeyToken() + "Ngày checkIn phải lớn hơn ngày hôm nay ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
@@ -261,10 +262,26 @@ public class WebSocketController {
         }
     }
 
-    private boolean isEndDateValid(Date startDate, Date endDate) {
+    public static boolean isEndDateValid(Date startDate, Date endDate) {
+        // Kiểm tra nếu endDate là null hoặc startDate là null
+        if (startDate == null || endDate == null) {
+            return false;
+        }
+
+        // Chuyển đổi Date thành LocalDate
+        LocalDate localStartDate = startDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+        LocalDate localEndDate = endDate.toInstant().atZone(java.time.ZoneId.systemDefault()).toLocalDate();
+
+        // Tính khoảng cách giữa endDate và startDate trong ngày
+        long daysDifference = localEndDate.toEpochDay() - localStartDate.toEpochDay();
+
         // Kiểm tra nếu endDate lớn hơn startDate ít nhất 2 ngày
-        long twoDaysInMillis = 3 * 24 * 60 * 60 * 1000; // 2 ngày trong millis
-        return endDate.getTime() > startDate.getTime() + twoDaysInMillis;
+        if (daysDifference == 1) {
+            return true;
+        } else if (daysDifference > 2) {
+            return true;
+        }
+        return false;
     }
 
     public static Date getNearestDate(Date start, List<String> dates, SimpleDateFormat dateFormat)

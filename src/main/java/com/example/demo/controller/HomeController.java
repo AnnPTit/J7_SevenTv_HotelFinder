@@ -46,6 +46,8 @@ public class HomeController {
     private OrderDetailService orderDetailService;
     @Autowired
     private FavouriteService favouriteService;
+    @Autowired
+    private FacilityService facilityService;
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -272,12 +274,25 @@ public class HomeController {
                                            @RequestParam("idRoom") String idRoom) {
         return new ResponseEntity<>(favouriteService.setLove(idCustom, idRoom), HttpStatus.OK);
     }
+
     @GetMapping("/load/favourite/{customerId}")
     public ResponseEntity<Page<FavouriteRoomDTO>> getFavouriteRoomsByCustomerId(@PathVariable String customerId,
                                                                                 @RequestParam(name = "current_page", defaultValue = "0") Integer current_page) {
-        Pageable pageable = PageRequest.of(current_page,  6);
+        Pageable pageable = PageRequest.of(current_page, 6);
         Page<FavouriteRoomDTO> favouriteRooms = favouriteService.getFavouriteRoomsByCustomerId(customerId, pageable);
         return ResponseEntity.ok(favouriteRooms);
+    }
+
+    @GetMapping("/load/facility")
+    public ResponseEntity<List<Facility>> getFacility() {
+        return ResponseEntity.ok(facilityService.getAll());
+    }
+
+    @PostMapping("/search/facility")
+    public ResponseEntity<Page<Room>> searchRoom(@RequestBody FacilityRequestDTO facilityRequestDTO) {
+        System.out.println(facilityRequestDTO);
+        Pageable pageable = PageRequest.of(facilityRequestDTO.getCurrentPage(), 6);
+        return new ResponseEntity<>(roomService.searchRoom(facilityRequestDTO, pageable), HttpStatus.OK);
     }
 
 }

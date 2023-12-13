@@ -1,9 +1,6 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.CartDTO;
-import com.example.demo.dto.RoomDTO;
-import com.example.demo.dto.RoomRequestDTO;
-import com.example.demo.dto.RoomResponeDTO;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Room;
 import io.swagger.models.auth.In;
 import org.springframework.data.domain.Page;
@@ -61,5 +58,7 @@ public interface RoomService {
     List<CartDTO> getCart(String customId, Integer odStt);
 
     List<Room> getTopRoom();
+
+    Page<Room> searchRoom(FacilityRequestDTO facilityRequestDTO, Pageable pageable);
 
 }
