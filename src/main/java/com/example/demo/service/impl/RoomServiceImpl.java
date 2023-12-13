@@ -1,10 +1,7 @@
 package com.example.demo.service.impl;
 
 import com.example.demo.constant.Constant;
-import com.example.demo.dto.CartDTO;
-import com.example.demo.dto.RoomDTO;
-import com.example.demo.dto.RoomRequestDTO;
-import com.example.demo.dto.RoomResponeDTO;
+import com.example.demo.dto.*;
 import com.example.demo.entity.Floor;
 import com.example.demo.entity.Room;
 import com.example.demo.repository.FloorRepository;
@@ -223,6 +220,11 @@ public class RoomServiceImpl implements RoomService {
     @Override
     public List<Room> getTopRoom() {
         return roomRepository.getTopRoom();
+    }
+
+    @Override
+    public Page<Room> searchRoom(FacilityRequestDTO facilityRequestDTO, Pageable pageable) {
+        return roomRepository.searchRoom(facilityRequestDTO, pageable);
     }
 
 }

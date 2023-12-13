@@ -1,8 +1,7 @@
 package com.example.demo.repository.custom;
 
-import com.example.demo.dto.CartDTO;
-import com.example.demo.dto.RoomRequestDTO;
-import com.example.demo.dto.RoomResponeDTO;
+import com.example.demo.dto.*;
+import com.example.demo.entity.Room;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -14,4 +13,6 @@ public interface RoomRepositoryCustom {
     Page<RoomResponeDTO> topBook(Pageable pageable);
 
     List<CartDTO> getCart(String customId, Integer odStt);
+
+    Page<Room> searchRoom(FacilityRequestDTO facilityRequestDTO, Pageable pageable);
 }

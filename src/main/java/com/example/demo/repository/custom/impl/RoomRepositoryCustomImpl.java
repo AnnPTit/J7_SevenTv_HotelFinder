@@ -1,8 +1,10 @@
 package com.example.demo.repository.custom.impl;
 
 import com.example.demo.dto.CartDTO;
+import com.example.demo.dto.FacilityRequestDTO;
 import com.example.demo.dto.RoomRequestDTO;
 import com.example.demo.dto.RoomResponeDTO;
+import com.example.demo.entity.Room;
 import com.example.demo.repository.custom.RoomRepositoryCustom;
 import com.example.demo.util.DataUtil;
 import jakarta.persistence.EntityManager;
@@ -17,6 +19,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
 
 public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
 
@@ -34,7 +37,7 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
         List<RoomResponeDTO> result = new ArrayList<>();
         if (count > 0) {
             Query query = buildQuerySearch(request, pageable);
-            result = query.getResultList(); // Sử dụng getResultList() thay vì getSingleResult()
+            result = query.getResultList();
         }
         return new PageImpl<>(result, pageable, count);
     }
@@ -105,6 +108,20 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
         return result;
     }
 
+    @Override
+    public Page<Room> searchRoom(FacilityRequestDTO request, Pageable pageable) {
+        Query queryCount = buildQuerySearchRoom(request, null);
+
+        Long count = Long.valueOf(queryCount.getResultList().size());
+
+        List<Room> result = new ArrayList<>();
+        if (count > 0) {
+            Query query = buildQuerySearchRoom(request, pageable);
+            result = query.getResultList();
+        }
+        return new PageImpl<>(result, pageable, count);
+    }
+
     private Query buildQuerySearch(RoomRequestDTO request, Pageable pageable) {
         Map<String, Object> params = new HashMap<>();
 
@@ -139,9 +156,9 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
             sql.append(" AND (\n" +
                     " od.room_id IS NULL OR\n" +
                     " (\n" +
-                    " ((od.check_in_datetime NOT BETWEEN :checkIn AND :checkOut) or o.status in(0,3,6,7)) \n" +
+                    " ((od.check_in_datetime NOT BETWEEN :checkIn AND :checkOut) or o.status in(0,3,6,7,8)) \n" +
                     " AND \n" +
-                    " ((od.check_out_datetime NOT BETWEEN :checkIn AND :checkOut) or o.status in(0,3,6,7))\n" +
+                    " ((od.check_out_datetime NOT BETWEEN :checkIn AND :checkOut) or o.status in(0,3,6,7,8))\n" +
                     " )\n" +
                     " ) ");
             params.put("checkIn", DataUtil.toLocalDateTime(request.getCheckIn()));
@@ -206,6 +223,54 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
                         "    countBook DESC\n"
         );
         Query query = entityManager.createNativeQuery(sql.toString(), "roomResult");
+
+        if (pageable != null) {
+            query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize()); // ví trí bản ghi đầu
+            query.setMaxResults(pageable.getPageSize()); // giới hạn số lượng kết quả trả về trên mỗi trang
+        }
+        params.forEach(query::setParameter);
+        return query;
+    }
+
+
+    private Query buildQuerySearchRoom(FacilityRequestDTO request, Pageable pageable) {
+        Map<String, Object> params = new HashMap<>();
+
+        StringBuilder sql = new StringBuilder("select r.* from room r\n" +
+                "inner join type_room tr\n" +
+                "on tr.id =r.type_room_id and tr.status = 1 \n" +
+                "left  join room_facility rf ON rf.room_id =r.id\n" +
+                "where 1=1 ");
+        if (request.getRoomname() != null && !("").equals(request.getRoomname())) {
+            sql.append(" and r.room_name like :roomName");
+            params.put("roomName", DataUtil.makeLikeStr(request.getRoomname()));
+        }
+        if (request.getSelectedChildren() != null && request.getSelectedChildren() != 0) {
+            sql.append(" and tr.children = :children");
+            params.put("children", request.getSelectedChildren());
+        }
+        if (!CollectionUtils.isEmpty(request.getPriceRange()) && !request.getPriceRange().contains(null)) {
+            sql.append(" and (tr.price_per_day between :start and :end)");
+            params.put("start", request.getPriceRange().get(0));
+            params.put("end", request.getPriceRange().get(1));
+        }
+        if (!CollectionUtils.isEmpty(request.getSelectedFacilities()) && !request.getPriceRange().contains(null)) {
+            sql.append(" and rf.facility_id in :facility");
+            List<String> ids = request.getSelectedFacilities().stream().map(item -> item.getId()).collect(Collectors.toList());
+            params.put("facility", ids);
+        }
+        if (request.getTypeRoomChose() != null && !("").equals(request.getTypeRoomChose())) {
+            sql.append(" and tr.type_room_code =:code ");
+            params.put("code", request.getTypeRoomChose());
+        }
+        sql.append(" group by r.id ");
+        sql.append("order by tr.price_per_day  ");
+        if ( request.getIsCrease().equals(false)) {
+            sql.append(" desc ");
+        }else {
+            sql.append(" asc ");
+        }
+        Query query = entityManager.createNativeQuery(sql.toString(), Room.class); // Chỉ định lớp mục tiêu là Room
 
         if (pageable != null) {
             query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize()); // ví trí bản ghi đầu
