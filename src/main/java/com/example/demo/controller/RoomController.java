@@ -240,7 +240,7 @@ public class RoomController {
     @PostMapping("/save")
     public ResponseEntity<Room> save(@Valid @ModelAttribute Room room,
                                      BindingResult bindingResult,
-                                     @RequestParam("facilities") List<String> facilityIds,
+                                     @RequestParam(name = "facilities", required = false ) List<String> facilityIds,
                                      @PathParam("photos") MultipartFile[] photos) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
@@ -293,20 +293,20 @@ public class RoomController {
                 photo.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 photoService.add(photo);
             }
-
-            for (String facilityId : facilityIds) {
-                Facility facility = facilityService.findById(facilityId);
-                if (facility != null) {
-                    RoomFacility roomFacility = new RoomFacility();
-                    roomFacility.setRoom(room);
-                    roomFacility.setFacility(facility);
-                    roomFacility.setCreateAt(new Date());
-                    roomFacility.setUpdateAt(new Date());
-                    roomFacility.setStatus(Constant.COMMON_STATUS.ACTIVE);
-                    roomFacilityService.save(roomFacility);
+            if(facilityIds !=null) {
+                for (String facilityId : facilityIds) {
+                    Facility facility = facilityService.findById(facilityId);
+                    if (facility != null) {
+                        RoomFacility roomFacility = new RoomFacility();
+                        roomFacility.setRoom(room);
+                        roomFacility.setFacility(facility);
+                        roomFacility.setCreateAt(new Date());
+                        roomFacility.setUpdateAt(new Date());
+                        roomFacility.setStatus(Constant.COMMON_STATUS.ACTIVE);
+                        roomFacilityService.save(roomFacility);
+                    }
                 }
             }
-
             System.out.println("Thêm thành công");
         } catch (IOException e) {
             e.printStackTrace();
@@ -329,7 +329,7 @@ public class RoomController {
     @PutMapping("/update/{id}")
     public ResponseEntity<Room> update(@PathVariable("id") String id, @Valid @ModelAttribute Room room,
                                        BindingResult bindingResult,
-                                       @RequestParam("facilities") List<String> facilityIds,
+                                       @RequestParam(name = "facilities", required = false) List<String> facilityIds,
                                        @PathParam("photos") MultipartFile[] photos) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
@@ -384,18 +384,20 @@ public class RoomController {
             }
 
             // Add new room facilities
-            for (String facilityId : facilityIds) {
-                Facility facility = facilityService.findById(facilityId);
-                if (facility != null) {
-                    RoomFacility roomFacility = new RoomFacility();
-                    roomFacility.setRoom(room);
-                    roomFacility.setFacility(facility);
-                    roomFacility.setCreateAt(new Date());
-                    roomFacility.setUpdateAt(new Date());
-                    roomFacility.setStatus(Constant.COMMON_STATUS.ACTIVE);
-                    roomFacilityService.save(roomFacility);
-                }
-            }
+         if(facilityIds !=null){
+             for (String facilityId : facilityIds) {
+                 Facility facility = facilityService.findById(facilityId);
+                 if (facility != null) {
+                     RoomFacility roomFacility = new RoomFacility();
+                     roomFacility.setRoom(room);
+                     roomFacility.setFacility(facility);
+                     roomFacility.setCreateAt(new Date());
+                     roomFacility.setUpdateAt(new Date());
+                     roomFacility.setStatus(Constant.COMMON_STATUS.ACTIVE);
+                     roomFacilityService.save(roomFacility);
+                 }
+             }
+         }
 
         } catch (IOException e) {
             e.printStackTrace();
