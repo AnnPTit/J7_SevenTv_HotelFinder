@@ -96,10 +96,10 @@ public class WebSocketController {
             List<String> dates1 = orderDetailService.getOrderByRoomIds(roomIds);
             SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
             Date startCompare = getNearestDate(endCompare, dates1, dateFormat);
-            if (!isEndDateValid(startCompare, endCompare)) {
-                return new Response(payload.getKeyToken() + "Bạn không được để một ngày bị trống ! [",
-                        Constant.COMMON_STATUS.ACTIVE, idsRoom);
-            }
+//            if (!isEndDateValid(startCompare, endCompare)) {
+//                return new Response(payload.getKeyToken() + "Bạn không được để một ngày bị trống ! [",
+//                        Constant.COMMON_STATUS.ACTIVE, idsRoom);
+//            }
             if (dateString.equals(todayString)) {
                 return new Response(payload.getKeyToken() + "Ngày checkIn phải lớn hơn ngày hôm nay ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
