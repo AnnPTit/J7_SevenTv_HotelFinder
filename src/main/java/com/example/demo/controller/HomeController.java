@@ -257,9 +257,15 @@ public class HomeController {
     }
 
     @PostMapping("/date-booked")
-    public List<String> getDateBooked(@RequestBody List<RoomId> dates) {
+    public List<List<String>> getDateBooked(@RequestBody List<RoomId> dates) {
+        List<List<String>> listFinal = new ArrayList<>();
         List<String> roomIds = dates.stream().map(item -> item.getId()).collect(Collectors.toList());
-        return orderDetailService.getOrderByRoomIds(roomIds);
+        listFinal.add(orderDetailService.getOrderByRoomIds(roomIds));
+        List<String> startDate = orderDetailService.getStartDate(roomIds);
+        List<String> endDate = orderDetailService.getEndDate(roomIds);
+        listFinal.add(startDate);
+        listFinal.add(endDate);
+        return listFinal;
     }
 
 

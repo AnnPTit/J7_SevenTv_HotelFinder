@@ -240,6 +240,8 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
                 "inner join type_room tr\n" +
                 "on tr.id =r.type_room_id and tr.status = 1 \n" +
                 "left  join room_facility rf ON rf.room_id =r.id\n" +
+                "left join order_detail od on\n" +
+                "\tod.room_id = r.id\n" +
                 "where 1=1 ");
         if (request.getRoomname() != null && !("").equals(request.getRoomname())) {
             sql.append(" and r.room_name like :roomName");
@@ -264,12 +266,24 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
             params.put("code", request.getTypeRoomChose());
         }
         sql.append(" group by r.id ");
-        sql.append("order by tr.price_per_day  ");
-        if ( request.getIsCrease().equals(false)) {
-            sql.append(" desc ");
-        }else {
-            sql.append(" asc ");
+        if(request.getIsCrease() !=null){
+            sql.append(" order by tr.price_per_day  ");
+            if ( request.getIsCrease().equals(false)) {
+                sql.append(" desc ");
+            }else {
+                sql.append(" asc ");
+            }
         }
+
+        if(request.getIsCreaseBook() !=null){
+            sql.append(" order by COUNT(od.id) ");
+            if ( request.getIsCreaseBook().equals(false)) {
+                sql.append(" desc ");
+            }else {
+                sql.append(" asc ");
+            }
+        }
+
         Query query = entityManager.createNativeQuery(sql.toString(), Room.class); // Chỉ định lớp mục tiêu là Room
 
         if (pageable != null) {

@@ -18,4 +18,5 @@ public class FacilityRequestDTO {
     private String typeRoomChose;
     private Integer currentPage;
     private Boolean isCrease;
+    private Boolean isCreaseBook;
 }
