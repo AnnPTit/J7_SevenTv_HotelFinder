@@ -124,7 +124,7 @@ public class WebSocketController {
                         + startDate + "   đến ngày :    " + endDate + "  !" + ". Vui lòng chọn ngày khác ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
-            if (validateDetail(payload, idsRoom)) {
+            if (!validateDetail(payload, idsRoom)) {
                 return new Response(payload.getKeyToken() + "Số khách vượt quá sức chứa  ! [",
                         Constant.COMMON_STATUS.ACTIVE, idsRoom);
             }
@@ -263,7 +263,7 @@ public class WebSocketController {
             List<String> startDate = orderDetailService.getStartDate(roomIds);
             List<String> endDate = orderDetailService.getEndDate(roomIds);
             // List ngày bắt đầu
-            return new Response(payload.getKeyToken() + "Đặt phòng thành công" + dates +startDate+endDate, Constant.COMMON_STATUS.ACTIVE, idsRoom);
+            return new Response(payload.getKeyToken() + "Đặt phòng thành công" + dates + startDate + endDate, Constant.COMMON_STATUS.ACTIVE, idsRoom);
         } catch (Exception e) {
             e.printStackTrace();
             return null;
@@ -331,12 +331,15 @@ public class WebSocketController {
 
         for (RoomData roomData : payload.getRooms()
         ) {
+            if (roomData.getGuestCount() < 0) {
+                return false;
+            }
             Room room = roomService.getRoomById(roomData.getId());
             if (roomData.getGuestCount() > room.getTypeRoom().getCapacity()) {
-                return true;
+                return false;
             }
         }
-        return false;
+        return true;
     }
 
     @MessageMapping("/likes")
