@@ -254,8 +254,12 @@ public class WebSocketController {
             mail.setMailSubject(subject);
             mail.setMailContent(content);
             mailService.sendEmail(mail);
+            // List ở giữa
             List<String> dates = orderDetailService.getOrderByRoomIds(roomIds);
-            return new Response(payload.getKeyToken() + "Đặt phòng thành công" + dates, Constant.COMMON_STATUS.ACTIVE, idsRoom);
+            List<String> startDate = orderDetailService.getStartDate(roomIds);
+            List<String> endDate = orderDetailService.getEndDate(roomIds);
+            // List ngày bắt đầu
+            return new Response(payload.getKeyToken() + "Đặt phòng thành công" + dates +startDate+endDate, Constant.COMMON_STATUS.ACTIVE, idsRoom);
         } catch (Exception e) {
             e.printStackTrace();
             return null;

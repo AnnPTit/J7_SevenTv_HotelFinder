@@ -33,5 +33,7 @@ public interface OrderDetailService {
     Integer getBooking();
 
     List<String> getOrderByRoomIds(List<String> roomId);
+     List<String> getStartDate(List<String> roomId);
+     List<String> getEndDate(List<String> roomId);
 
 }

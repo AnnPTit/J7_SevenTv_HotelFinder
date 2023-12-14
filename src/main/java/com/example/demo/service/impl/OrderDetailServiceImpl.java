@@ -101,6 +101,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
         for (String id : roomId) {
             List<OrderDetail> list = orderDetailRepository.getOrderByRoomId(id);
 
+            // List ở giữa xuất hiện ở cả 2
             for (OrderDetail orderDetail : list) {
                 List<LocalDate> dateList = DataUtil.getDateRange(DataUtil.convertToLocalDate(orderDetail.getCheckInDatetime()), DataUtil.convertToLocalDate(orderDetail.getCheckOutDatetime()));
                 disableDate.addAll(localDateToString(dateList));
@@ -109,6 +110,28 @@ public class OrderDetailServiceImpl implements OrderDetailService {
 
         }
         return disableDate;
+    }
+
+    public List<String> getStartDate(List<String> roomId) {
+        List<String> startDate = new ArrayList<>();
+        for (String id : roomId) {
+            List<OrderDetail> list = orderDetailRepository.getOrderByRoomId(id);
+            for (OrderDetail orderDetail : list) {
+                startDate.add(DataUtil.convertDateToString2(orderDetail.getCheckInDatetime()));
+            }
+        }
+        return startDate;
+    }
+
+    public List<String> getEndDate(List<String> roomId) {
+        List<String> endDate = new ArrayList<>();
+        for (String id : roomId) {
+            List<OrderDetail> list = orderDetailRepository.getOrderByRoomId(id);
+            for (OrderDetail orderDetail : list) {
+                endDate.add(DataUtil.convertDateToString2(orderDetail.getCheckOutDatetime()));
+            }
+        }
+        return endDate;
     }
 
     private List<String> localDateToString(List<LocalDate> dateList) {
