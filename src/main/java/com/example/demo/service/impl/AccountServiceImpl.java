@@ -8,6 +8,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.security.SecureRandom;
 import java.util.List;
@@ -60,6 +61,11 @@ public class AccountServiceImpl implements AccountService {
             return false;
         }
 
+    }
+
+    @Override
+    public void updatePasse(String pass, String id) {
+        accountRepository.updatePass(passwordEncoder.encode(pass), id);
     }
 
     @Override

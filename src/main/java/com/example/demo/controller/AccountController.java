@@ -143,10 +143,7 @@ public class AccountController {
             if (account == null) {
                 return new ResponseEntity("Không tìm thấy tài khoản có ID: " + id, HttpStatus.NOT_FOUND);
             }
-            account.setPassword(newPassword);
-            account.setUpdateAt(new Date());
-
-            accountService.add(account);
+            accountService.updatePasse(newPassword, id);
 
             Mail mail = new Mail();
             mail.setMailFrom("nguyenvantundz2003@gmail.com");

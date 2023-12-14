@@ -19,6 +19,8 @@ public interface AccountService {
 
     Boolean add(Account account);
 
+    void updatePasse(String pass, String id);
+
     Boolean update(Account account);
 
     Boolean delete(String id);
