@@ -403,14 +403,7 @@
                                     <text><![CDATA[Đơn giá]]></text>
                                 </staticText>
                             </jr:tableHeader>
-                            <jr:tableFooter style="Table_CH" height="30" rowSpan="1">
-                                <textField>
-                                    <reportElement x="0" y="0" width="52" height="30" uuid="24b780f9-34de-451d-a5f7-758d616c2f23"/>
-                                    <textElement textAlignment="Center" verticalAlignment="Middle">
-                                        <font fontName="Times New Roman" size="11"/>
-                                    </textElement>
-                                </textField>
-                            </jr:tableFooter>
+                            <jr:tableFooter style="Table_CH" height="30" rowSpan="1"/>
                             <jr:detailCell style="Table_TD" height="30">
                                 <textField>
                                     <reportElement x="0" y="0" width="52" height="30" uuid="3c60c7de-a60e-4568-90c0-4147957a1785"/>

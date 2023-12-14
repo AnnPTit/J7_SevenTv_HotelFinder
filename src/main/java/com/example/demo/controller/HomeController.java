@@ -211,8 +211,9 @@ public class HomeController {
 
 
     @GetMapping("/load/blog")
-    public Page<BlogDTO> load(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
-        Pageable pageable = PageRequest.of(current_page, 6);
+    public Page<BlogDTO> load(@RequestParam(name = "current_page", defaultValue = "0") int current_page,
+                              @RequestParam(name = "total", defaultValue = "6") int total) {
+        Pageable pageable = PageRequest.of(current_page, total);
         return blogService.getPaginate(pageable);
     }
 

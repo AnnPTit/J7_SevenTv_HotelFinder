@@ -314,8 +314,8 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("deliverer", orderExportDTO.getCreater());
         parameters.put("customer", orderExportDTO.getCustomer());
         parameters.put("bookingDay", DataUtil.dateToString(orderExportDTO.getBookingDay()));
-        parameters.put("checkin", DataUtil.dateToString(orderExportDTO.getCheckIn()));
-        parameters.put("checkOut", DataUtil.dateToString(orderExportDTO.getCheckOut()));
+        parameters.put("checkin", orderExportDTO.getCheckIn() != null ? DataUtil.dateToString(orderExportDTO.getCheckIn()) : dataTable.get(0).getCheckIn());
+        parameters.put("checkOut", orderExportDTO.getCheckOut() != null ? DataUtil.dateToString(orderExportDTO.getCheckIn()) : dataTable.get(0).getCheckOut());
         parameters.put("day", day);
         parameters.put("month", month);
         parameters.put("year", year);

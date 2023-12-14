@@ -20,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Date;
@@ -107,7 +109,7 @@ public class OrderController {
         for (Order order : listoOrders) {
             // Nếu hạn thanh toán <= hôm nay
             Date date = new Date();
-            if (order.getPaymentDeadline()!=null && !order.getPaymentDeadline().after(date)) {
+            if (order.getPaymentDeadline() != null && !order.getPaymentDeadline().after(date)) {
                 // Hết hạn thanh toán -> Set trạng thái hóa đơn về 8
                 order.setStatus(Constant.ORDER_STATUS.EXPIRED_PAYMENT);
                 for (OrderDetail orderDetail : order.getOrderDetailList()) {
@@ -117,11 +119,39 @@ public class OrderController {
 
                 ordersSave.add(order);
             }
+
+            // nếu ngày checkin lớn hơn ngày hôm nay
+            Date bookingDateStart = order.getBookingDateStart();
+
+            if (bookingDateStart != null) {
+                // Lấy ngày hiện tại
+                Instant now = Instant.now();
+                LocalDate currentDate = now.atZone(ZoneId.systemDefault()).toLocalDate();
+
+                // Chuyển đổi bookingDateStart thành LocalDate
+                Instant bookingDateInstant = bookingDateStart.toInstant();
+                LocalDate bookingDate = bookingDateInstant.atZone(ZoneId.systemDefault()).toLocalDate();
+
+                // So sánh nếu bookingDate lớn hơn ngày hiện tại 1 ngày
+                // 14                           12
+                if (currentDate.isAfter(bookingDate.plusDays(1))) {
+                    // Hết hạn thanh toán -> Set trạng thái hóa đơn về 9
+                    order.setStatus(Constant.ORDER_STATUS.EXPIRED_CHECKIN);
+
+                    for (OrderDetail orderDetail : order.getOrderDetailList()) {
+                        orderDetail.setStatus(Constant.ORDER_DETAIL.EXPIRED_CHECKIN);
+                        orderDetailService.add(orderDetail);
+                    }
+
+                    ordersSave.add(order);
+                }
+            }
         }
         orderService.add(ordersSave);
 
         Pageable pageable = PageRequest.of(current_page, 5);
         return orderService.loadBookRoomOnline(key, key, key, key, status, pageable);
+
     }
 
     @GetMapping("/loadByStatus")
