@@ -81,6 +81,10 @@ public class WebSocketController {
             // Kiểm tra ngày check in có phải ngày hôm nay
             // Kiểm tra ngày đặt đã trùng
             Date today = new Date();
+            if ((payload.getDayStart()) == null) {
+                return new Response(payload.getKeyToken() + "Vui lòng nhập lại ! [",
+                        Constant.COMMON_STATUS.ACTIVE, idsRoom);
+            }
             String dateString = payload.getDayStart().toString().substring(0, 11);
             String dateStringEnd = payload.getDayEnd().toString().substring(0, 11);
             String todayString = today.toString().substring(0, 11);
