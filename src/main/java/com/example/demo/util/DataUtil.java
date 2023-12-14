@@ -137,6 +137,12 @@ public class DataUtil {
         return sdf.format(date);
     }
 
+    // Convert ngày theo định dạng
+    public static String convertDateToString2(Date date) {
+        SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+        return sdf.format(date);
+    }
+
     public static String formatMoney(BigDecimal money) {
         DecimalFormat df = new DecimalFormat("###,###,###");
         return df.format(money);
@@ -168,7 +174,7 @@ public class DataUtil {
 
     public static List<LocalDate> getDateRange(LocalDate startDate, LocalDate endDate) {
         List<LocalDate> dateRange = new ArrayList<>();
-        LocalDate currentDate = startDate;
+        LocalDate currentDate = startDate.plusDays(1); // Bắt đầu từ ngày sau startDate
 
         while (!currentDate.isAfter(endDate.minusDays(1))) {
             dateRange.add(currentDate);
@@ -177,6 +183,7 @@ public class DataUtil {
 
         return dateRange;
     }
+
 
 
     public static LocalDate convertToLocalDate(Date dateToConvert) {
