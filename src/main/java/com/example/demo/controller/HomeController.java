@@ -164,7 +164,7 @@ public class HomeController {
 
     @PostMapping("/customer/save")
     public ResponseEntity<Customer> add(@RequestBody Customer customer,
-                                      @Valid  BindingResult result) {
+                                        @Valid BindingResult result) {
 
         if (result.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
@@ -210,9 +210,9 @@ public class HomeController {
         if (customer.getPassword().isBlank()) {
             return new ResponseEntity("Không được bỏ trống Mật khẩu", HttpStatus.BAD_REQUEST);
         }
-        if (customer.getPassword().length() < 5 || customer.getPassword().length() > 20) {
-            return new ResponseEntity("Mật khẩu phải từ 5-20 kí tự.", HttpStatus.BAD_REQUEST);
-        }
+//        if (customer.getPassword().length() < 5 || customer.getPassword().length() > 20) {
+//            return new ResponseEntity("Mật khẩu phải từ 5-20 kí tự.", HttpStatus.BAD_REQUEST);
+//        }
 
         customer.setCustomerCode(customerService.generateCustomerCode());
         customer.setCreateAt(new Date());
@@ -243,7 +243,7 @@ public class HomeController {
             return new ResponseEntity("Full name không được bỏ trống", HttpStatus.BAD_REQUEST);
         }
 
-        if(customer.getGender() == null) {
+        if (customer.getGender() == null) {
             return new ResponseEntity("Giới tính không được bỏ trống", HttpStatus.BAD_REQUEST);
 
         }
@@ -276,9 +276,9 @@ public class HomeController {
         if (customer.getPassword().isBlank()) {
             return new ResponseEntity("Không được bỏ trống Mật khẩu", HttpStatus.BAD_REQUEST);
         }
-        if (customer.getPassword().length() < 5 || customer.getPassword().length() > 20) {
-            return new ResponseEntity("Mật khẩu phải từ 5-20 kí tự.", HttpStatus.BAD_REQUEST);
-        }
+//        if (customer.getPassword().length() < 5 || customer.getPassword().length() > 20) {
+//            return new ResponseEntity("Mật khẩu phải từ 5-20 kí tự.", HttpStatus.BAD_REQUEST);
+//        }
 
         if (customer.getProvinces().isBlank()) {
             return new ResponseEntity("Không được bỏ trống Tỉnh.", HttpStatus.BAD_REQUEST);
@@ -318,7 +318,7 @@ public class HomeController {
         if (customer.getPassword().isBlank()) {
             return new ResponseEntity("Không được bỏ trống Mật khẩu", HttpStatus.BAD_REQUEST);
         }
-        if (customer.getPassword().length() < 5 || customer.getPassword().length() > 20) {
+        if (newPassword.length() < 5 || newPassword.length() > 20) {
             return new ResponseEntity("Mật khẩu phải từ 5-20 kí tự.", HttpStatus.BAD_REQUEST);
         }
         customer.setPassword(newPassword);
@@ -383,6 +383,10 @@ public class HomeController {
 
     @PostMapping("/login")
     public ResponseEntity<Customer> login(@RequestBody CustomerLoginDTO customerLoginDTO) {
+//        return new ResponseEntity<>(customerService.login(customerLoginDTO), HttpStatus.OK);
+        if (customerService.login(customerLoginDTO) == null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(customerService.login(customerLoginDTO), HttpStatus.OK);
     }
 
