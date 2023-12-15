@@ -160,4 +160,9 @@ public class CustomerServiceImplement implements CustomerService {
         return customerRepository.existsByEmail(email);
     }
 
+    @Override
+    public boolean existsByCitizenId(String citizenId) {
+        return customerRepository.existsByCitizenId(citizenId);
+    }
+
 }
