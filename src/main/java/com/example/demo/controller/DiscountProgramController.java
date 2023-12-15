@@ -176,6 +176,14 @@ public class DiscountProgramController {
             return new ResponseEntity("Số lượng hóa đơn áp dụng phải lớn hơn 0!", HttpStatus.BAD_REQUEST);
         }
 
+        if (discountProgram.getStartDay() == null) {
+            return new ResponseEntity("Không được bỏ trống ngày bắt đầu!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (discountProgram.getEndDate() == null) {
+            return new ResponseEntity("Không được bỏ trống ngày kết thúc!", HttpStatus.BAD_REQUEST);
+        }
+
         discountProgram.setUpdateAt(new Date());
         discountProgram.setUpdatedBy(baseService.getCurrentUser().getFullname());
         discountProgramService.add(discountProgram);
