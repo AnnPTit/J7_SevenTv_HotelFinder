@@ -814,14 +814,7 @@ phiếu
                 <textElement textAlignment="Left" verticalAlignment="Top">
                     <font fontName="Times New Roman" size="11" isBold="false"/>
                 </textElement>
-                <text><![CDATA[]]></text>
-            </staticText>
-            <staticText>
-                <reportElement x="-20" y="38" width="270" height="19" uuid="468d3f9e-ca68-4ccc-9b39-4c317f31947e"/>
-                <textElement textAlignment="Left" verticalAlignment="Top">
-                    <font fontName="Times New Roman" size="11" isBold="false"/>
-                </textElement>
-                <text><![CDATA[Bà Trưng, Thành phố Hà Nội, Việt Nam]]></text>
+                <text><![CDATA[Trịnh Văn Bô - Hà Nội - Việt Nam ]]></text>
             </staticText>
         </band>
     </title>

@@ -104,16 +104,6 @@ public class CustomerController {
         if (customer.getBirthday() == null) {
             return new ResponseEntity("Ngày sinh không được để trống!", HttpStatus.BAD_REQUEST);
         }
-        // Validate birthday against a regex pattern
-//        if (!customer.getBirthday().toString().matches("\\d{4}-\\d{2}-\\d{2}")) {
-//            return new ResponseEntity("Ngày sinh không đúng định dạng (yyyy-MM-dd)!!", HttpStatus.BAD_REQUEST);
-//        }
-        // Validate age against the minimum required age
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.YEAR, -18);
-        if (customer.getBirthday().after(calendar.getTime())) {
-            return new ResponseEntity("Bạn phải ít nhất 18 tuổi!!", HttpStatus.BAD_REQUEST);
-        }
 
         if (customer.getEmail().isBlank()) {
             return new ResponseEntity("Email không được để trống!", HttpStatus.BAD_REQUEST);
@@ -137,6 +127,9 @@ public class CustomerController {
         }
         if (!customer.getCitizenId().matches("\\d{12}")) {
             return new ResponseEntity("Căn cước công dân không đúng định dạng!!", HttpStatus.BAD_REQUEST);
+        }
+        if (customerService.existsByCitizenId(customer.getCitizenId())) {
+            return new ResponseEntity("Căn cước công dân đã tồn tại!!", HttpStatus.BAD_REQUEST);
         }
 
         if (customer.getPassword().isBlank()) {
@@ -223,11 +216,11 @@ public class CustomerController {
 //            return new ResponseEntity("Ngày sinh không đúng định dạng (yyyy-MM-dd)!!", HttpStatus.BAD_REQUEST);
 //        }
         // Validate age against the minimum required age
-        Calendar calendar = Calendar.getInstance();
-        calendar.add(Calendar.YEAR, -18);
-        if (customer.getBirthday().after(calendar.getTime())) {
-            return new ResponseEntity("Bạn phải ít nhất 18 tuổi!!", HttpStatus.BAD_REQUEST);
-        }
+//        Calendar calendar = Calendar.getInstance();
+//        calendar.add(Calendar.YEAR, -18);
+//        if (customer.getBirthday().after(calendar.getTime())) {
+//            return new ResponseEntity("Bạn phải ít nhất 18 tuổi!!", HttpStatus.BAD_REQUEST);
+//        }
 
         if (customer.getEmail().isBlank()) {
             return new ResponseEntity("Email không được bỏ trống", HttpStatus.BAD_REQUEST);

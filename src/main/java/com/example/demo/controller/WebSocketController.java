@@ -29,6 +29,8 @@ import java.text.SimpleDateFormat;
 import java.time.Duration;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -198,12 +200,9 @@ public class WebSocketController {
                 // Tính toán ngày và nhân với đơn giá
                 Date bookingStart = payload.getDayStart();
                 Date bookingEnd = payload.getDayEnd();
-                Instant startInstant = bookingStart.toInstant();
-                Instant endInstant = bookingEnd.toInstant();
-                // Calculate the duration between the two instants
-                Duration duration = Duration.between(startInstant, endInstant);
-                // Get the number of days
-                long days = duration.toDays();
+                LocalDate startLocalDate = bookingStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate endLocalDate = bookingEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                long days = ChronoUnit.DAYS.between(startLocalDate, endLocalDate);
                 BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
                 BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days));
                 orderDetail.setRoomPrice(totalCost);

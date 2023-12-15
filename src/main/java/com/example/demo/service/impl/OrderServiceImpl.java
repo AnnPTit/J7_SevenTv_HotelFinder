@@ -233,7 +233,9 @@ public class OrderServiceImpl implements OrderService {
         String subJect = "Xác Nhận Đơn Đặt Phòng của Quý Khách tại Khách Sạn Armani";
         String subContent = "";
         for (OrderDetail orderDetail : orderDetails) {
-            subContent = subContent + " \n Loại phòng: " + orderDetail.getRoom().getTypeRoom().getTypeRoomName() + "\n" +
+            subContent = subContent
+                    + " \n Phòng: " + orderDetail.getRoom().getRoomName() + "\n"
+                    + " \n Loại phòng: " + orderDetail.getRoom().getTypeRoom().getTypeRoomName() + "\n" +
                     "Số lượng khách: " + orderDetail.getCustomerQuantity() + "\n";
         }
         String content = "Kính gửi Quý Khách,\n" +
@@ -260,6 +262,7 @@ public class OrderServiceImpl implements OrderService {
                 "\n" +
                 "Chúng tôi rất mong đợi được phục vụ Quý Khách tại Khách Sạn Armani và hy vọng rằng chuyến đi của Quý Khách sẽ trở thành một kỷ niệm đáng nhớ.\n" +
                 "\n" +
+                "Bạn vui lòng đến đúng thời gian đã hẹn để quá trình checkIn diễn ra thuận lợi nhất , Armani hỗ trợ bạn checkIn sớm 1 ngày nếu phòng còn trống và đừng đến muộn quá 1 ngày bạn sẽ không thể checkin bạn nhé ! \n" +
                 "Trân trọng,\n" +
                 "[Armani Hotel]\n" +
                 "Khách Sạn Armani\n";
@@ -383,6 +386,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancel(String id, Integer stt) {
         orderRepository.updateStatus(id, stt);
+        // set hóa đơn chi tiết
+        orderDetailRepository.updateStatusByOrderId(id, stt);
     }
 
 }

@@ -1,10 +1,38 @@
 package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
-import com.example.demo.dto.*;
-import com.example.demo.entity.*;
+import com.example.demo.dto.BlogCommentDTO;
+import com.example.demo.dto.BlogDTO;
+import com.example.demo.dto.CartDTO;
+import com.example.demo.dto.ChangePasswordData;
+import com.example.demo.dto.ComboDTO;
+import com.example.demo.dto.CustomerLoginDTO;
+import com.example.demo.dto.FacilityRequestDTO;
+import com.example.demo.dto.FavouriteRoomDTO;
+import com.example.demo.dto.Message;
+import com.example.demo.dto.RoomId;
+import com.example.demo.dto.RoomRequestDTO;
+import com.example.demo.dto.RoomResponeDTO;
+import com.example.demo.entity.BlogComment;
+import com.example.demo.entity.Customer;
+import com.example.demo.entity.Deposit;
+import com.example.demo.entity.Facility;
+import com.example.demo.entity.Room;
+import com.example.demo.entity.Service;
+import com.example.demo.entity.TypeRoom;
+import com.example.demo.service.BlogCommentService;
+import com.example.demo.service.BlogService;
 import com.example.demo.service.ComboService;
-import com.example.demo.service.*;
+import com.example.demo.service.CustomerService;
+import com.example.demo.service.DepositService;
+import com.example.demo.service.FacilityService;
+import com.example.demo.service.FavouriteService;
+import com.example.demo.service.HomeService;
+import com.example.demo.service.OrderDetailService;
+import com.example.demo.service.RoomService;
+import com.example.demo.service.ServiceService;
+import com.example.demo.service.TypeRoomService;
+import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -12,12 +40,23 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 @CrossOrigin("*")
@@ -118,9 +157,63 @@ public class HomeController {
         }
     }
 
+    @GetMapping("/detail/{id}")
+    public ResponseEntity<Customer> detailCustomer(@PathVariable("id") String id) {
+        return ResponseEntity.ok(customerService.findById(id));
+    }
+
     @PostMapping("/customer/save")
     public ResponseEntity<Customer> add(@RequestBody Customer customer,
-                                        BindingResult result) {
+                                        @Valid BindingResult result) {
+
+        if (result.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : result.getFieldErrors()) {
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+                errorMap.put(key, value);
+            }
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getFullname().isBlank()) {
+            return new ResponseEntity("Full name không được bỏ trống", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getEmail().isBlank()) {
+            return new ResponseEntity("Email không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")) {
+            return new ResponseEntity("Email không đúng định dạng!", HttpStatus.BAD_REQUEST);
+        }
+        if (customerService.existsByEmail(customer.getEmail())) {
+            return new ResponseEntity("Email đã tồn tại, Vui lòng nhập E-mail mới!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getPhoneNumber().isBlank()) {
+            return new ResponseEntity("Số điện thoại không được bỏ trống", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getPhoneNumber().matches("^(\\+84|0)[35789][0-9]{8}$")) {
+            return new ResponseEntity("Số điện thoại không đúng định dạng!!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getCitizenId().isBlank()) {
+            return new ResponseEntity("Căn cước công dân không được để trống!!", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getCitizenId().matches("\\d{12}")) {
+            return new ResponseEntity("Căn cước công dân không đúng định dạng!!", HttpStatus.BAD_REQUEST);
+        }
+        if (customerService.existsByCitizenId(customer.getCitizenId())) {
+            return new ResponseEntity("Căn cước công dân đã tồn tại!!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getPassword().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Mật khẩu", HttpStatus.BAD_REQUEST);
+        }
+//        if (customer.getPassword().length() < 5 || customer.getPassword().length() > 20) {
+//            return new ResponseEntity("Mật khẩu phải từ 5-20 kí tự.", HttpStatus.BAD_REQUEST);
+//        }
+
         customer.setCustomerCode(customerService.generateCustomerCode());
         customer.setCreateAt(new Date());
         customer.setUpdateAt(new Date());
@@ -130,13 +223,104 @@ public class HomeController {
         return new ResponseEntity<Customer>(customer, HttpStatus.OK);
     }
 
+    @PutMapping("/update/{id}")
+    public ResponseEntity<Customer> update(
+            @PathVariable("id") String id,
+            @Valid @RequestBody Customer customer,
+            BindingResult result) {
+        customer.setId(id);
+        if (result.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : result.getFieldErrors()) {
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+                errorMap.put(key, value);
+            }
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getFullname().isBlank()) {
+            return new ResponseEntity("Full name không được bỏ trống", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getGender() == null) {
+            return new ResponseEntity("Giới tính không được bỏ trống", HttpStatus.BAD_REQUEST);
+
+        }
+
+        if (customer.getBirthday() == null) {
+            return new ResponseEntity("Ngày sinh không được để trống!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getEmail().isBlank()) {
+            return new ResponseEntity("Email không được bỏ trống", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")) {
+            return new ResponseEntity("Email không đúng định dạng!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getPhoneNumber().isBlank()) {
+            return new ResponseEntity("Số điện thoại không được bỏ trống", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getPhoneNumber().matches("^(\\+84|0)[35789][0-9]{8}$")) {
+            return new ResponseEntity("Số điện thoại không đúng định dạng!!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getCitizenId().isBlank()) {
+            return new ResponseEntity("Căn cước công dân không được để trống!!", HttpStatus.BAD_REQUEST);
+        }
+        if (!customer.getCitizenId().matches("\\d{12}")) {
+            return new ResponseEntity("Căn cước công dân không đúng định dạng!!", HttpStatus.BAD_REQUEST);
+        }
+
+        if (customer.getPassword().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Mật khẩu", HttpStatus.BAD_REQUEST);
+        }
+//        if (customer.getPassword().length() < 5 || customer.getPassword().length() > 20) {
+//            return new ResponseEntity("Mật khẩu phải từ 5-20 kí tự.", HttpStatus.BAD_REQUEST);
+//        }
+
+        if (customer.getProvinces().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Tỉnh.", HttpStatus.BAD_REQUEST);
+        }
+        if (customer.getDistricts().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Huyện.", HttpStatus.BAD_REQUEST);
+        }
+        if (customer.getWards().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Xã.", HttpStatus.BAD_REQUEST);
+        }
+
+        customer.setUpdateAt(new Date());
+        customerService.add(customer);
+        return new ResponseEntity<Customer>(customer, HttpStatus.OK);
+    }
+
     @PutMapping("/changePassWord/{id}")
     public ResponseEntity<Customer> changePassWord(
             @PathVariable("id") String id,
-            @RequestBody ChangePasswordData changePasswordData
+            @RequestBody ChangePasswordData changePasswordData,
+            @Valid BindingResult result
     ) {
+
+        if (result.hasErrors()) {
+            Map<String, String> errorMap = new HashMap<>();
+            for (FieldError error : result.getFieldErrors()) {
+                String key = error.getField();
+                String value = error.getDefaultMessage();
+                errorMap.put(key, value);
+            }
+            return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
+        }
+
         String newPassword = changePasswordData.getPassword();
         Customer customer = customerService.findById(id);
+
+        if (customer.getPassword().isBlank()) {
+            return new ResponseEntity("Không được bỏ trống Mật khẩu", HttpStatus.BAD_REQUEST);
+        }
+        if (newPassword.length() < 5 || newPassword.length() > 20) {
+            return new ResponseEntity("Mật khẩu phải từ 5-20 kí tự.", HttpStatus.BAD_REQUEST);
+        }
         customer.setPassword(newPassword);
         customer.setUpdateAt(new Date());
         customerService.add(customer);
@@ -199,6 +383,10 @@ public class HomeController {
 
     @PostMapping("/login")
     public ResponseEntity<Customer> login(@RequestBody CustomerLoginDTO customerLoginDTO) {
+//        return new ResponseEntity<>(customerService.login(customerLoginDTO), HttpStatus.OK);
+        if (customerService.login(customerLoginDTO) == null) {
+            return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+        }
         return new ResponseEntity<>(customerService.login(customerLoginDTO), HttpStatus.OK);
     }
 

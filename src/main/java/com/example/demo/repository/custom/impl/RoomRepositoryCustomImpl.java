@@ -98,7 +98,8 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
                         "  od.customer_quantity,\n" +
                         "  o.status,\n" +
                         "  o.create_at,\n" +
-                        "  o.order_code";
+                        "  o.order_code \n " +
+                        " order by o.create_at desc ";
 
         Query query = entityManager.createNativeQuery(sql, "cartResult");
         query.setParameter("customId", customId);

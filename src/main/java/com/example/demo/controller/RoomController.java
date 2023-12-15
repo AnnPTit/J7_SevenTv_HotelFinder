@@ -10,11 +10,8 @@ import com.example.demo.config.S3Util;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.PhotoDTO;
 import com.example.demo.dto.RoomDTO;
-import com.example.demo.entity.Facility;
-import com.example.demo.entity.OrderDetail;
-import com.example.demo.entity.Photo;
-import com.example.demo.entity.Room;
-import com.example.demo.entity.RoomFacility;
+import com.example.demo.entity.*;
+import com.example.demo.repository.OrderRepository;
 import com.example.demo.service.FacilityService;
 import com.example.demo.service.PhotoService;
 import com.example.demo.service.RoomFacilityService;
@@ -63,6 +60,8 @@ public class RoomController {
 
     @Autowired
     private RoomService roomService;
+    @Autowired
+    private OrderRepository orderRepository;
     @Autowired
     private PhotoService photoService;
     @Autowired
@@ -214,7 +213,6 @@ public class RoomController {
     }
 
 
-
     @GetMapping("getPublicUrl")
     public ResponseEntity<String> getPublicUrl(@RequestParam("fileName") String fileName) {
 
@@ -241,7 +239,7 @@ public class RoomController {
     @PostMapping("/save")
     public ResponseEntity<Room> save(@Valid @ModelAttribute Room room,
                                      BindingResult bindingResult,
-                                     @RequestParam(name = "facilities", required = false ) List<String> facilityIds,
+                                     @RequestParam(name = "facilities", required = false) List<String> facilityIds,
                                      @PathParam("photos") MultipartFile[] photos) {
         if (bindingResult.hasErrors()) {
             Map<String, String> errorMap = new HashMap<>();
@@ -294,7 +292,7 @@ public class RoomController {
                 photo.setStatus(Constant.COMMON_STATUS.ACTIVE);
                 photoService.add(photo);
             }
-            if(facilityIds !=null) {
+            if (facilityIds != null) {
                 for (String facilityId : facilityIds) {
                     Facility facility = facilityService.findById(facilityId);
                     if (facility != null) {
@@ -385,20 +383,20 @@ public class RoomController {
             }
 
             // Add new room facilities
-         if(facilityIds !=null){
-             for (String facilityId : facilityIds) {
-                 Facility facility = facilityService.findById(facilityId);
-                 if (facility != null) {
-                     RoomFacility roomFacility = new RoomFacility();
-                     roomFacility.setRoom(room);
-                     roomFacility.setFacility(facility);
-                     roomFacility.setCreateAt(new Date());
-                     roomFacility.setUpdateAt(new Date());
-                     roomFacility.setStatus(Constant.COMMON_STATUS.ACTIVE);
-                     roomFacilityService.save(roomFacility);
-                 }
-             }
-         }
+            if (facilityIds != null) {
+                for (String facilityId : facilityIds) {
+                    Facility facility = facilityService.findById(facilityId);
+                    if (facility != null) {
+                        RoomFacility roomFacility = new RoomFacility();
+                        roomFacility.setRoom(room);
+                        roomFacility.setFacility(facility);
+                        roomFacility.setCreateAt(new Date());
+                        roomFacility.setUpdateAt(new Date());
+                        roomFacility.setStatus(Constant.COMMON_STATUS.ACTIVE);
+                        roomFacilityService.save(roomFacility);
+                    }
+                }
+            }
 
         } catch (IOException e) {
             e.printStackTrace();
@@ -410,9 +408,22 @@ public class RoomController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         Room room = roomService.getRoomById(id);
+        // Check phòng đang nằm trong hóa đơn
+        List<Order> list = orderRepository.getRoomInOrder(id);
+        if (list.size() != 0) {
+            return new ResponseEntity<String>("Không thể xóa phòng vì phòng đang nằm trong hóa đơn", HttpStatus.BAD_REQUEST );
+        }
         room.setStatus(Constant.ROOM.UNACTIVE);
         roomService.add(room);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
+    }
+
+    @DeleteMapping("/change-status/{id}")
+    public ResponseEntity<String> changeStatus(@PathVariable("id") String id) {
+        Room room = roomService.getRoomById(id);
+        room.setStatus(Constant.ROOM.EMPTY);
+        roomService.add(room);
+        return new ResponseEntity<String>("Success " + id + " successfully", HttpStatus.OK);
     }
 
     @GetMapping("/photo/{id}")
