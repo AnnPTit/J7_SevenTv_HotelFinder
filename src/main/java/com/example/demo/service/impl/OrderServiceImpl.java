@@ -383,6 +383,8 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public void cancel(String id, Integer stt) {
         orderRepository.updateStatus(id, stt);
+        // set hóa đơn chi tiết
+        orderDetailRepository.updateStatusByOrderId(id, stt);
     }
 
 }

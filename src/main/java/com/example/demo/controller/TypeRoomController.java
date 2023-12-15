@@ -116,6 +116,7 @@ public class TypeRoomController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         TypeRoom typeRoom = typeRoomService.getTypeRoomById(id);
+        //Todo : check loại phòng đang được sử dụng
         typeRoom.setStatus(Constant.COMMON_STATUS.UNACTIVE);
         typeRoomService.add(typeRoom);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
