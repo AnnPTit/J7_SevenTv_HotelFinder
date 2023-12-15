@@ -27,7 +27,6 @@ public interface RoomRepository extends JpaRepository<Room, String>, RoomReposit
             "       OR (:roomName IS NULL OR room_name LIKE CONCAT('%', :roomName, '%')))\n" +
             "  AND (:floorId IS NULL OR floor_id = :floorId)\n" +
             "  AND (:typeRoomId IS NULL OR type_room_id = :typeRoomId) " +
-            " AND status =1" +
             " ORDER BY update_at DESC", nativeQuery = true)
     Page<Room> loadAndSearch(@Param("roomCode") String roomCode,
                              @Param("roomName") String roomName,

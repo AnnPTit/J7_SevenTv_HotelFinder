@@ -122,6 +122,7 @@ public class FloorController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<Floor> delete(@PathVariable("id") String id) {
         Floor floor = floorService.getFloorById(id);
+        // Todo: Kiểm tra tầng đang có phòng
         floor.setStatus(Constant.COMMON_STATUS.UNACTIVE);
         floorService.add(floor);
         return new ResponseEntity("Deleted", HttpStatus.OK);
