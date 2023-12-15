@@ -113,8 +113,10 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<Room> loadRoomByCondition(Integer capacity, Integer adult, Integer children, Date dayStart, Date dayEnd) {
-        return roomRepository.loadRoomByCondition(capacity, adult, children, dayStart, dayEnd);
+    public List<Room> loadRoomByCondition(String typeRoomId, Integer capacity, Integer adult, Integer children, Date dayStart, Date dayEnd) {
+        return roomRepository.loadRoomByCondition(
+                (typeRoomId != null && !typeRoomId.isEmpty()) ? typeRoomId : null,
+                capacity, adult, children, dayStart, dayEnd);
     }
 
     @Override
