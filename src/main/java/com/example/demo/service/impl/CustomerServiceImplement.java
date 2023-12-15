@@ -146,10 +146,12 @@ public class CustomerServiceImplement implements CustomerService {
     public Customer login(CustomerLoginDTO customerLoginDTO) {
         Customer customer = customerRepository.findCustomerByEmail(customerLoginDTO.getEmail()).orElse(null);
         if (Objects.isNull(customer)) {
-            throw new CustomerNotFondException();
+//            throw new CustomerNotFondException();
+            return null;
         }
         if (!customer.getPassword().equals(customerLoginDTO.getPassword())) {
-            throw new CustomerNotFondException();
+//            throw new CustomerNotFondException();
+            return null;
         }
         return customer;
 
