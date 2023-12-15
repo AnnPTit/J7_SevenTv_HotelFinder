@@ -50,4 +50,6 @@ public interface CustomerService {
 
     boolean existsByEmail(String email);
 
+    boolean existsByCitizenId(String citizenId);
+
 }
