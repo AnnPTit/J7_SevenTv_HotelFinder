@@ -51,7 +51,7 @@ public class Constant {
         public static Integer CHECKED_OUT = 3;
         public static Integer WAIT_PAYMENT = 4;
         public static Integer WAIT_CHECKIN = 5;
-        public static Integer REFUSE = 6;
+        public static Integer CHANGE_ROOM = 10;
         public static Integer LEAVE_EARLY = 7;
     }
 

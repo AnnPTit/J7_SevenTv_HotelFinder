@@ -173,7 +173,8 @@ public class RoomController {
     }
 
     @GetMapping("/loadByCondition")
-    public List<Room> loadByCondition(@RequestParam(name = "capacity", defaultValue = "0") Integer capacity,
+    public List<Room> loadByCondition(@RequestParam(name = "typeRoomId", defaultValue = "") String typeRoomId,
+                                      @RequestParam(name = "capacity", defaultValue = "0") Integer capacity,
                                       @RequestParam(name = "adult", defaultValue = "0") Integer adult,
                                       @RequestParam(name = "children", defaultValue = "0") Integer children,
                                       @RequestParam(name = "dayStart", defaultValue = "") String dayStart,
@@ -195,7 +196,7 @@ public class RoomController {
             e.printStackTrace();
         }
 
-        return roomService.loadRoomByCondition(capacity, adult, children, startDay, endDay);
+        return roomService.loadRoomByCondition(typeRoomId, capacity, adult, children, startDay, endDay);
     }
 
     @PostMapping("upload")

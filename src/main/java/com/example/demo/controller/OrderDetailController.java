@@ -2,10 +2,12 @@ package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.OrderDetailDTO;
+import com.example.demo.entity.Account;
 import com.example.demo.entity.ComboUsed;
 import com.example.demo.entity.InformationCustomer;
 import com.example.demo.entity.Order;
 import com.example.demo.entity.OrderDetail;
+import com.example.demo.entity.OrderTimeline;
 import com.example.demo.entity.Photo;
 import com.example.demo.entity.Room;
 import com.example.demo.entity.ServiceUsed;
@@ -13,8 +15,10 @@ import com.example.demo.service.ComboUsedService;
 import com.example.demo.service.InformationCustomerService;
 import com.example.demo.service.OrderDetailService;
 import com.example.demo.service.OrderService;
+import com.example.demo.service.OrderTimelineService;
 import com.example.demo.service.RoomService;
 import com.example.demo.service.ServiceUsedSerivce;
+import com.example.demo.util.BaseService;
 import com.example.demo.util.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -53,6 +57,8 @@ public class OrderDetailController {
     @Autowired
     private OrderService orderService;
     @Autowired
+    private OrderTimelineService orderTimelineService;
+    @Autowired
     private RoomService roomService;
     @Autowired
     private ServiceUsedSerivce serviceUsedSerivce;
@@ -60,6 +66,8 @@ public class OrderDetailController {
     private InformationCustomerService informationCustomerService;
     @Autowired
     private ComboUsedService comboUsedService;
+    @Autowired
+    private BaseService baseService;
 
     @GetMapping("/getList")
     public List<OrderDetail> getList() {
@@ -178,6 +186,16 @@ public class OrderDetailController {
         orderDetail.setUpdateAt(new Date());
         orderDetail.setUpdatedBy(orderDetailDTO.getUpdatedBy());
         orderDetailService.add(orderDetail);
+
+        OrderTimeline orderTimeline = new OrderTimeline();
+        orderTimeline.setOrder(orderDetail.getOrder());
+        Account account = new Account();
+        account.setId(baseService.getCurrentUser().getId());
+        orderTimeline.setAccount(account);
+        orderTimeline.setType(Constant.ORDER_TIMELINE.CHANGE_ROOM);
+        orderTimeline.setNote(orderDetail.getNote());
+        orderTimeline.setCreateAt(new Date());
+        orderTimelineService.add(orderTimeline);
 
         Room updatedRoom = orderDetail.getRoom();
         updatedRoom.setStatus(Constant.ROOM.ACTIVE);
