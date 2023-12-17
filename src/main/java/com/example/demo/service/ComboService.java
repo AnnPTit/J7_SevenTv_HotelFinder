@@ -22,7 +22,8 @@ public interface ComboService {
 
     boolean existsByCode(String code);
 
-    List<Combo> searchCombosWithService(String comboCode, String comboName, String serviceId, BigDecimal start, BigDecimal end, int pageSize , int offset);
+    List<Combo> searchCombosWithService(String comboCode, String comboName, String serviceId, BigDecimal start, BigDecimal end, int pageSize, int offset);
+
     long countSearch(String comboCode, String comboName, String serviceId, BigDecimal start, BigDecimal end);
 
 
