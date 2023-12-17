@@ -10,4 +10,5 @@ public class UserObject {
     private String hoVaTen;
     private String email;
     private String soDienThoai;
+    private String cccd;
 }
