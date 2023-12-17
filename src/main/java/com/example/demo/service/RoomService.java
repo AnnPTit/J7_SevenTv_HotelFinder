@@ -20,7 +20,7 @@ public interface RoomService {
 
     Page<Room> getAll(Pageable pageable);
 
-    Page<Room> loadAndSearch(String roomCode, String roomName, String floorId, String typeRoomId, Pageable pageable);
+    Page<Room> loadAndSearch(String roomCode, String roomName, String floorId, String typeRoomId, Integer status, Pageable pageable);
 
     Page<Room> loadAndSearchForHome(String roomCode, String roomName, String floorId, String typeRoomId, String id, Pageable pageable);
 
