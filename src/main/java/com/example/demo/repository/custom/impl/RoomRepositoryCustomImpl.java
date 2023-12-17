@@ -1,15 +1,15 @@
 package com.example.demo.repository.custom.impl;
 
-import com.example.demo.dto.CartDTO;
-import com.example.demo.dto.FacilityRequestDTO;
-import com.example.demo.dto.RoomRequestDTO;
-import com.example.demo.dto.RoomResponeDTO;
+import com.example.demo.dto.*;
+import com.example.demo.entity.Photo;
 import com.example.demo.entity.Room;
+import com.example.demo.repository.PhotoRepository;
 import com.example.demo.repository.custom.RoomRepositoryCustom;
 import com.example.demo.util.DataUtil;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.Query;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -25,6 +25,9 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
 
     @PersistenceContext
     private EntityManager entityManager;
+
+    @Autowired
+    private PhotoRepository photoRepository;
 
     private static final char KEY_ESCAPE = '\\';
 
@@ -60,46 +63,49 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
     public List<CartDTO> getCart(String customId, Integer odStt) {
         String sql =
                 "select\n" +
-                        "  r.id as roomId,\n" +
-                        "  r.room_name as roomName,\n" +
-                        "  tr.type_room_name as typeRoom,\n" +
-                        "  o.booking_date_start as bookingStart,\n" +
-                        "  o.booking_date_end as bookingEnd,\n" +
-                        "  tr.price_per_day as price,\n" +
-                        "  od.customer_quantity as numberCustom,\n" +
-                        "  o.status as orderStatus,\n" +
-                        "  o.create_at as bookingDay,\n" +
-                        "  MAX(p.url) as url,\n" +
-                        "  o.order_code as orderCode,\n" +
-                        "  o.deposit,\n" +
-                        "  o.refuse_reason as refuseReason\n" +
+                        " r.id as roomId,\n" +
+                        " r.room_name as roomName,\n" +
+                        " tr.type_room_name as typeRoom,\n" +
+                        " o.booking_date_start as bookingStart,\n" +
+                        " o.booking_date_end as bookingEnd,\n" +
+                        " tr.price_per_day as price,\n" +
+                        " tr.capacity  as capacity,\n" +
+                        " tr.children  as children,\n" +
+                        " od.customer_quantity as numberCustom,\n" +
+                        " o.status as orderStatus,\n" +
+                        " o.create_at as bookingDay,\n" +
+                        " MAX(p.url) as url,\n" +
+                        " o.order_code as orderCode,\n" +
+                        " o.deposit,\n" +
+                        " o.refuse_reason as refuseReason\n" +
                         "from\n" +
-                        "  `order` o\n" +
+                        " `order` o\n" +
                         "inner join order_detail od on\n" +
-                        "  o.id = od.order_id\n" +
+                        " o.id = od.order_id\n" +
                         "inner join room r on\n" +
-                        "  od.room_id = r.id\n" +
+                        " od.room_id = r.id\n" +
                         "inner join type_room tr on\n" +
-                        "  tr.id = r.type_room_id\n" +
-                        "  and tr.status = 1\n" +
+                        " tr.id = r.type_room_id\n" +
+                        " and tr.status = 1\n" +
                         "left join photo p on\n" +
-                        "  p.room_id = r.id\n" +
+                        " p.room_id = r.id\n" +
                         "where\n" +
-                        "  o.customer_id = :customId\n" +
-                        "  and o.status = :odStt " +
-                        "  and o.type_of_order = 0\n" +
+                        " o.customer_id = :customId\n" +
+                        " and o.status = :odStt\n" +
+                        " and o.type_of_order = 0\n" +
                         "group by\n" +
-                        "  r.id,\n" +
-                        "  r.room_name,\n" +
-                        "  tr.type_room_name,\n" +
-                        "  o.booking_date_start,\n" +
-                        "  o.booking_date_end,\n" +
-                        "  tr.price_per_day,\n" +
-                        "  od.customer_quantity,\n" +
-                        "  o.status,\n" +
-                        "  o.create_at,\n" +
-                        "  o.order_code \n " +
-                        " order by o.create_at desc ";
+                        " r.id,\n" +
+                        " r.room_name,\n" +
+                        " tr.type_room_name,\n" +
+                        " o.booking_date_start,\n" +
+                        " o.booking_date_end,\n" +
+                        " tr.price_per_day,\n" +
+                        " od.customer_quantity,\n" +
+                        " o.status,\n" +
+                        " o.create_at,\n" +
+                        " o.order_code \n" +
+                        "order by\n" +
+                        " o.create_at desc";
 
         Query query = entityManager.createNativeQuery(sql, "cartResult");
         query.setParameter("customId", customId);
@@ -110,15 +116,29 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
     }
 
     @Override
-    public Page<Room> searchRoom(FacilityRequestDTO request, Pageable pageable) {
+    public Page<RoomCardDTO> searchRoom(FacilityRequestDTO request, Pageable pageable) {
         Query queryCount = buildQuerySearchRoom(request, null);
 
         Long count = Long.valueOf(queryCount.getResultList().size());
 
-        List<Room> result = new ArrayList<>();
+        List<RoomCardDTO> result = new ArrayList<>();
+        for (RoomCardDTO roomCardDTO : result) {
+            List<Photo> photos = photoRepository.getPhotoByRoomId(roomCardDTO.getId());
+            if (photos.size() != 0) {
+                String url = photos.get(0).getUrl();
+                roomCardDTO.setUrl(url);
+            }
+        }
         if (count > 0) {
             Query query = buildQuerySearchRoom(request, pageable);
             result = query.getResultList();
+            for (RoomCardDTO roomCardDTO : result) {
+                List<Photo> photos = photoRepository.getPhotoByRoomId(roomCardDTO.getId());
+                if (photos.size() != 0) {
+                    String url = photos.get(0).getUrl();
+                    roomCardDTO.setUrl(url);
+                }
+            }
         }
         return new PageImpl<>(result, pageable, count);
     }
@@ -133,6 +153,7 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
                         ", r.note , \n" +
                         "tr.type_room_name  as typeRoom ,\n" +
                         "tr.capacity ,\n" +
+                        "tr.children ,\n" +
                         "tr.price_per_hours as pricePerHours ,\n" +
                         "tr.price_per_day  as pricePerDay, \n" +
                         "0 AS countBook\n" +
@@ -197,6 +218,7 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
                         "    r.note,\n" +
                         "    tr.type_room_name AS typeRoom,\n" +
                         "    tr.capacity,\n" +
+                        "    tr.children,\n" +
                         "    tr.price_per_hours AS pricePerHours,\n" +
                         "    tr.price_per_day AS pricePerDay,\n" +
                         "    COUNT(od.id) AS countBook\n" +
@@ -237,13 +259,26 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
     private Query buildQuerySearchRoom(FacilityRequestDTO request, Pageable pageable) {
         Map<String, Object> params = new HashMap<>();
 
-        StringBuilder sql = new StringBuilder("select r.* from room r\n" +
+        StringBuilder sql = new StringBuilder("select\n" +
+                "  r.id ,\n" +
+                "  r.room_name as name , \n" +
+                "  tr.type_room_name as typeRoom,\n" +
+                "  tr.capacity ,\n" +
+                "  tr.children ,\n" +
+                "  COUNT(od.id) as bookingCount , \n" +
+                "  tr.price_per_day as price\n" +
+                "from\n" +
+                "  room r\n" +
                 "inner join type_room tr\n" +
-                "on tr.id =r.type_room_id and tr.status = 1 \n" +
-                "left  join room_facility rf ON rf.room_id =r.id\n" +
+                "                on\n" +
+                "  tr.id = r.type_room_id\n" +
+                "  and tr.status = 1\n" +
+                "left join room_facility rf on\n" +
+                "  rf.room_id = r.id\n" +
                 "left join order_detail od on\n" +
-                "\tod.room_id = r.id\n" +
-                "where 1=1 ");
+                "  od.room_id = r.id\n" +
+                "where\n" +
+                "  1 = 1");
         if (request.getRoomname() != null && !("").equals(request.getRoomname())) {
             sql.append(" and r.room_name like :roomName");
             params.put("roomName", DataUtil.makeLikeStr(request.getRoomname()));
@@ -267,25 +302,25 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
             params.put("code", request.getTypeRoomChose());
         }
         sql.append(" group by r.id ");
-        if(request.getIsCrease() !=null){
+        if (request.getIsCrease() != null) {
             sql.append(" order by tr.price_per_day  ");
-            if ( request.getIsCrease().equals(false)) {
+            if (request.getIsCrease().equals(false)) {
                 sql.append(" desc ");
-            }else {
+            } else {
                 sql.append(" asc ");
             }
         }
 
-        if(request.getIsCreaseBook() !=null){
+        if (request.getIsCreaseBook() != null) {
             sql.append(" order by COUNT(od.id) ");
-            if ( request.getIsCreaseBook().equals(false)) {
+            if (request.getIsCreaseBook().equals(false)) {
                 sql.append(" desc ");
-            }else {
+            } else {
                 sql.append(" asc ");
             }
         }
 
-        Query query = entityManager.createNativeQuery(sql.toString(), Room.class); // Chỉ định lớp mục tiêu là Room
+        Query query = entityManager.createNativeQuery(sql.toString(), "RoomCardResult"); // Chỉ định lớp mục tiêu là Room
 
         if (pageable != null) {
             query.setFirstResult(pageable.getPageNumber() * pageable.getPageSize()); // ví trí bản ghi đầu

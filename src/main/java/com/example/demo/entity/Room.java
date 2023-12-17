@@ -1,6 +1,7 @@
 package com.example.demo.entity;
 
 import com.example.demo.dto.CartDTO;
+import com.example.demo.dto.RoomCardDTO;
 import com.example.demo.dto.RoomResponeDTO;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.Column;
@@ -48,6 +49,7 @@ import java.util.List;
                                                 @ColumnResult(name = "note", type = String.class),
                                                 @ColumnResult(name = "typeRoom", type = String.class),
                                                 @ColumnResult(name = "capacity", type = Integer.class),
+                                                @ColumnResult(name = "children", type = Integer.class),
                                                 @ColumnResult(name = "pricePerHours", type = BigDecimal.class),
                                                 @ColumnResult(name = "pricePerDay", type = BigDecimal.class),
                                                 @ColumnResult(name = "countBook", type = Integer.class),
@@ -67,6 +69,8 @@ import java.util.List;
                                                 @ColumnResult(name = "bookingStart", type = Date.class),
                                                 @ColumnResult(name = "bookingEnd", type = Date.class),
                                                 @ColumnResult(name = "price", type = BigDecimal.class),
+                                                @ColumnResult(name = "capacity", type = Integer.class),
+                                                @ColumnResult(name = "children", type = Integer.class),
                                                 @ColumnResult(name = "numberCustom", type = Integer.class),
                                                 @ColumnResult(name = "orderStatus", type = Integer.class),
                                                 @ColumnResult(name = "bookingDay", type = Date.class),
@@ -74,6 +78,23 @@ import java.util.List;
                                                 @ColumnResult(name = "orderCode", type = String.class),
                                                 @ColumnResult(name = "deposit", type = BigDecimal.class),
                                                 @ColumnResult(name = "refuseReason", type = String.class),
+                                        }
+                                ),
+                        }
+                ),
+                @SqlResultSetMapping(
+                        name = "RoomCardResult",
+                        classes = {
+                                @ConstructorResult(
+                                        targetClass = RoomCardDTO.class,
+                                        columns = {
+                                                @ColumnResult(name = "id", type = String.class),
+                                                @ColumnResult(name = "name", type = String.class),
+                                                @ColumnResult(name = "typeRoom", type = String.class),
+                                                @ColumnResult(name = "capacity", type = Integer.class),
+                                                @ColumnResult(name = "children", type = Integer.class),
+                                                @ColumnResult(name = "bookingCount", type = Integer.class),
+                                                @ColumnResult(name = "price", type = BigDecimal.class),
                                         }
                                 ),
                         }

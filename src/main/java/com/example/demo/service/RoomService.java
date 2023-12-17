@@ -59,6 +59,6 @@ public interface RoomService {
 
     List<Room> getTopRoom();
 
-    Page<Room> searchRoom(FacilityRequestDTO facilityRequestDTO, Pageable pageable);
+    Page<RoomCardDTO> searchRoom(FacilityRequestDTO facilityRequestDTO, Pageable pageable);
 
 }

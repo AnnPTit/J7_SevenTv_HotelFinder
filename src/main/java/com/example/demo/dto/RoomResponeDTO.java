@@ -17,6 +17,7 @@ public class RoomResponeDTO {
     private String note;
     private String typeRoom;
     private Integer capacity;
+    private Integer children;
     private BigDecimal pricePerHours;
     private BigDecimal pricePerDay;
     private List<String> urls;

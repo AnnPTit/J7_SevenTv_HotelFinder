@@ -226,7 +226,7 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Page<Room> searchRoom(FacilityRequestDTO facilityRequestDTO, Pageable pageable) {
+    public Page<RoomCardDTO> searchRoom(FacilityRequestDTO facilityRequestDTO, Pageable pageable) {
         return roomRepository.searchRoom(facilityRequestDTO, pageable);
     }
 

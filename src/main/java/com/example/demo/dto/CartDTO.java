@@ -17,6 +17,8 @@ public class CartDTO {
     private Date bookingStart;
     private Date bookingEnd;
     private BigDecimal price;
+    private Integer capacity;
+    private Integer children;
     private Integer numberCustom;
     private Integer orderStatus;
     private Date bookingDay;
