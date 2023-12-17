@@ -49,12 +49,13 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public Page<Room> loadAndSearch(String roomCode, String roomName, String floorId, String typeRoomId, Pageable pageable) {
+    public Page<Room> loadAndSearch(String roomCode, String roomName, String floorId, String typeRoomId, Integer status, Pageable pageable) {
         return roomRepository.loadAndSearch(
                 (roomCode != null && !roomCode.isEmpty()) ? roomCode : null,
                 (roomName != null && !roomName.isEmpty()) ? "%" + roomName + "%" : null,
                 (floorId != null && !floorId.isEmpty()) ? floorId : null,
                 (typeRoomId != null && !typeRoomId.isEmpty()) ? typeRoomId : null,
+                (status != null && !status.toString().isEmpty()) ? status : null,
                 pageable
         );
     }

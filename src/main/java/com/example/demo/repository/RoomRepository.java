@@ -23,7 +23,7 @@ public interface RoomRepository extends JpaRepository<Room, String>, RoomReposit
 
     @Query(value = "SELECT *\n" +
             "FROM room\n" +
-            "  WHERE ((:roomCode IS NULL OR room_code = :roomCode)\n" +
+            "  WHERE (:status IS NULL OR status = :status) AND ((:roomCode IS NULL OR room_code = :roomCode)\n" +
             "       OR (:roomName IS NULL OR room_name LIKE CONCAT('%', :roomName, '%')))\n" +
             "  AND (:floorId IS NULL OR floor_id = :floorId)\n" +
             "  AND (:typeRoomId IS NULL OR type_room_id = :typeRoomId) " +
@@ -32,6 +32,7 @@ public interface RoomRepository extends JpaRepository<Room, String>, RoomReposit
                              @Param("roomName") String roomName,
                              @Param("floorId") String floorId,
                              @Param("typeRoomId") String typeRoomId,
+                             @Param("status") Integer status,
                              Pageable pageable);
 
     @Query(value = "SELECT *\n" +

@@ -103,10 +103,11 @@ public class HomeController {
     public Page<Room> loadAndSearch1(@RequestParam(name = "key", defaultValue = "") String key,
                                      @RequestParam(name = "floorId", defaultValue = "") String floorId,
                                      @RequestParam(name = "typeRoomId", defaultValue = "") String typeRoomId,
+                                     @RequestParam(name = "status", defaultValue = "") Integer status,
                                      @RequestParam(name = "current_page", defaultValue = "0") int current_page
     ) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        return roomService.loadAndSearch(key, key, floorId, typeRoomId, pageable);
+        return roomService.loadAndSearch(key, key, floorId, typeRoomId, status, pageable);
     }
 
     @GetMapping("/room/load")
