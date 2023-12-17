@@ -14,5 +14,5 @@ public interface RoomRepositoryCustom {
 
     List<CartDTO> getCart(String customId, Integer odStt);
 
-    Page<Room> searchRoom(FacilityRequestDTO facilityRequestDTO, Pageable pageable);
+    Page<RoomCardDTO> searchRoom(FacilityRequestDTO facilityRequestDTO, Pageable pageable);
 }

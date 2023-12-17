@@ -1,18 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
-import com.example.demo.dto.BlogCommentDTO;
-import com.example.demo.dto.BlogDTO;
-import com.example.demo.dto.CartDTO;
-import com.example.demo.dto.ChangePasswordData;
-import com.example.demo.dto.ComboDTO;
-import com.example.demo.dto.CustomerLoginDTO;
-import com.example.demo.dto.FacilityRequestDTO;
-import com.example.demo.dto.FavouriteRoomDTO;
-import com.example.demo.dto.Message;
-import com.example.demo.dto.RoomId;
-import com.example.demo.dto.RoomRequestDTO;
-import com.example.demo.dto.RoomResponeDTO;
+import com.example.demo.dto.*;
 import com.example.demo.entity.BlogComment;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Deposit;
@@ -485,7 +474,7 @@ public class HomeController {
     }
 
     @PostMapping("/search/facility")
-    public ResponseEntity<Page<Room>> searchRoom(@RequestBody FacilityRequestDTO facilityRequestDTO) {
+    public ResponseEntity<Page<RoomCardDTO>> searchRoom(@RequestBody FacilityRequestDTO facilityRequestDTO) {
         System.out.println(facilityRequestDTO);
         Pageable pageable = PageRequest.of(facilityRequestDTO.getCurrentPage(), 6);
         return new ResponseEntity<>(roomService.searchRoom(facilityRequestDTO, pageable), HttpStatus.OK);
