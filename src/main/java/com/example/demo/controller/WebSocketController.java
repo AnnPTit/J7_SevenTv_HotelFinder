@@ -251,7 +251,7 @@ public class WebSocketController {
                 content = content + "\n Bạn vui lòng đăng nhập với thông tin sau để theo dõi đơn hàng : \n " +
                         "Tên đăng nhập : " + customer.getEmail() + "\n" +
                         "Mật khẩu : " + customer.getPassword() + "\n" +
-                        "Tại đường dẫn sau : http://localhost:3000/sign-in";
+                        "Tại đường dẫn sau : http://localhost:3001/sign-in";
             }
             content = content + "\n Chúc bạn có một trải nghiệm tuyệt vời ! \n";
             mail.setMailSubject(subject);
