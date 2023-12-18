@@ -52,7 +52,7 @@ public class SecurityConfig {
                 .authorizeHttpRequests()
                 .requestMatchers("/api/account/load").permitAll()
                 .requestMatchers("/api/book-room/**").permitAll()
-                .requestMatchers("/api/order/**").permitAll()
+//                .requestMatchers("/api/order/**").permitAll()
                 .requestMatchers("/api/order-detail/**").permitAll()
                 .requestMatchers("/api/order-timeline/**").permitAll()
                 .requestMatchers("/api/information-customer/**").permitAll()
