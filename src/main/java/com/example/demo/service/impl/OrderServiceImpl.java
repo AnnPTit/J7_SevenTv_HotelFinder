@@ -5,10 +5,7 @@ import com.example.demo.dto.*;
 import com.example.demo.entity.*;
 import com.example.demo.errors.BadRequestAlertException;
 import com.example.demo.model.Mail;
-import com.example.demo.repository.CustomerRepository;
-import com.example.demo.repository.OrderDetailRepository;
-import com.example.demo.repository.OrderRepository;
-import com.example.demo.repository.OrderTimelineRepository;
+import com.example.demo.repository.*;
 import com.example.demo.service.MailService;
 import com.example.demo.service.OrderService;
 import com.example.demo.util.BaseService;
@@ -32,7 +29,10 @@ import java.io.InputStream;
 import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.Duration;
+import java.time.LocalDateTime;
 import java.time.ZonedDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 
 @Service
@@ -51,7 +51,8 @@ public class OrderServiceImpl implements OrderService {
     private final MailService mailService;
     @Autowired
     private BaseService baseService;
-
+    @Autowired
+    private TypeRoomRepository typeRoomRepository;
 
     @Override
     public List<Order> getList() {
@@ -328,7 +329,7 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("customer", orderExportDTO.getCustomer());
         parameters.put("bookingDay", DataUtil.dateToString(orderExportDTO.getBookingDay()));
         parameters.put("checkin", orderExportDTO.getCheckIn() != null ? DataUtil.dateToString(orderExportDTO.getCheckIn()) : dataTable.get(0).getCheckIn2());
-        parameters.put("checkOut", orderExportDTO.getCheckOut() != null ? DataUtil.dateToString(orderExportDTO.getCheckIn()) : dataTable.get(0).getCheckOut2());
+        parameters.put("checkOut", orderExportDTO.getCheckOut() != null ? DataUtil.dateToString(orderExportDTO.getCheckOut()) : dataTable.get(0).getCheckOut2());
         parameters.put("now", DataUtil.dateToString(new Date()));
         parameters.put("day", day);
         parameters.put("month", month);
@@ -345,10 +346,41 @@ public class OrderServiceImpl implements OrderService {
         totalPriceString = totalPriceString.substring(0, 1).toUpperCase() + totalPriceString.substring(1);
         parameters.put("stringTotalPrice", totalPriceString);
         parameters.put("totalNumberPrice", DataUtil.currencyFormat(orderExportDTO.getTotalMoney()));
-        parameters.put("total", DataUtil.currencyFormat(totalPriceRoom));
+
         parameters.put("vat", DataUtil.currencyFormat(orderExportDTO.getVat()));
         parameters.put("discount", DataUtil.currencyFormat(orderExportDTO.getDiscount()));
         parameters.put("Parameter1", new JRBeanCollectionDataSource(serviceUsedInvoiceDTOS));
+
+        for (OrderDetailExport daExport : dataTable) {
+//            System.out.println(daExport.getCheckIn().substring(0,10));
+            if (daExport.getCheckIn2().substring(0, 10).equals(daExport.getCheckOut2().substring(0, 10))) {
+                List<TypeRoom> typeRooms = typeRoomRepository.findByName(daExport.getTypeRoom());
+                daExport.setUnitPrice(typeRooms.get(0).getPricePerHours());
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+
+                // Chuyển đổi chuỗi thời điểm thành đối tượng LocalDateTime
+                LocalDateTime checkInDateTime = LocalDateTime.parse(daExport.getCheckIn2(), formatter);
+                LocalDateTime checkOutDateTime = LocalDateTime.parse(daExport.getCheckOut2(), formatter);
+
+                // Tính số giờ giữa hai thời điểm
+                Duration duration = Duration.between(checkInDateTime, checkOutDateTime);
+
+                // Làm tròn số giờ lên nếu có ít nhất một phút
+                long roundedHours = duration.toHours();
+                if (duration.toMinutes() % 60 > 0 || duration.toSecondsPart() > 0) {
+                    roundedHours++;
+                }
+
+                // In ra số giờ làm tròn
+                System.out.println("Số giờ (làm tròn): " + roundedHours);
+                // Chuyển đổi roundedHours sang BigDecimal
+                BigDecimal roundedHoursBigDecimal = BigDecimal.valueOf(roundedHours);
+                BigDecimal totalPrice = typeRooms.get(0).getPricePerHours().multiply(roundedHoursBigDecimal);
+                daExport.setTotalPrice(totalPrice);
+                totalPriceRoom = totalPriceRoom.add(totalPrice);
+            }
+        }
+        parameters.put("total", DataUtil.currencyFormat(totalPriceRoom));
         parameters.put("dataTable", new JRBeanCollectionDataSource(dataTable));
         JasperPrint jasperPrint = JasperFillManager.fillReport(jasperReport, parameters, new JREmptyDataSource());
         JRDocxExporter export = new JRDocxExporter();
