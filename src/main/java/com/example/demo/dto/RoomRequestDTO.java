@@ -18,4 +18,5 @@ public class RoomRequestDTO {
     private List<BigDecimal> pricePerDays;
     private Date checkIn;
     private Date checkOut;
+    private int children;
 }

@@ -209,8 +209,8 @@ public class WebSocketController {
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setCreateAt(new Date());
                 orderDetail.setUpdateAt(new Date());
-                orderDetail.setCheckInDatetime(payload.getDayStart());
-                orderDetail.setCheckOutDatetime(payload.getDayEnd());
+                orderDetail.setCheckInDatetime(DataUtil.setFixedTime(payload.getDayStart(), 14, 0, 0));
+                orderDetail.setCheckOutDatetime(DataUtil.setFixedTime(payload.getDayEnd(), 12, 0, 0));
                 orderDetail.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
                 roomService.add(room);
                 // Thêm hóa đơn chi tiết
