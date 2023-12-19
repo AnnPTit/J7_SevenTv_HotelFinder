@@ -2,7 +2,6 @@ package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.ConfirmOrderDTO;
-import com.example.demo.dto.DiscountCbbDTO;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.RevenueDTO;
 import com.example.demo.entity.*;
@@ -114,7 +113,7 @@ public class OrderController {
         for (Order order : listoOrders) {
             // Nếu hạn thanh toán <= hôm nay
             Date date = new Date();
-            if (order.getPaymentDeadline() != null && !order.getPaymentDeadline().after(date)) {
+            if (order.getPaymentDeadline() != null && !order.getPaymentDeadline().after(date) && Constant.ORDER_STATUS.WAIT_CONFIRM.equals(order.getStatus())) {
                 // Hết hạn thanh toán -> Set trạng thái hóa đơn về 8
                 order.setStatus(Constant.ORDER_STATUS.EXPIRED_PAYMENT);
                 for (OrderDetail orderDetail : order.getOrderDetailList()) {
@@ -140,7 +139,7 @@ public class OrderController {
 
                 // So sánh nếu bookingDate lớn hơn ngày hiện tại 1 ngày
                 // 14                           12
-                if (currentDate.isAfter(bookingDate.plusDays(1))) {
+                if (currentDate.isAfter(bookingDate.plusDays(1)) && Constant.ORDER_STATUS.WAIT_CONFIRM.equals(order.getStatus())) {
                     // Hết hạn thanh toán -> Set trạng thái hóa đơn về 9
                     order.setStatus(Constant.ORDER_STATUS.EXPIRED_CHECKIN);
 
