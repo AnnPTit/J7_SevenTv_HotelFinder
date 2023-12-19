@@ -86,6 +86,7 @@ public class OrderDetailController {
             orderDetailDTO.setRoom(orderDetail.getRoom());
             orderDetailDTO.setCheckIn(orderDetail.getCheckInDatetime());
             orderDetailDTO.setCheckOut(orderDetail.getCheckOutDatetime());
+            orderDetailDTO.setCheckOutReal(orderDetail.getCheckOutDatetimeReal());
             orderDetailDTO.setCustomerQuantity(orderDetail.getCustomerQuantity());
             orderDetailDTO.setTimeIn(orderDetail.getTimeIn());
             orderDetailDTO.setRoomPrice(orderDetail.getRoomPrice());

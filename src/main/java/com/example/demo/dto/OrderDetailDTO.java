@@ -30,6 +30,7 @@ public class OrderDetailDTO {
     private String orderDetailCode;
     private Date checkIn;
     private Date checkOut;
+    private Date checkOutReal;
     private Integer timeIn;
     private BigDecimal roomPrice;
     private Integer customerQuantity;
