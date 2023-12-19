@@ -38,6 +38,7 @@ import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
 import java.time.temporal.ChronoUnit;
 import java.util.*;
+import java.util.concurrent.TimeUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -342,6 +343,7 @@ public class OrderServiceImpl implements OrderService {
         for (OrderDetailExport export : dataTable) {
             totalPriceRoom = totalPriceRoom.add(export.getTotalPrice2());
         }
+
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         InputStream employeeReportStream = getClass().getResourceAsStream("/templates/doc/recommended.jrxml");
         JasperReport jasperReport = JasperCompileManager.compileReport(employeeReportStream);
@@ -352,7 +354,7 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("customer", orderExportDTO.getCustomer());
         parameters.put("bookingDay", DataUtil.dateToString(orderExportDTO.getBookingDay()));
         parameters.put("checkin", orderExportDTO.getCheckIn() != null ? DataUtil.dateToString(orderExportDTO.getCheckIn()) : dataTable.get(0).getCheckIn2());
-        parameters.put("checkOut", orderExportDTO.getCheckOut() != null ? DataUtil.dateToString(orderExportDTO.getCheckOut()) : dataTable.get(0).getCheckOut2());
+        parameters.put("checkOut", orderExportDTO.getCheckOut() != null ? DataUtil.dateToString(orderExportDTO.getCheckOut()) : dataTable.get(0).getCheckOut3());
         parameters.put("now", DataUtil.dateToString(new Date()));
         parameters.put("day", day);
         parameters.put("month", month);
@@ -376,7 +378,7 @@ public class OrderServiceImpl implements OrderService {
 
         for (OrderDetailExport daExport : dataTable) {
 //            System.out.println(daExport.getCheckIn().substring(0,10));
-            if (daExport.getCheckIn2().substring(0, 10).equals(daExport.getCheckOut2().substring(0, 10))) {
+            if (daExport.getTimeIn() == 2) {
                 List<TypeRoom> typeRooms = typeRoomRepository.findByName(daExport.getTypeRoom());
                 daExport.setUnitPrice(typeRooms.get(0).getPricePerHours());
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
@@ -411,6 +413,21 @@ public class OrderServiceImpl implements OrderService {
         export.setExporterOutput(new SimpleOutputStreamExporterOutput(baos));
         export.exportReport();
         return new ByteArrayResource(baos.toByteArray());
+    }
+
+    private static Date parseDate(String dateString) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        try {
+            return dateFormat.parse(dateString);
+        } catch (ParseException e) {
+            e.printStackTrace();
+            return null;
+        }
+    }
+
+    private static long calculateDaysDifference(Date checkInDate, Date checkOutDate) {
+        long differenceInMilliseconds = checkOutDate.getTime() - checkInDate.getTime();
+        return TimeUnit.DAYS.convert(differenceInMilliseconds, TimeUnit.MILLISECONDS);
     }
 
     @Override

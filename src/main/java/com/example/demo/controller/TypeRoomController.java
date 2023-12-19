@@ -1,7 +1,11 @@
 package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
+import com.example.demo.entity.Order;
+import com.example.demo.entity.Room;
 import com.example.demo.entity.TypeRoom;
+import com.example.demo.repository.OrderRepository;
+import com.example.demo.repository.RoomRepository;
 import com.example.demo.service.TypeRoomService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +39,9 @@ public class TypeRoomController {
 
     @Autowired
     private TypeRoomService typeRoomService;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @GetMapping("/getList")
     public List<TypeRoom> getList() {
@@ -116,7 +123,14 @@ public class TypeRoomController {
     @DeleteMapping("/delete/{id}")
     public ResponseEntity<String> delete(@PathVariable("id") String id) {
         TypeRoom typeRoom = typeRoomService.getTypeRoomById(id);
-        //Todo : check loại phòng đang được sử dụng
+        // Lấy danh sách phòng
+        List<Room> list = typeRoom.getRoomList();
+        for (Room room :list) {
+            List<Order> listR = orderRepository.getRoomInOrder(room.getId());
+            if (list.size() != 0) {
+                return new ResponseEntity<String>("Không thể xóa loại phòng vì phòng đang nằm trong hóa đơn", HttpStatus.BAD_REQUEST );
+            }
+        }
         typeRoom.setStatus(Constant.COMMON_STATUS.UNACTIVE);
         typeRoomService.add(typeRoom);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
