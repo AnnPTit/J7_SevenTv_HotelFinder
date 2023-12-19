@@ -338,7 +338,7 @@ public class OrderController {
         order.setTotalMoney(orderDTO.getTotalMoney());
         order.setVat(orderDTO.getVat());
         order.setMoneyGivenByCustomer(orderDTO.getMoneyGivenByCustomer());
-        order.setExcessMoney(orderDTO.getMoneyGivenByCustomer().subtract(orderDTO.getTotalMoney()));
+        order.setExcessMoney(orderDTO.getExcessMoney());
         order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
         order.setUpdatedBy(baseService.getCurrentUser().getFullname());

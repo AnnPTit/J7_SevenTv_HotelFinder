@@ -8,6 +8,7 @@ import com.example.demo.model.Mail;
 import com.example.demo.repository.*;
 import com.example.demo.service.MailService;
 import com.example.demo.service.OrderService;
+import com.example.demo.service.RoomService;
 import com.example.demo.util.BaseService;
 import com.example.demo.util.DataUtil;
 import com.example.demo.util.NumToViet;
@@ -30,9 +31,12 @@ import java.math.BigDecimal;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Duration;
+import java.time.LocalDate;
 import java.time.LocalDateTime;
+import java.time.ZoneId;
 import java.time.ZonedDateTime;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @Service
@@ -53,6 +57,8 @@ public class OrderServiceImpl implements OrderService {
     private BaseService baseService;
     @Autowired
     private TypeRoomRepository typeRoomRepository;
+    @Autowired
+    private RoomService roomService;
 
     @Override
     public List<Order> getList() {
@@ -285,6 +291,23 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ConfirmOrderDTO updateSurcharge(ConfirmOrderDTO confirmOrderDTO) {
         Order order = orderRepository.getById(confirmOrderDTO.getOrderId());
+        for (OrderDetail orderDetail : orderDetailRepository.getAllByOrderId(order.getId())) {
+            if (orderDetail.getTimeIn() == 1) {
+                orderDetail.setCheckInDatetime(new Date());
+                Room room = roomService.getRoomById(orderDetail.getRoom().getId());
+                Date bookingStart = orderDetail.getCheckInDatetime();
+                Date bookingEnd = orderDetail.getCheckOutDatetime();
+                LocalDate startLocalDate = bookingStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate endLocalDate = bookingEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                long days = ChronoUnit.DAYS.between(startLocalDate, endLocalDate);
+                System.out.println(days);
+                BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
+                BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days + 1));
+                orderDetail.setRoomPrice(totalCost);
+                orderDetail.setUpdateAt(new Date());
+                orderDetailRepository.save(orderDetail);
+            }
+        }
         order.setSurcharge(confirmOrderDTO.getSurcharge());
         orderRepository.save(order);
         return confirmOrderDTO;
