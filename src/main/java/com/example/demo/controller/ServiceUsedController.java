@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -67,6 +68,12 @@ public class ServiceUsedController {
             serviceUsedSerivce.add(serviceUsed);
             return new ResponseEntity<ServiceUsed>(serviceUsed, HttpStatus.OK);
         }
+    }
+
+    @PutMapping("/update")
+    public ResponseEntity<String> update(@RequestBody ServiceUsedDTO serviceUsedDTO) {
+        serviceUsedSerivce.updateQuantity(serviceUsedDTO.getQuantity(), serviceUsedDTO.getId());
+        return new ResponseEntity<String>("Update số lượng thành công", HttpStatus.OK);
     }
 
     @DeleteMapping("/delete/{id}")

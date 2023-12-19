@@ -50,4 +50,9 @@ public class ComboUsedServiceImpl implements ComboUsedService {
     public void updateQuantityComboUsed(Integer quantity, String comboId) {
         comboUsedRepository.updateQuantityComboUsed(quantity, comboId);
     }
+
+    @Override
+    public void updateQuantity(Integer quantity, String comboId) {
+        comboUsedRepository.updateQuantity(quantity, comboId);
+    }
 }

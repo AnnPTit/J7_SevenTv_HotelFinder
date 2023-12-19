@@ -25,4 +25,8 @@ public interface ServiceUsedRepository extends JpaRepository<ServiceUsed, String
     @Query(value = "UPDATE ServiceUsed su SET su.quantity=:quantity WHERE su.service.id=:serviceId")
     void updateQuantityServiceUsed(@Param("quantity") Integer quantity, @Param("serviceId") String serviceId);
 
+    @Modifying()
+    @Query(value = "UPDATE ServiceUsed su SET su.quantity=:quantity WHERE su.id=:serviceId")
+    void updateQuantity(@Param("quantity") Integer quantity, @Param("serviceId") String serviceId);
+
 }

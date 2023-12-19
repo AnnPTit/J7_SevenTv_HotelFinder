@@ -26,4 +26,8 @@ public interface ComboUsedRepository extends JpaRepository<ComboUsed, String> {
     @Query(value = "UPDATE ComboUsed cu SET cu.quantity=:quantity WHERE cu.combo.id=:comboId")
     void updateQuantityComboUsed(@Param("quantity") Integer quantity, @Param("comboId") String comboId);
 
+    @Modifying()
+    @Query(value = "UPDATE ComboUsed cu SET cu.quantity=:quantity WHERE cu.id=:comboId")
+    void updateQuantity(@Param("quantity") Integer quantity, @Param("comboId") String comboId);
+
 }

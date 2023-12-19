@@ -49,4 +49,9 @@ public class ServiceUsedSerivceImpl implements ServiceUsedSerivce {
         serviceUsedRepository.updateQuantityServiceUsed(quantity, serviceId);
     }
 
+    @Override
+    public void updateQuantity(Integer quantity, String serviceId) {
+        serviceUsedRepository.updateQuantity(quantity, serviceId);
+    }
+
 }

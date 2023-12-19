@@ -71,7 +71,7 @@ public interface OrderRepository extends JpaRepository<Order, String>, OrderRepo
     Page<Order> loadBookRoomOffline(@Param("orderCode") String orderCode,
                                     @Param("status") Integer status, Pageable pageable);
 
-    @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 0")
+    @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status IN (0, 6, 8, 9)")
     Long countOrderCancel();
 
     @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 1")
@@ -82,6 +82,12 @@ public interface OrderRepository extends JpaRepository<Order, String>, OrderRepo
 
     @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 3")
     Long countOrderAccept();
+
+    @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 4")
+    Long countOrderConfirmInfo();
+
+    @Query(value = "SELECT COUNT(od.id) FROM Order od WHERE od.status = 5")
+    Long countOrderPaymentDeposit();
 
     @Query(value = "SELECT * FROM `order` WHERE id = :id", nativeQuery = true)
     Order getById(String id);

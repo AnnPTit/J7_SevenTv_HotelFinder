@@ -20,4 +20,6 @@ public interface ComboUsedService {
 
     void updateQuantityComboUsed(Integer quantity, String comboId);
 
+    void updateQuantity(Integer quantity, String comboId);
+
 }
