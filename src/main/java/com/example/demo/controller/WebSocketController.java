@@ -205,6 +205,7 @@ public class WebSocketController {
                 long days = ChronoUnit.DAYS.between(startLocalDate, endLocalDate);
                 BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
                 BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days));
+                orderDetail.setTimeIn(1);
                 orderDetail.setRoomPrice(totalCost);
                 orderDetail.setCustomerQuantity(roomData.getGuestCount());
                 orderDetail.setCreateAt(new Date());

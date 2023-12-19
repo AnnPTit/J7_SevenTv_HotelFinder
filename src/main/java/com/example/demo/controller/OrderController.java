@@ -23,8 +23,10 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.Instant;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -336,7 +338,7 @@ public class OrderController {
         order.setTotalMoney(orderDTO.getTotalMoney());
         order.setVat(orderDTO.getVat());
         order.setMoneyGivenByCustomer(orderDTO.getMoneyGivenByCustomer());
-        order.setExcessMoney(orderDTO.getMoneyGivenByCustomer().subtract(orderDTO.getTotalMoney()));
+        order.setExcessMoney(orderDTO.getExcessMoney());
         order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
         order.setUpdatedBy(baseService.getCurrentUser().getFullname());
@@ -367,7 +369,7 @@ public class OrderController {
         String paymentMethodCode = "PT" + formattedDate + randomDigits;
         paymentMethod.setPaymentMethodCode(paymentMethodCode);
         paymentMethod.setMethod(true);
-        paymentMethod.setTotalMoney(order.getTotalMoney());
+        paymentMethod.setTotalMoney(order.getMoneyGivenByCustomer());
         paymentMethod.setNote(order.getNote());
         paymentMethod.setCreateAt(new Date());
         paymentMethod.setCreateBy(order.getCreateBy());
@@ -378,7 +380,7 @@ public class OrderController {
 
         HistoryTransaction historyTransaction = new HistoryTransaction();
         historyTransaction.setOrder(order);
-        historyTransaction.setTotalMoney(order.getTotalMoney());
+        historyTransaction.setTotalMoney(order.getMoneyGivenByCustomer());
         historyTransaction.setNote(order.getNote());
         historyTransaction.setCreateAt(new Date());
         historyTransaction.setCreateBy(order.getCreateBy());
@@ -498,6 +500,42 @@ public class OrderController {
     @PostMapping("/confirm-order")
     public ResponseEntity<ConfirmOrderDTO> confirmOrder(@RequestBody ConfirmOrderDTO confirmOrderDTO) {
         return new ResponseEntity<>(orderService.confirmOrder(confirmOrderDTO), HttpStatus.OK);
+    }
+
+    @PutMapping("/update-checkout/{id}")
+    public ResponseEntity<Order> updateSurcharge(@PathVariable("id") String id) {
+        Order order = orderService.getOrderById(id);
+        for (OrderDetail orderDetail : order.getOrderDetailList()) {
+            if (orderDetail.getTimeIn() == 1) {
+                Room room = roomService.getRoomById(orderDetail.getRoom().getId());
+                orderDetail.setCheckOutDatetimeReal(new Date());
+                Date bookingStart = orderDetail.getCheckInDatetime();
+                Date bookingEnd = orderDetail.getCheckOutDatetimeReal();
+                LocalDate startLocalDate = bookingStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                LocalDate endLocalDate = bookingEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+                long days = ChronoUnit.DAYS.between(startLocalDate, endLocalDate);
+                System.out.println(days);
+                BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
+                BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days + 1));
+                orderDetail.setRoomPrice(totalCost);
+                orderDetail.setUpdateAt(new Date());
+                orderDetailService.add(orderDetail);
+            } else if (orderDetail.getTimeIn() == 2) {
+                Room room = roomService.getRoomById(orderDetail.getRoom().getId());
+                orderDetail.setCheckOutDatetimeReal(new Date());
+                Date bookingStart = orderDetail.getCheckInDatetime();
+                Date bookingEnd = orderDetail.getCheckOutDatetimeReal();
+                LocalDateTime startLocalDateTime = bookingStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                LocalDateTime endLocalDateTime = bookingEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDateTime();
+                long hours = ChronoUnit.HOURS.between(startLocalDateTime, endLocalDateTime);
+                BigDecimal pricePerHours = room.getTypeRoom().getPricePerHours();
+                BigDecimal totalCost = pricePerHours.multiply(BigDecimal.valueOf(hours + 1));
+                orderDetail.setRoomPrice(totalCost);
+                orderDetail.setUpdateAt(new Date());
+                orderDetailService.add(orderDetail);
+            }
+        }
+        return new ResponseEntity<>(order, HttpStatus.OK);
     }
 
     @PutMapping("/update-surcharge")
