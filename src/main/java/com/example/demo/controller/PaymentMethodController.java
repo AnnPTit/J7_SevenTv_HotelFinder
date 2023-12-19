@@ -56,6 +56,7 @@ import java.net.URLEncoder;
 import java.nio.charset.StandardCharsets;
 import java.security.InvalidKeyException;
 import java.security.NoSuchAlgorithmException;
+import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
@@ -94,9 +95,29 @@ public class PaymentMethodController {
     @GetMapping("/loadAndSearch")
     public Page<PaymentMethod> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
                                              @RequestParam(name = "method", defaultValue = "") Boolean method,
+                                             @RequestParam(name = "startDate", defaultValue = "") String startDateStr,
+                                             @RequestParam(name = "endDate", defaultValue = "") String endDateStr,
                                              @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+
+        Date startDate = null;
+        Date endDate = null;
+
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+
+        try {
+            if (!startDateStr.isEmpty()) {
+                startDate = dateFormat.parse(startDateStr);
+            }
+
+            if (!endDateStr.isEmpty()) {
+                endDate = dateFormat.parse(endDateStr);
+            }
+        } catch (ParseException e) {
+            e.printStackTrace();
+        }
+
         Pageable pageable = PageRequest.of(current_page, 5);
-        return paymentMethodService.loadAndSearch(key, method, key, pageable);
+        return paymentMethodService.loadAndSearch(key, method, key, startDate, endDate, pageable);
     }
 
     @GetMapping("/load/{id}")

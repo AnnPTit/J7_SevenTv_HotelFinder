@@ -7,6 +7,7 @@ import net.sf.jasperreports.engine.JRException;
 import org.springframework.core.io.ByteArrayResource;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.jpa.repository.Query;
 
 import java.math.BigDecimal;
 import java.util.Date;
@@ -39,6 +40,10 @@ public interface OrderService {
     Long countOrderConfirm();
 
     Long countOrderAccept();
+
+    Long countOrderConfirmInfo();
+
+    Long countOrderPaymentDeposit();
 
     Order add(Order order);
 

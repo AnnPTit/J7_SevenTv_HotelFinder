@@ -131,6 +131,16 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
+    public Long countOrderConfirmInfo() {
+        return orderRepository.countOrderConfirmInfo();
+    }
+
+    @Override
+    public Long countOrderPaymentDeposit() {
+        return orderRepository.countOrderPaymentDeposit();
+    }
+
+    @Override
     public Order add(Order order) {
         try {
             return orderRepository.save(order);

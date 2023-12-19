@@ -7,6 +7,7 @@ import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.RevenueDTO;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
+import com.example.demo.util.BaseService;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -52,6 +53,8 @@ public class OrderController {
     private OrderTimelineService orderTimelineService;
     @Autowired
     private DiscountProgramService discountProgramService;
+    @Autowired
+    private BaseService baseService;
 
     @GetMapping("/load")
     public Page<Order> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
@@ -114,6 +117,7 @@ public class OrderController {
                 order.setStatus(Constant.ORDER_STATUS.EXPIRED_PAYMENT);
                 for (OrderDetail orderDetail : order.getOrderDetailList()) {
                     orderDetail.setStatus(Constant.ORDER_DETAIL.EXPIRED_PAYMENT);
+                    orderDetail.getRoom().setStatus(Constant.ROOM.EMPTY);
                     orderDetailService.add(orderDetail);
                 }
 
@@ -140,6 +144,7 @@ public class OrderController {
 
                     for (OrderDetail orderDetail : order.getOrderDetailList()) {
                         orderDetail.setStatus(Constant.ORDER_DETAIL.EXPIRED_CHECKIN);
+                        orderDetail.getRoom().setStatus(Constant.ROOM.EMPTY);
                         orderDetailService.add(orderDetail);
                     }
 
@@ -193,6 +198,16 @@ public class OrderController {
     @GetMapping("/countByAccept")
     public Long countByAccept() {
         return orderService.countOrderAccept();
+    }
+
+    @GetMapping("/countByConfirmInfo")
+    public Long countByConfirmInfo() {
+        return orderService.countOrderConfirmInfo();
+    }
+
+    @GetMapping("/countByPaymentDeposit")
+    public Long countByPaymentDeposit() {
+        return orderService.countOrderPaymentDeposit();
     }
 
     @GetMapping("/getRevenueMonth")
@@ -292,6 +307,7 @@ public class OrderController {
         order.setVat(orderDTO.getVat());
         order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
+        order.setUpdatedBy(baseService.getCurrentUser().getFullname());
         order.setStatus(Constant.ORDER_STATUS.CHECKED_IN);
         orderService.add(order);
 
@@ -323,6 +339,7 @@ public class OrderController {
         order.setExcessMoney(orderDTO.getMoneyGivenByCustomer().subtract(orderDTO.getTotalMoney()));
         order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
+        order.setUpdatedBy(baseService.getCurrentUser().getFullname());
         if (orderDTO.getDiscountProgram() != null) {
             order.setDiscountProgram(orderDTO.getDiscountProgram());
             discountProgramService.updateNumberOfApplication(orderDTO.getDiscountProgram());
@@ -453,7 +470,7 @@ public class OrderController {
     public ResponseEntity<String> delete(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
         Order order = orderService.getOrderById(id);
         order.setStatus(Constant.ORDER_STATUS.CANCEL);
-        order.setDeleted(orderDTO.getDeleted());
+        order.setDeleted(baseService.getCurrentUser().getFullname());
         order.setNote(orderDTO.getNote());
         order.setUpdateAt(new Date());
         orderService.add(order);
@@ -469,7 +486,8 @@ public class OrderController {
 
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
-        orderTimeline.setAccount(order.getAccount());
+        Account account = accountService.findById(baseService.getCurrentUser().getId());
+        orderTimeline.setAccount(account);
         orderTimeline.setType(Constant.ORDER_TIMELINE.CANCEL);
         orderTimeline.setNote(order.getNote());
         orderTimeline.setCreateAt(new Date());

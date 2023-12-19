@@ -87,6 +87,7 @@ public class OrderDetailController {
             orderDetailDTO.setCheckIn(orderDetail.getCheckInDatetime());
             orderDetailDTO.setCheckOut(orderDetail.getCheckOutDatetime());
             orderDetailDTO.setCustomerQuantity(orderDetail.getCustomerQuantity());
+            orderDetailDTO.setTimeIn(orderDetail.getTimeIn());
             orderDetailDTO.setRoomPrice(orderDetail.getRoomPrice());
             List<String> roomImages = orderDetail.getRoom().getPhotoList()
                     .stream()
@@ -160,12 +161,13 @@ public class OrderDetailController {
         orderDetail.setOrder(orderDetailDTO.getOrder());
         orderDetail.setCheckInDatetime(orderDetailDTO.getCheckIn());
         orderDetail.setCheckOutDatetime(orderDetailDTO.getCheckOut());
+        orderDetail.setTimeIn(orderDetailDTO.getTimeIn());
         orderDetail.setRoomPrice(orderDetailDTO.getRoomPrice());
         orderDetail.setCustomerQuantity(orderDetailDTO.getCustomerQuantity());
         orderDetail.setCreateAt(new Date());
-        orderDetail.setCreateBy(orderDetailDTO.getCreateBy());
+        orderDetail.setCreateBy(baseService.getCurrentUser().getFullname());
         orderDetail.setUpdateAt(new Date());
-        orderDetail.setUpdatedBy(orderDetailDTO.getUpdatedBy());
+        orderDetail.setUpdatedBy(baseService.getCurrentUser().getFullname());
         orderDetail.setStatus(Constant.ORDER_DETAIL.WAIT_CONFIRM);
         orderDetailService.add(orderDetail);
 
@@ -220,6 +222,7 @@ public class OrderDetailController {
         for (InformationCustomer informationCustomer : informationCustomerList) {
             informationCustomerService.delete(informationCustomer);
         }
+        orderDetail.setDeleted(baseService.getCurrentUser().getFullname());
         orderDetail.setStatus(Constant.ORDER_DETAIL.CANCEL);
         orderDetailService.add(orderDetail);
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
