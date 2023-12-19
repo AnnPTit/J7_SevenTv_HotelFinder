@@ -133,7 +133,7 @@ public class DataUtil {
 
     // Convert ngày theo định dạng
     public static String convertDateToString(Date date) {
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd/MM/yyyy HH:mm:ss");
+        SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         return sdf.format(date);
     }
 
