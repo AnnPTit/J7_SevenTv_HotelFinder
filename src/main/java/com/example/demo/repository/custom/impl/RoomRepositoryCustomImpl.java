@@ -195,7 +195,7 @@ public class RoomRepositoryCustomImpl implements RoomRepositoryCustom {
             params.put("start", request.getPricePerDays().get(0));
             params.put("end", request.getPricePerDays().get(1));
         }
-        if (!CollectionUtils.isEmpty(request.getPricePerDays()) && !request.getPricePerDays().contains(null)) {
+        if (request.getChildren() !=0) {
             sql.append(" and (tr.children =:children )");
             params.put("children", request.getChildren());
         }
