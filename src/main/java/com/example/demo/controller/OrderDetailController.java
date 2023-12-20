@@ -146,13 +146,13 @@ public class OrderDetailController {
         System.out.println(dayEnd);
         String id = orderDetailDTO.getRoom().getId();
         System.out.println(id);
-        List<String> list = orderDetailService.checkRoomExist(DataUtil.toLocalDateTime(dayStart), DataUtil.toLocalDateTime(dayEnd), id);
+        List<String> list = orderDetailService.checkRoomExist(DataUtil.dateToStringSql(dayStart), DataUtil.dateToStringSql(dayEnd), id);
         System.out.println(list.toString());
         if (!list.isEmpty()) {
             SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
             String startDate = sdf.format(dayStart);
             String endDate = sdf.format(dayEnd);
-            String errorMessage = "Phòng không khả dụng từ ngày " + startDate + " đến ngày " + endDate;
+            String errorMessage = "Phòng đã được đặt trong khoảng từ ngày " + startDate + " đến ngày " + endDate;
             return new ResponseEntity<String>(errorMessage, HttpStatus.BAD_REQUEST);
         }
 
