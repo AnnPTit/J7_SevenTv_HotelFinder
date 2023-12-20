@@ -53,22 +53,30 @@ public class OrderRepositoryCustomImpl implements OrderRepositoryCustom {
 
     @Override
     public List<OrderDetailExport> getDataDetail(String orderId) {
-        String sql = "select\n" +
-                " r.room_name as roomName ,\n" +
-                " tr.type_room_name as typeRoom ,\n" +
-                " coalesce(od.customer_quantity , 0) as quantity,\n" +
-                " od.check_in_datetime as checkIn ,\n" +
-                " od.check_out_datetime as checkOut ,\n" +
-                " tr.price_per_day as unitPrice ,\n" +
-                " (DATEDIFF(od.check_out_datetime, od.check_in_datetime)* tr.price_per_day ) as totalPrice\n" +
-                "from\n" +
-                " order_detail od\n" +
-                "join room r on\n" +
-                " r.id = od.room_id\n" +
-                "join type_room tr on\n" +
-                " tr.id = r.type_room_id\n" +
-                "where\n" +
-                " od.order_id =:orderId";
+        String sql = "SELECT\n" +
+                "    r.room_name AS roomName,\n" +
+                "    tr.type_room_name AS typeRoom,\n" +
+                "    COALESCE(od.customer_quantity, 0) AS quantity,\n" +
+                "    od.check_in_datetime AS checkIn,\n" +
+                "    od.check_out_datetime_real AS checkOut,\n" +
+                "    od.check_out_datetime AS checkOutFake,\n" +
+                "    tr.price_per_day AS unitPrice,\n" +
+                "    (\n" +
+                "        DATEDIFF(od.check_out_datetime_real, od.check_in_datetime) +\n" +
+                "        CASE\n" +
+                "            WHEN TIME(od.check_out_datetime_real) > TIME(od.check_in_datetime) THEN 1\n" +
+                "            ELSE 0\n" +
+                "        END\n" +
+                "    ) * tr.price_per_day AS totalPrice,\n" +
+                "    od.time_in AS timeIn\n" +
+                "FROM\n" +
+                "    order_detail od\n" +
+                "JOIN room r ON\n" +
+                "    r.id = od.room_id\n" +
+                "JOIN type_room tr ON\n" +
+                "    tr.id = r.type_room_id\n" +
+                "WHERE\n" +
+                "    od.order_id =:orderId";
         Query query = entityManager.createNativeQuery(sql, "orderDetailResult");
         query.setParameter("orderId", orderId);
         @SuppressWarnings("unchecked")

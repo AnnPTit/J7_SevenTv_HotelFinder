@@ -60,8 +60,10 @@ import java.util.List;
                                                 @ColumnResult(name = "quantity", type = Integer.class),
                                                 @ColumnResult(name = "checkIn", type = Date.class),
                                                 @ColumnResult(name = "checkOut", type = Date.class),
+                                                @ColumnResult(name = "checkOutFake", type = Date.class),
                                                 @ColumnResult(name = "unitPrice", type = BigDecimal.class),
-                                                @ColumnResult(name = "totalPrice", type = BigDecimal.class)
+                                                @ColumnResult(name = "totalPrice", type = BigDecimal.class),
+                                                @ColumnResult(name = "timeIn", type = Integer.class)
                                         }
                                 ),
                         }
