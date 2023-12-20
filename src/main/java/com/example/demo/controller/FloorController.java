@@ -2,7 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.entity.Floor;
+import com.example.demo.entity.Order;
+import com.example.demo.entity.Room;
 import com.example.demo.entity.ServiceType;
+import com.example.demo.repository.OrderRepository;
 import com.example.demo.service.FloorService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +39,9 @@ public class FloorController {
 
     @Autowired
     private FloorService floorService;
+
+    @Autowired
+    private OrderRepository orderRepository;
 
     @GetMapping("/getList")
     public List<Floor> getList() {
@@ -123,6 +129,14 @@ public class FloorController {
     public ResponseEntity<Floor> delete(@PathVariable("id") String id) {
         Floor floor = floorService.getFloorById(id);
         // Todo: Kiểm tra tầng đang có phòng
+        // Lấy danh sách phòng
+        List<Room> list = floor.getRoomList();
+        for (Room room : list) {
+            List<Order> listR = orderRepository.getRoomInOrder(room.getId());
+            if (listR.size() != 0) {
+                return new ResponseEntity<>(null, HttpStatus.BAD_REQUEST);
+            }
+        }
         floor.setStatus(Constant.COMMON_STATUS.UNACTIVE);
         floorService.add(floor);
         return new ResponseEntity("Deleted", HttpStatus.OK);

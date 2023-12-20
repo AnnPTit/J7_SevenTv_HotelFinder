@@ -127,7 +127,7 @@ public class TypeRoomController {
         List<Room> list = typeRoom.getRoomList();
         for (Room room :list) {
             List<Order> listR = orderRepository.getRoomInOrder(room.getId());
-            if (list.size() != 0) {
+            if (listR.size() != 0) {
                 return new ResponseEntity<String>("Không thể xóa loại phòng vì phòng đang nằm trong hóa đơn", HttpStatus.BAD_REQUEST );
             }
         }
