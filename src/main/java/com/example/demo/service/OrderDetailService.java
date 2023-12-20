@@ -16,7 +16,7 @@ public interface OrderDetailService {
 
     List<String> checkRoomIsBooked(String dayStart, String dayEnd, List<String> idsRoom);
 
-    List<String> checkRoomExist(LocalDateTime dayStart, LocalDateTime dayEnd, String id);
+    List<String> checkRoomExist(String dayStart, String dayEnd, String id);
 
     Page<OrderDetail> getAll(Pageable pageable);
 

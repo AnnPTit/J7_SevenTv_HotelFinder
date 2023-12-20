@@ -302,8 +302,10 @@ public class OrderController {
     @PutMapping("/update-accept/{id}")
     public ResponseEntity<Order> updateStatus(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
         Customer customer = customerService.getCustomerById(orderDTO.getCustomerId());
+        Account account = accountService.findById(baseService.getCurrentUser().getId());
         Order order = orderService.getOrderById(id);
         order.setCustomer(customer);
+        order.setAccount(account);
         order.setTotalMoney(orderDTO.getTotalMoney());
         order.setVat(orderDTO.getVat());
         order.setNote(orderDTO.getNote());
@@ -334,6 +336,8 @@ public class OrderController {
     @PutMapping("/update-return/{id}")
     public ResponseEntity<Order> updateReturn(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
         Order order = orderService.getOrderById(id);
+        Account account = accountService.findById(baseService.getCurrentUser().getId());
+        order.setAccount(account);
         order.setTotalMoney(orderDTO.getTotalMoney());
         order.setVat(orderDTO.getVat());
         order.setMoneyGivenByCustomer(orderDTO.getMoneyGivenByCustomer());
@@ -440,7 +444,8 @@ public class OrderController {
 
         Order or = orderService.getOrderById(orderDTO.getIdReturn());
         Customer customerRepresent = customerService.getCustomerById(orderDTO.getCustomerId());
-        or.setTotalMoney(or.getTotalMoney().subtract(orderDTO.getTotalMoney()));
+        or.setTotalMoney(orderDTO.getTotalMoney());
+        or.setVat(orderDTO.getVat());
         if (orderDTO.getCustomerId() != null) {
             or.setCustomer(customerRepresent);
         }

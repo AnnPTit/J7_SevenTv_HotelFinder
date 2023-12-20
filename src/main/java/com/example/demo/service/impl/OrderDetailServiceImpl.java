@@ -39,7 +39,7 @@ public class OrderDetailServiceImpl implements OrderDetailService {
     }
 
     @Override
-    public List<String> checkRoomExist(LocalDateTime dayStart, LocalDateTime dayEnd, String id) {
+    public List<String> checkRoomExist(String dayStart, String dayEnd, String id) {
         return orderDetailRepository.checkRoomExist(dayStart, dayEnd, id);
     }
 
