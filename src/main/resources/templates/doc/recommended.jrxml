@@ -181,7 +181,7 @@
                     <textElement>
                         <font fontName="Times New Roman" size="11"/>
                     </textElement>
-                    <textFieldExpression><![CDATA["- Check-Out : " + $P{checkOut}]]></textFieldExpression>
+                    <textFieldExpression><![CDATA["- Check-Out dự kiến : " + $P{checkOut}]]></textFieldExpression>
                 </textField>
             </band>
             <band height="15">
@@ -193,7 +193,7 @@
                     <textElement>
                         <font fontName="Times New Roman" size="11"/>
                     </textElement>
-                    <textFieldExpression><![CDATA["- Giờ xuất hóa đơn  : " + $P{now}]]></textFieldExpression>
+                    <textFieldExpression><![CDATA["- Thời gian xuất hóa đơn  : " + $P{now}]]></textFieldExpression>
                 </textField>
             </band>
             <band height="16">
@@ -782,32 +782,7 @@
                     <textFieldExpression><![CDATA["- Tiền thừa : " +$P{excessMoney}+"VND"]]></textFieldExpression>
                 </textField>
             </band>
-            <band height="46">
-                <staticText>
-                    <reportElement x="-2" y="5" width="90" height="26" uuid="5b0e58d4-06ff-43e1-b901-2b8995bf944f">
-                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
-                        <property name="com.jaspersoft.studio.unit.height" value="px"/>
-                    </reportElement>
-                    <textElement textAlignment="Center" verticalAlignment="Top">
-                        <font fontName="Times New Roman" size="11" isBold="true" isItalic="true"/>
-                    </textElement>
-                    <text><![CDATA[Người lập
-phiếu
-
-
-]]></text>
-                </staticText>
-                <staticText>
-                    <reportElement x="-2" y="31" width="90" height="15" uuid="84acc098-33ff-49ef-9077-08f8044776c3">
-                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
-                        <property name="com.jaspersoft.studio.unit.height" value="px"/>
-                    </reportElement>
-                    <textElement textAlignment="Center" verticalAlignment="Top">
-                        <font fontName="Times New Roman" size="11" isBold="false"/>
-                    </textElement>
-                    <text><![CDATA[(Ký, họ tên)]]></text>
-                </staticText>
-            </band>
+            <band height="46"/>
         </groupFooter>
     </group>
     <background>
