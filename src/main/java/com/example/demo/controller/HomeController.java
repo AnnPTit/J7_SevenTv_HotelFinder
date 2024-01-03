@@ -22,6 +22,7 @@ import com.example.demo.service.RoomService;
 import com.example.demo.service.ServiceService;
 import com.example.demo.service.TypeRoomService;
 import jakarta.validation.Valid;
+import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -478,6 +479,24 @@ public class HomeController {
         System.out.println(facilityRequestDTO);
         Pageable pageable = PageRequest.of(facilityRequestDTO.getCurrentPage(), 6);
         return new ResponseEntity<>(roomService.searchRoom(facilityRequestDTO, pageable), HttpStatus.OK);
+    }
+
+
+    @GetMapping("/type-room/search")
+    public Page<TypeRoom> searchTypeRoom(@RequestParam(name = "key", defaultValue = "") String key,
+                                         @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+        Pageable pageable = PageRequest.of(current_page, 5);
+        if (StringUtils.isBlank(key) || "".equals(key)) {
+            return typeRoomService.getAll(pageable);
+        }
+
+        return typeRoomService.findByCodeOrName(key, pageable);
+    }
+
+    @GetMapping("/type-room/detail/{id}")
+    public ResponseEntity<TypeRoom> detailTypeRoom(@PathVariable("id") String id) {
+        TypeRoom typeRoom = typeRoomService.getTypeRoomById(id);
+        return new ResponseEntity<TypeRoom>(typeRoom, HttpStatus.OK);
     }
 
 }

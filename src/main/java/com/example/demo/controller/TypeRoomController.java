@@ -58,7 +58,7 @@ public class TypeRoomController {
     public Page<TypeRoom> findByCodeOrName(@RequestParam(name = "key") String key,
                                            @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        if (key == "") {
+        if ("".equals(key)) {
             return typeRoomService.getAll(pageable);
         }
 
