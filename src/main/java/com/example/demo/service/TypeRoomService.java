@@ -16,6 +16,8 @@ public interface TypeRoomService {
 
     TypeRoom getTypeRoomById(String id);
 
+    TypeRoom findByName(String name);
+
     TypeRoom add(TypeRoom typeRoom);
 
     void delete(String id);

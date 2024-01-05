@@ -499,4 +499,9 @@ public class HomeController {
         return new ResponseEntity<TypeRoom>(typeRoom, HttpStatus.OK);
     }
 
+    @GetMapping("/type-room/getByName")
+    public ResponseEntity<TypeRoom> findByName(@RequestParam("name") String name) {
+        TypeRoom typeRoom = typeRoomService.findByName(name);
+        return new ResponseEntity<TypeRoom>(typeRoom, HttpStatus.OK);
+    }
 }

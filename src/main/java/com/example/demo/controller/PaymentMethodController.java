@@ -200,6 +200,82 @@ public class PaymentMethodController {
         return ResponseEntity.ok(vnp_Params);
     }
 
+    @PostMapping("/payment-vnpay")
+    @ResponseBody
+    public ResponseEntity<?> vnPayPostBook(HttpServletRequest req, @RequestBody Map<String, Object> requestBody) throws UnsupportedEncodingException {
+//        Order order = orderService.getOrderById(id);
+        String vnp_Version = "2.1.0";
+        String vnp_Command = "pay";
+        long amount = ((Integer) requestBody.get("amount")).longValue() * 100;
+//        long discount = ((Integer) requestBody.get("discount")).longValue() * 100;
+//        String idDiscount = (String) requestBody.get("idDiscount");
+//        System.out.println(order.getId() + idDiscount);
+
+        String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
+        String vnp_IpAddr = VNPayConfig.getIpAddress(req);
+        String vnp_TmnCode = VNPayConfig.vnp_TmnCode;
+
+        Map<String, String> vnp_Params = new HashMap<>();
+        vnp_Params.put("vnp_Version", vnp_Version);
+        vnp_Params.put("vnp_Command", vnp_Command);
+        vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
+        vnp_Params.put("vnp_Amount", String.valueOf(amount));
+        vnp_Params.put("vnp_CurrCode", "VND");
+        vnp_Params.put("vnp_BankCode", "");
+//        if (idDiscount != null) {
+//            vnp_Params.put("vnp_TxnRef", order.getId() + idDiscount);
+//        } else {
+//            vnp_Params.put("vnp_TxnRef", order.getId());
+//        }
+        vnp_Params.put("vnp_TxnRef", "123");
+        vnp_Params.put("vnp_OrderInfo", String.valueOf(amount));
+        vnp_Params.put("vnp_OrderType", "billpayment1321");
+        vnp_Params.put("vnp_Locale", "vn");
+        vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_Returnurl);
+        vnp_Params.put("vnp_IpAddr", vnp_IpAddr);
+
+        Calendar cld = Calendar.getInstance(TimeZone.getTimeZone("Etc/GMT+7"));
+        SimpleDateFormat formatter = new SimpleDateFormat("yyyyMMddHHmmss");
+        String vnp_CreateDate = formatter.format(cld.getTime());
+        vnp_Params.put("vnp_CreateDate", vnp_CreateDate);
+
+        cld.add(Calendar.MINUTE, 15);
+        String vnp_ExpireDate = formatter.format(cld.getTime());
+        vnp_Params.put("vnp_ExpireDate", vnp_ExpireDate);
+
+        List fieldNames = new ArrayList(vnp_Params.keySet());
+        Collections.sort(fieldNames);
+        StringBuilder hashData = new StringBuilder();
+        StringBuilder query = new StringBuilder();
+        Iterator itr = fieldNames.iterator();
+        while (itr.hasNext()) {
+            String fieldName = (String) itr.next();
+            String fieldValue = "" + vnp_Params.get(fieldName);
+            if ((fieldValue != null) && (fieldValue.length() > 0)) {
+                //Build hash data
+                hashData.append(fieldName);
+                hashData.append('=');
+                hashData.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                //Build query
+                query.append(URLEncoder.encode(fieldName, StandardCharsets.US_ASCII.toString()));
+                query.append('=');
+                query.append(URLEncoder.encode(fieldValue, StandardCharsets.US_ASCII.toString()));
+                if (itr.hasNext()) {
+                    query.append('&');
+                    hashData.append('&');
+                }
+            }
+        }
+        String queryUrl = query.toString();
+        String vnp_SecureHash = VNPayConfig.hmacSHA512(VNPayConfig.vnp_HashSecret, hashData.toString());
+        queryUrl += "&vnp_SecureHash=" + vnp_SecureHash;
+        String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
+
+        vnp_Params.put("finalUrl", paymentUrl);
+
+        return ResponseEntity.ok(vnp_Params);
+    }
+
     @GetMapping("/payment/done")
     @ResponseBody
     public ResponseEntity<String> vnPayDone(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -208,6 +284,9 @@ public class PaymentMethodController {
         String amount = request.getParameter("vnp_Amount");
         String discount = request.getParameter("vnp_OrderInfo");
         String orderId = request.getParameter("vnp_TxnRef"); // Lấy mã đơn hàng từ VNPay
+        if(orderId.equals("123")){
+            paymentBooking();
+        }
         String idRedirect = orderId.substring(0, 36);
         String idOrder = "";
         String idDiscount = "";
@@ -288,6 +367,10 @@ public class PaymentMethodController {
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         }
+    }
+
+    private void paymentBooking() {
+        // Insert vào bảng booking
     }
 
     @PostMapping("/payment-momo/{id}")
