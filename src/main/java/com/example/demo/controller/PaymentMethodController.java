@@ -4,19 +4,8 @@ import com.example.demo.config.MomoConfig;
 import com.example.demo.config.VNPayConfig;
 import com.example.demo.config.ZaloPayConfig;
 import com.example.demo.constant.Constant;
-import com.example.demo.entity.HistoryTransaction;
-import com.example.demo.entity.Order;
-import com.example.demo.entity.OrderDetail;
-import com.example.demo.entity.OrderTimeline;
-import com.example.demo.entity.PaymentMethod;
-import com.example.demo.entity.Room;
-import com.example.demo.service.DiscountProgramService;
-import com.example.demo.service.HistoryTransactionService;
-import com.example.demo.service.OrderDetailService;
-import com.example.demo.service.OrderService;
-import com.example.demo.service.OrderTimelineService;
-import com.example.demo.service.PaymentMethodService;
-import com.example.demo.service.RoomService;
+import com.example.demo.entity.*;
+import com.example.demo.service.*;
 import com.example.demo.util.HMACUtil;
 import com.example.demo.util.MomoEncoderUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -37,15 +26,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.ResponseBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -60,17 +41,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.Collections;
-import java.util.Date;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-import java.util.Random;
-import java.util.TimeZone;
+import java.util.*;
 
 @RestController
 @CrossOrigin("*")
@@ -284,8 +255,8 @@ public class PaymentMethodController {
         String amount = request.getParameter("vnp_Amount");
         String discount = request.getParameter("vnp_OrderInfo");
         String orderId = request.getParameter("vnp_TxnRef"); // Lấy mã đơn hàng từ VNPay
-        if(orderId.equals("123")){
-            paymentBooking();
+        if (orderId.equals("123")) {
+            return paymentBooking(vnp_ResponseCode, response);
         }
         String idRedirect = orderId.substring(0, 36);
         String idOrder = "";
@@ -369,8 +340,56 @@ public class PaymentMethodController {
         }
     }
 
-    private void paymentBooking() {
+    private ResponseEntity<String> paymentBooking(String vnp_ResponseCode, HttpServletResponse response) throws IOException {
         // Insert vào bảng booking
+        if (vnp_ResponseCode != null && vnp_ResponseCode.equals("00")) { // Mã 00 thường tượng trưng cho thanh toán thành công
+            // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
+            // Todo lưu vào bảng booking
+            // Todo lưu vào các bảng phụ
+            PaymentMethod paymentMethod = new PaymentMethod();
+            paymentMethod.setOrder(null);
+            LocalDate currentDate = LocalDate.now();
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+            String formattedDate = currentDate.format(formatter);
+            Random random = new Random();
+            int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
+            String paymentMethodCode = "PT" + formattedDate + randomDigits;
+            paymentMethod.setPaymentMethodCode(paymentMethodCode);
+            paymentMethod.setMethod(false);
+//            paymentMethod.setTotalMoney(order.getMoneyGivenByCustomer());
+//            paymentMethod.setNote(order.getNote());
+//            paymentMethod.setCreateAt(new Date());
+//            paymentMethod.setCreateBy(order.getCreateBy());
+//            paymentMethod.setUpdateAt(new Date());
+//            paymentMethod.setUpdatedBy(order.getUpdatedBy());
+            paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
+            paymentMethodService.add(paymentMethod);
+
+            HistoryTransaction historyTransaction = new HistoryTransaction();
+//            historyTransaction.setOrder(order);
+//            historyTransaction.setTotalMoney(order.getMoneyGivenByCustomer());
+//            historyTransaction.setNote(order.getNote());
+//            historyTransaction.setCreateAt(new Date());
+//            historyTransaction.setCreateBy(order.getCreateBy());
+//            historyTransaction.setUpdateAt(new Date());
+//            historyTransaction.setUpdatedBy(order.getUpdatedBy());
+            historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
+            historyTransactionService.add(historyTransaction);
+
+            OrderTimeline orderTimeline = new OrderTimeline();
+//            orderTimeline.setOrder(order);
+//            orderTimeline.setAccount(order.getAccount());
+            orderTimeline.setType(Constant.ORDER_TIMELINE.CHECKED_OUT);
+            orderTimeline.setNote("Khách chuyển khoản để thanh toán");
+            orderTimeline.setCreateAt(new Date());
+            orderTimelineService.add(orderTimeline);
+            String redirectUrl = "http://localhost:3001";
+            response.sendRedirect(redirectUrl);
+            return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
+        }
+        String redirectUrl = "http://localhost:3000";
+        response.sendRedirect(redirectUrl);
+        return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
     }
 
     @PostMapping("/payment-momo/{id}")
