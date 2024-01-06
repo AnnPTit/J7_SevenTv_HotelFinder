@@ -198,7 +198,7 @@ public class PaymentMethodController {
 //        } else {
 //            vnp_Params.put("vnp_TxnRef", order.getId());
 //        }
-        vnp_Params.put("vnp_TxnRef", "123");
+        vnp_Params.put("vnp_TxnRef", "BKOL"+vnp_TxnRef);
         vnp_Params.put("vnp_OrderInfo", String.valueOf(amount));
         vnp_Params.put("vnp_OrderType", "billpayment1321");
         vnp_Params.put("vnp_Locale", "vn");
@@ -255,7 +255,7 @@ public class PaymentMethodController {
         String amount = request.getParameter("vnp_Amount");
         String discount = request.getParameter("vnp_OrderInfo");
         String orderId = request.getParameter("vnp_TxnRef"); // Lấy mã đơn hàng từ VNPay
-        if (orderId.equals("123")) {
+        if (orderId.contains("BKOL")) {
             return paymentBooking(vnp_ResponseCode, response);
         }
         String idRedirect = orderId.substring(0, 36);
@@ -363,7 +363,7 @@ public class PaymentMethodController {
 //            paymentMethod.setUpdateAt(new Date());
 //            paymentMethod.setUpdatedBy(order.getUpdatedBy());
             paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
-            paymentMethodService.add(paymentMethod);
+//            paymentMethodService.add(paymentMethod);
 
             HistoryTransaction historyTransaction = new HistoryTransaction();
 //            historyTransaction.setOrder(order);
@@ -374,7 +374,7 @@ public class PaymentMethodController {
 //            historyTransaction.setUpdateAt(new Date());
 //            historyTransaction.setUpdatedBy(order.getUpdatedBy());
             historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
-            historyTransactionService.add(historyTransaction);
+//            historyTransactionService.add(historyTransaction);
 
             OrderTimeline orderTimeline = new OrderTimeline();
 //            orderTimeline.setOrder(order);
@@ -382,7 +382,7 @@ public class PaymentMethodController {
             orderTimeline.setType(Constant.ORDER_TIMELINE.CHECKED_OUT);
             orderTimeline.setNote("Khách chuyển khoản để thanh toán");
             orderTimeline.setCreateAt(new Date());
-            orderTimelineService.add(orderTimeline);
+//            orderTimelineService.add(orderTimeline);
             String redirectUrl = "http://localhost:3001";
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
