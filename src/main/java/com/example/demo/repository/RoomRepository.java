@@ -154,8 +154,15 @@ public interface RoomRepository extends JpaRepository<Room, String>, RoomReposit
     @Query(value = "select * from room where  status = :status order by update_at  DESC", nativeQuery = true)
     Page<Room> findAllByStatus(@Param("status") Integer status, Pageable pageable);
 
-    @Query("SELECT r FROM Room r WHERE r.floor.id = :floorId")
-    List<Room> getRoomsByFloorId(String floorId);
+    @Query(value = "SELECT * FROM room " +
+            "WHERE (:status IS NULL OR status = :status) " +
+            "AND ((:roomCode IS NULL OR room_code = :roomCode) " +
+            "OR (:roomName IS NULL OR room_name LIKE CONCAT('%', :roomName, '%'))) " +
+            "AND (:floor IS NULL OR floor_id = :floor) " +
+            "AND (:floorId IS NULL OR floor_id = :floorId) " +
+            "AND (:typeRoomId IS NULL OR type_room_id = :typeRoomId) " +
+            "ORDER BY update_at DESC", nativeQuery = true)
+    List<Room> getRoomsByFloorId(Integer status, String roomCode, String roomName, String floor, String floorId, String typeRoomId);
 
     @Query(value = "SELECT r FROM Room r LEFT JOIN r.photoList p" +
             " LEFT JOIN r.orderDetailList od GROUP BY r.id, r.roomName, p.url" +

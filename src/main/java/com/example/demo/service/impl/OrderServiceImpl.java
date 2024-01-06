@@ -473,4 +473,9 @@ public class OrderServiceImpl implements OrderService {
         orderDetailRepository.updateStatusByOrderId(id, stt);
     }
 
+    @Override
+    public Order getByRoomId(String id) {
+        return orderRepository.getByRoomId(id);
+    }
+
 }

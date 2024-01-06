@@ -30,7 +30,7 @@ public class RoomDTO {
     private String updatedBy;
     private String deleted;
     private Integer status;
-    private List<String> photoList;
+    private List<Photo> photoList;
     private List<OrderDetail> orderDetailList;
 
 }

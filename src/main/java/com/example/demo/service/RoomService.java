@@ -1,8 +1,11 @@
 package com.example.demo.service;
 
-import com.example.demo.dto.*;
+import com.example.demo.dto.CartDTO;
+import com.example.demo.dto.FacilityRequestDTO;
+import com.example.demo.dto.RoomCardDTO;
+import com.example.demo.dto.RoomRequestDTO;
+import com.example.demo.dto.RoomResponeDTO;
 import com.example.demo.entity.Room;
-import io.swagger.models.auth.In;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
@@ -53,7 +56,7 @@ public interface RoomService {
 
     Page<RoomResponeDTO> topBook(Pageable pageable);
 
-    List<List<Room>> getRoomsByAllFloors();
+    List<List<Room>> getRoomsByAllFloors(Integer status, String roomCode, String roomName, String floorId, String typeRoomId);
 
     List<CartDTO> getCart(String customId, Integer odStt);
 
