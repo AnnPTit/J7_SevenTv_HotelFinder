@@ -67,4 +67,6 @@ public interface OrderService {
 
     void cancel(String id, Integer stt);
 
+    Order getByRoomId(String id);
+
 }

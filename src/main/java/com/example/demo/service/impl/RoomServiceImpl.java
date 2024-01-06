@@ -17,6 +17,7 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 public class RoomServiceImpl implements RoomService {
@@ -184,13 +185,21 @@ public class RoomServiceImpl implements RoomService {
     }
 
     @Override
-    public List<List<Room>> getRoomsByAllFloors() {
+    public List<List<Room>> getRoomsByAllFloors(Integer status, String roomCode, String roomName, String floorId, String typeRoomId) {
         List<Floor> allFloors = floorRepository.findAll();
         List<List<Room>> roomsByAllFloors = new ArrayList<>();
 
-        for (Floor floor : allFloors) {
-            List<Room> roomsInFloor = roomRepository.getRoomsByFloorId(floor.getId());
-            roomsByAllFloors.add(roomsInFloor);
+        for (Floor fl : allFloors) {
+            List<Room> roomsInFloor = roomRepository.getRoomsByFloorId(
+                    (status != null && !status.toString().isEmpty()) ? status : null,
+                    (roomCode != null && !roomCode.isEmpty()) ? roomCode : null,
+                    (roomName != null && !roomName.isEmpty()) ? "%" + roomName + "%" : null,
+                    fl.getId(),
+                    (floorId != null && !floorId.isEmpty()) ? floorId : null,
+                    (typeRoomId != null && !typeRoomId.isEmpty()) ? typeRoomId : null);
+            if (!roomsInFloor.isEmpty()) {
+                roomsByAllFloors.add(roomsInFloor);
+            }
         }
 
         return roomsByAllFloors;

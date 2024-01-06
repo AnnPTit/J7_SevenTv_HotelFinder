@@ -117,4 +117,12 @@ public interface OrderRepository extends JpaRepository<Order, String>, OrderRepo
     @Query(value = "select o.*  from `order` o inner join order_detail od on od.order_id  = o.id \n" +
             "where od.room_id =:idRoom and o.status  in (1,2,4,5)", nativeQuery = true)
     List<Order> getRoomInOrder(@Param("idRoom") String idRoom);
+
+    @Query(value = "SELECT o.*\n" +
+            "FROM room r\n" +
+            "JOIN order_detail od ON r.id = od.room_id\n" +
+            "JOIN `order` o ON od.order_id = o.id\n" +
+            "WHERE r.id =:idRoom AND o.status IN (1, 2);", nativeQuery = true)
+    Order getByRoomId(@Param("idRoom") String idRoom);
+
 }

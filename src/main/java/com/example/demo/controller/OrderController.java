@@ -3,10 +3,12 @@ package com.example.demo.controller;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.ConfirmOrderDTO;
 import com.example.demo.dto.OrderDTO;
+import com.example.demo.dto.OrderDetailDTO;
 import com.example.demo.dto.RevenueDTO;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
 import com.example.demo.util.BaseService;
+import com.example.demo.util.DataUtil;
 import net.sf.jasperreports.engine.JRException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.ByteArrayResource;
@@ -252,10 +254,33 @@ public class OrderController {
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 
+    @GetMapping("/getByRoomId/{id}")
+    public ResponseEntity<Order> getByRoomId(@PathVariable("id") String id) {
+        Order order = orderService.getByRoomId(id);
+        return new ResponseEntity<Order>(order, HttpStatus.OK);
+    }
+
     @PostMapping("/save")
-    public ResponseEntity<Order> save(@RequestBody Order order) {
-        Account account = accountService.findById(order.getAccount().getId());
+    public ResponseEntity<?> save(@RequestBody OrderDetailDTO orderDetailDTO) {
+        Account account = accountService.findById(baseService.getCurrentUser().getId());
         Customer customer = customerService.getCustomertByCode();
+
+        Date dayStart = orderDetailDTO.getCheckIn();
+        Date dayEnd = orderDetailDTO.getCheckOut();
+        System.out.println(dayStart);
+        System.out.println(dayEnd);
+        String id = orderDetailDTO.getRoom().getId();
+        System.out.println(id);
+
+        List<String> list = orderDetailService.checkRoomExist(DataUtil.dateToStringSql(dayStart), DataUtil.dateToStringSql(dayEnd), id);
+        System.out.println(list.toString());
+        if (!list.isEmpty()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            String startDate = sdf.format(dayStart);
+            String endDate = sdf.format(dayEnd);
+            String errorMessage = "Phòng đã được đặt trong khoảng từ ngày " + startDate + " đến ngày " + endDate;
+            return new ResponseEntity<String>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
 
         LocalDate currentDate = LocalDate.now();
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
@@ -263,6 +288,7 @@ public class OrderController {
         Random random = new Random();
         int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
         String orderCode = "HD" + formattedDate + randomDigits;
+        Order order = new Order();
         order.setOrderCode(orderCode);
         order.setTypeOfOrder(true);
         order.setTotalMoney(BigDecimal.valueOf(0));
@@ -270,6 +296,8 @@ public class OrderController {
         order.setSurcharge(BigDecimal.valueOf(0));
         order.setVat(BigDecimal.valueOf(0));
         order.setDiscount(BigDecimal.valueOf(0));
+        order.setMoneyGivenByCustomer(BigDecimal.valueOf(0));
+        order.setExcessMoney(BigDecimal.valueOf(0));
         order.setAccount(account);
         order.setCustomer(customer);
         order.setCreateAt(new Date());
@@ -279,6 +307,27 @@ public class OrderController {
         order.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
         order.setNote(account.getFullname() + " tạo hóa đơn");
         orderService.add(order);
+
+        OrderDetail orderDetail = new OrderDetail();
+        String orderDetailCode = "HDCT" + formattedDate + randomDigits;
+        orderDetail.setOrderDetailCode(orderDetailCode);
+        orderDetail.setRoom(orderDetailDTO.getRoom());
+        orderDetail.setOrder(order);
+        orderDetail.setCheckInDatetime(orderDetailDTO.getCheckIn());
+        orderDetail.setCheckOutDatetime(orderDetailDTO.getCheckOut());
+        orderDetail.setTimeIn(orderDetailDTO.getTimeIn());
+        orderDetail.setRoomPrice(orderDetailDTO.getRoomPrice());
+        orderDetail.setCustomerQuantity(orderDetailDTO.getCustomerQuantity());
+        orderDetail.setCreateAt(new Date());
+        orderDetail.setCreateBy(baseService.getCurrentUser().getFullname());
+        orderDetail.setUpdateAt(new Date());
+        orderDetail.setUpdatedBy(baseService.getCurrentUser().getFullname());
+        orderDetail.setStatus(Constant.ORDER_DETAIL.WAIT_CONFIRM);
+        orderDetailService.add(orderDetail);
+
+        Room room = orderDetail.getRoom();
+        room.setStatus(Constant.ROOM.ACTIVE);
+        roomService.add(room);
 
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
@@ -295,6 +344,7 @@ public class OrderController {
     public ResponseEntity<Order> update(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
         Order order = orderService.getOrderById(id);
         order.setTotalMoney(orderDTO.getTotalMoney());
+        order.setVat(orderDTO.getVat());
         orderService.add(order);
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }

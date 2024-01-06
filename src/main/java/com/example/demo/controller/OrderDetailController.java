@@ -172,6 +172,10 @@ public class OrderDetailController {
         orderDetail.setStatus(Constant.ORDER_DETAIL.WAIT_CONFIRM);
         orderDetailService.add(orderDetail);
 
+        Room room = orderDetail.getRoom();
+        room.setStatus(Constant.ROOM.ACTIVE);
+        roomService.add(room);
+
         return new ResponseEntity<OrderDetail>(orderDetail, HttpStatus.OK);
     }
 
