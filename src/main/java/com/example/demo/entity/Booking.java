@@ -19,31 +19,31 @@ public class Booking {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(name = "id_type_room")
-    private String idTypeRoom;
+    @ManyToOne
+    @JoinColumn(name = "id_type_room")
+    private TypeRoom typeRoom;
 
-    @Column(name = "id_customer")
-    private String idCustomer;
+    @ManyToOne
+    @JoinColumn(name = "id_customer")
+    private Customer customer;
 
-    @Column(name = "id_order")
-    private String idOrder;
+    @ManyToOne
+    @JoinColumn(name = "id_order")
+    private Order order;
 
     @Column(name = "note")
     private String note;
 
-    @Column(name = "numberRooms")
+    @Column(name = "number_rooms")
     private Integer numberRooms;
 
-    @Column(name = "numberCustomers")
-    private Integer numberCustomers;
-
-    @Column(name = "numberAdults")
+    @Column(name = "number_adults")
     private Integer numberAdults;
 
-    @Column(name = "numberChildren")
+    @Column(name = "number_children")
     private Integer numberChildren;
 
-    @Column(name = "numberDays")
+    @Column(name = "number_days")
     private Integer numberDays;
 
     @Column(name = "check_in_date")
@@ -52,7 +52,7 @@ public class Booking {
     @Column(name = "check_out_date")
     private Date checkOutDate;
 
-    @Column(name = "roomPrice")
+    @Column(name = "room_price")
     private BigDecimal roomPrice;
 
     @Column(name = "vat")

@@ -9,9 +9,9 @@ public class BookingMapper {
     public static BookingDTO toDTO(Booking booking) {
         BookingDTO dto = new BookingDTO();
         dto.setId(booking.getId());
-        dto.setIdTypeRoom(booking.getIdTypeRoom());
-        dto.setIdCustomer(booking.getIdCustomer());
-        dto.setIdOrder(booking.getIdOrder());
+        dto.setIdTypeRoom(booking.getTypeRoom().getId());
+        dto.setIdCustomer(booking.getCustomer().getId());
+        dto.setIdOrder(booking.getOrder().getId());
         dto.setNote(booking.getNote());
         dto.setNumberRooms(booking.getNumberRooms());
         dto.setNumberCustomers(booking.getNumberCustomers());
@@ -38,9 +38,9 @@ public class BookingMapper {
     public static Booking toEntity(BookingDTO dto) {
         Booking booking = new Booking();
         booking.setId(dto.getId());
-        booking.setIdTypeRoom(dto.getIdTypeRoom());
-        booking.setIdCustomer(dto.getIdCustomer());
-        booking.setIdOrder(dto.getIdOrder());
+        booking.getTypeRoom().setId(dto.getIdTypeRoom());
+        booking.getCustomer().setId(dto.getIdCustomer());
+        booking.getOrder().setId(dto.getIdOrder());
         booking.setNote(dto.getNote());
         booking.setNumberRooms(dto.getNumberRooms());
         booking.setNumberCustomers(dto.getNumberCustomers());

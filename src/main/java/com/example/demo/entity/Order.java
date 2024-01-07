@@ -162,6 +162,10 @@ public class Order {
 
     @JsonIgnore
     @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
+    private List<Booking> bookingList;
+
+    @JsonIgnore
+    @OneToMany(mappedBy = "order", fetch = FetchType.LAZY)
     private List<OrderTimeline> orderTimelineList;
 
 }
