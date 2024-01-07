@@ -6,6 +6,7 @@ import com.example.demo.config.ZaloPayConfig;
 import com.example.demo.constant.Constant;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
+import com.example.demo.util.DataUtil;
 import com.example.demo.util.HMACUtil;
 import com.example.demo.util.MomoEncoderUtils;
 import jakarta.servlet.http.HttpServletRequest;
@@ -62,6 +63,8 @@ public class PaymentMethodController {
     private OrderTimelineService orderTimelineService;
     @Autowired
     private DiscountProgramService discountProgramService;
+    @Autowired
+    private MailService mailService ;
 
     @GetMapping("/loadAndSearch")
     public Page<PaymentMethod> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -177,10 +180,12 @@ public class PaymentMethodController {
 //        Order order = orderService.getOrderById(id);
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        long amount = ((Integer) requestBody.get("amount")).longValue() * 100;
-//        long discount = ((Integer) requestBody.get("discount")).longValue() * 100;
-//        String idDiscount = (String) requestBody.get("idDiscount");
-//        System.out.println(order.getId() + idDiscount);
+        long amount = ((Integer) requestBody.get("amount")).longValue() ;
+        String email = (String) requestBody.get("email");
+        String checkInStr =  (String) requestBody.get("checkIn");
+        String checkOutStr =  (String) requestBody.get("checkOut");
+//        LocalDate checkIn = DataUtil.convertStringToLocalDateTime(checkInStr);
+//        LocalDate checkOut = DataUtil.convertStringToLocalDateTime(checkOutStr);
 
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         String vnp_IpAddr = VNPayConfig.getIpAddress(req);
@@ -243,6 +248,7 @@ public class PaymentMethodController {
         String paymentUrl = VNPayConfig.vnp_PayUrl + "?" + queryUrl;
 
         vnp_Params.put("finalUrl", paymentUrl);
+//        DataUtil.sendMailCommon("anptph27230@fpt.edu.vn","test",paymentUrl,mailService);
 
         return ResponseEntity.ok(vnp_Params);
     }
@@ -256,7 +262,7 @@ public class PaymentMethodController {
         String discount = request.getParameter("vnp_OrderInfo");
         String orderId = request.getParameter("vnp_TxnRef"); // Lấy mã đơn hàng từ VNPay
         if (orderId.contains("BKOL")) {
-            return paymentBooking(vnp_ResponseCode, response);
+            return paymentBooking(vnp_ResponseCode, response , orderId);
         }
         String idRedirect = orderId.substring(0, 36);
         String idOrder = "";
@@ -340,7 +346,8 @@ public class PaymentMethodController {
         }
     }
 
-    private ResponseEntity<String> paymentBooking(String vnp_ResponseCode, HttpServletResponse response) throws IOException {
+    private ResponseEntity<String> paymentBooking(String vnp_ResponseCode, HttpServletResponse response, String code) throws IOException {
+        System.out.println("Thành công :" + code );
         // Insert vào bảng booking
         if (vnp_ResponseCode != null && vnp_ResponseCode.equals("00")) { // Mã 00 thường tượng trưng cho thanh toán thành công
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
