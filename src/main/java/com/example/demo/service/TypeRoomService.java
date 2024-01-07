@@ -4,6 +4,7 @@ import com.example.demo.entity.TypeRoom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 
+import java.util.Date;
 import java.util.List;
 
 public interface TypeRoomService {
@@ -23,5 +24,7 @@ public interface TypeRoomService {
     void delete(String id);
 
     boolean existsByCode(String code);
+
+    Integer countRoomCanBeBook(String typeRoomId , Date checkIn , Date checkOut );
 
 }

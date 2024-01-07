@@ -11,7 +11,9 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -35,5 +37,15 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public Booking findOne(String id) {
         return bookingRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Booking getNumberRoomBooked(String typeRoomId, String checkIn, String checkOut) {
+        LocalDate checkInTime = DataUtil.convertStringToLocalDate(checkIn);
+        LocalDate checkOutTime = DataUtil.convertStringToLocalDate(checkOut);
+        Date ci = DataUtil.convertLocalDateToDateWithTime(checkInTime, 14);
+        Date co = DataUtil.convertLocalDateToDateWithTime(checkOutTime, 12);
+        bookingRepository.checkRoomBooked(typeRoomId, ci, co);
+        return null;
     }
 }

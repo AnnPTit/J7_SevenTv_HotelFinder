@@ -14,6 +14,7 @@ import java.text.DecimalFormat;
 import java.text.SimpleDateFormat;
 import java.time.*;
 import java.time.format.DateTimeFormatter;
+import java.time.format.DateTimeParseException;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
@@ -210,15 +211,18 @@ public class DataUtil {
         // Parse the string to LocalDateTime
         return LocalDateTime.parse(dateTimeStr, formatter);
     }
-    public static LocalDate convertStringToLocalDate(String dateTimeStr) {
-        // Định dạng của chuỗi thời gian
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+    public static LocalDate convertStringToLocalDate(String dateString) {
+        try {
+            // Define the date format
+            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
-        // Chuyển đổi chuỗi thành đối tượng LocalDateTime
-        LocalDateTime localDateTime = LocalDateTime.parse(dateTimeStr, formatter);
-
-        // Chuyển đổi thành LocalDate
-        return localDateTime.toLocalDate();
+            // Parse the string to LocalDate
+            return LocalDate.parse(dateString, formatter);
+        } catch (DateTimeParseException e) {
+            // Handle the exception if the input string is not in the expected format
+            System.err.println("Error parsing date: " + e.getMessage());
+            return null; // Or throw an exception or handle it according to your needs
+        }
     }
     public static Date convertLocalDateToDateWithTime(LocalDate localDate, int hour) {
         LocalDateTime localDateTime = localDate.atTime(hour, 0);
