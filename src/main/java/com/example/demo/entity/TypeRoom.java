@@ -81,4 +81,8 @@ public class TypeRoom {
     @OneToMany(mappedBy = "typeRoom", fetch = FetchType.LAZY)
     private List<Room> roomList;
 
+    @JsonIgnore
+    @OneToMany(mappedBy = "typeRoom", fetch = FetchType.LAZY)
+    private List<Booking> bookingList;
+
 }
