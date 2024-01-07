@@ -1,5 +1,8 @@
 package com.example.demo.dto;
 
+import com.example.demo.entity.Customer;
+import com.example.demo.entity.Order;
+import com.example.demo.entity.TypeRoom;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -11,9 +14,9 @@ import java.util.Date;
 @Data
 public class BookingDTO {
     private String id;
-    private String idTypeRoom;
-    private String idCustomer;
-    private String idOrder;
+    private TypeRoom typeRoom;
+    private Customer customer;
+    private Order order;
     private String note;
     private Integer numberRooms;
     private Integer numberAdults;

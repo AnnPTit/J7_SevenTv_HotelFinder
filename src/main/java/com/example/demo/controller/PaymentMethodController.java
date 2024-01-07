@@ -317,9 +317,9 @@ public class PaymentMethodController {
         booking.setCheckInDate(checkInDateConfig);
         booking.setCheckOutDate(checkOutDateConfig);
         booking.setNote(note);
-        booking.setIdCustomer(customer.getId());
-        booking.setIdOrder(null);
-        booking.setIdTypeRoom(!DataUtil.isNull(typeRoom) ? typeRoom.getId() : null);
+        booking.setCustomer(customer);
+        booking.setOrder(null);
+        booking.setTypeRoom(!DataUtil.isNull(typeRoom) ? typeRoom: null);
         booking.setNumberAdults(numberCustomer);
         booking.setNumberChildren(numberChildren);
         booking.setNumberDays(numberNight);
@@ -455,13 +455,13 @@ public class PaymentMethodController {
     private ResponseEntity<String> paymentBooking(String vnp_ResponseCode, HttpServletResponse response, String code) throws IOException {
         System.out.println("Thành công :" + code);
         String bookingID = removePrefix(code, "BKOL");
-        // Insert vào bảng booking
         if (vnp_ResponseCode != null && vnp_ResponseCode.equals("00")) { // Mã 00 thường tượng trưng cho thanh toán thành công
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
             // Todo cập nhật lại trạng thái của booking
             Booking booking = bookingService.findOne(bookingID);
             if (!DataUtil.isNull(booking)) {
                 booking.setStatus(Constant.BOOKING.SUCCESS);
+                booking.setId(bookingID);
                 bookingService.create(booking);
             }
             String redirectUrl = "http://localhost:3001";
