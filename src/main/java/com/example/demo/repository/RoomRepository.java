@@ -169,4 +169,9 @@ public interface RoomRepository extends JpaRepository<Room, String>, RoomReposit
             " ORDER BY COUNT(od.room.id) DESC")
     List<Room> getTopRoom();
 
+    @Query(value = "select r.* from room r\n" +
+            "inner join type_room tr on tr.id = r.type_room_id  and tr.status = 1\n" +
+            "where r.status = 1 and r.type_room_id =:typeRoomId ", nativeQuery = true)
+    List<Room> findByTypeRoomId(@Param("typeRoomId") String typeRoomId);
+
 }
