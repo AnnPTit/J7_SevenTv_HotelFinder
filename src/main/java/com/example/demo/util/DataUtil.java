@@ -210,4 +210,21 @@ public class DataUtil {
         // Parse the string to LocalDateTime
         return LocalDateTime.parse(dateTimeStr, formatter);
     }
+    public static LocalDate convertStringToLocalDate(String dateTimeStr) {
+        // Định dạng của chuỗi thời gian
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+
+        // Chuyển đổi chuỗi thành đối tượng LocalDateTime
+        LocalDateTime localDateTime = LocalDateTime.parse(dateTimeStr, formatter);
+
+        // Chuyển đổi thành LocalDate
+        return localDateTime.toLocalDate();
+    }
+    public static Date convertLocalDateToDateWithTime(LocalDate localDate, int hour) {
+        LocalDateTime localDateTime = localDate.atTime(hour, 0);
+        return java.sql.Timestamp.valueOf(localDateTime);
+    }
+    public static BigDecimal convertLongToBigDecimal(long value) {
+        return new BigDecimal(value);
+    }
 }

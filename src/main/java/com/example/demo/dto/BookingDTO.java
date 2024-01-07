@@ -16,7 +16,6 @@ public class BookingDTO {
     private String idOrder;
     private String note;
     private Integer numberRooms;
-    private Integer numberCustomers;
     private Integer numberAdults;
     private Integer numberChildren;
     private Integer numberDays;

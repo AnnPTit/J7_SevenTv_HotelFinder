@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.BookingDTO;
+import com.example.demo.entity.Booking;
 import com.example.demo.service.BookingService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
@@ -13,7 +14,7 @@ public class BookingController {
     private BookingService bookingService;
 
     @GetMapping("/{id}")
-    public BookingDTO findOne(@PathVariable("id") String id) {
+    public Booking findOne(@PathVariable("id") String id) {
         System.out.println("heelo");
         return bookingService.findOne(id);
     }

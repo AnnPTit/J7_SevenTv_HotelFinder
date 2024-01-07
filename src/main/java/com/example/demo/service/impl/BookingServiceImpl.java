@@ -17,9 +17,9 @@ import java.util.List;
 public class BookingServiceImpl implements BookingService {
 
     @Autowired
-    private BookingMapper bookingMapper ;
+    private BookingMapper bookingMapper;
     @Autowired
-    private BookingRepository bookingRepository ;
+    private BookingRepository bookingRepository;
 
     @Override
     public Page<Booking> findAll(Pageable pageable) {
@@ -27,17 +27,13 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDTO create(BookingDTO bookingDTO) {
-        Booking booking = bookingRepository.save(bookingMapper.toEntity(bookingDTO));
+    public BookingDTO create(Booking booking) {
+        bookingRepository.save(booking);
         return bookingMapper.toDTO(booking);
     }
 
     @Override
-    public BookingDTO findOne(String id) {
-        Booking booking = bookingRepository.findById(id).orElse(null);
-        if(!DataUtil.isNull(booking)){
-            return bookingMapper.toDTO(booking);
-        }
-        return null;
+    public Booking findOne(String id) {
+        return bookingRepository.findById(id).orElse(null);
     }
 }

@@ -11,8 +11,7 @@ public interface BookingService {
 
     Page<Booking> findAll(Pageable pageable);
 
-    BookingDTO create(BookingDTO bookingDTO);
+    BookingDTO create(Booking booking);
 
-    BookingDTO findOne(String id);
-
+    Booking findOne(String id);
 }

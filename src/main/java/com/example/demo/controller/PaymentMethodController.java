@@ -6,6 +6,7 @@ import com.example.demo.config.ZaloPayConfig;
 import com.example.demo.constant.Constant;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
+import com.example.demo.util.BaseService;
 import com.example.demo.util.DataUtil;
 import com.example.demo.util.HMACUtil;
 import com.example.demo.util.MomoEncoderUtils;
@@ -64,7 +65,18 @@ public class PaymentMethodController {
     @Autowired
     private DiscountProgramService discountProgramService;
     @Autowired
-    private MailService mailService ;
+    private MailService mailService;
+    @Autowired
+    private CustomerService customerService;
+    @Autowired
+    private TypeRoomService typeRoomService;
+    @Autowired
+    private BookingService bookingService;
+    @Autowired
+    private BookingHistoryTransactionService bookingHistoryTransactionService;
+    @Autowired
+    private BaseService baseService;
+
 
     @GetMapping("/loadAndSearch")
     public Page<PaymentMethod> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -180,12 +192,11 @@ public class PaymentMethodController {
 //        Order order = orderService.getOrderById(id);
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
-        long amount = ((Integer) requestBody.get("amount")).longValue() ;
-        String email = (String) requestBody.get("email");
-        String checkInStr =  (String) requestBody.get("checkIn");
-        String checkOutStr =  (String) requestBody.get("checkOut");
-//        LocalDate checkIn = DataUtil.convertStringToLocalDateTime(checkInStr);
-//        LocalDate checkOut = DataUtil.convertStringToLocalDateTime(checkOutStr);
+        // Lấy thông tin -> lưu vào bảng booking với trạng thái unactive
+        // Thông tin khách hàng
+        Customer customer = createCustomer(requestBody);
+
+        Booking booking = createBooking(requestBody, customer);
 
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         String vnp_IpAddr = VNPayConfig.getIpAddress(req);
@@ -195,16 +206,11 @@ public class PaymentMethodController {
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(amount));
+        vnp_Params.put("vnp_Amount", String.valueOf(booking.getTotalPrice()));
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_BankCode", "");
-//        if (idDiscount != null) {
-//            vnp_Params.put("vnp_TxnRef", order.getId() + idDiscount);
-//        } else {
-//            vnp_Params.put("vnp_TxnRef", order.getId());
-//        }
-        vnp_Params.put("vnp_TxnRef", "BKOL"+vnp_TxnRef);
-        vnp_Params.put("vnp_OrderInfo", String.valueOf(amount));
+        vnp_Params.put("vnp_TxnRef", "BKOL" + booking.getId());
+        vnp_Params.put("vnp_OrderInfo", String.valueOf(booking.getTotalPrice()));
         vnp_Params.put("vnp_OrderType", "billpayment1321");
         vnp_Params.put("vnp_Locale", "vn");
         vnp_Params.put("vnp_ReturnUrl", VNPayConfig.vnp_Returnurl);
@@ -253,6 +259,96 @@ public class PaymentMethodController {
         return ResponseEntity.ok(vnp_Params);
     }
 
+    private Customer createCustomer(Map<String, Object> requestBody) {
+        String fullName = (String) requestBody.get("fullName");
+        String phoneNumber = (String) requestBody.get("phoneNumber");
+        String email = (String) requestBody.get("email");
+        // Thực hiện validate xem khách hàng đã có tài khoản chưa ?
+        Customer customer = customerService.findCustomerByEmail(email).orElse(null);
+        if (DataUtil.isNull(customer)) {
+            // Nếu email chưa tồn tại thực hiện thêm tài khoản
+            Date currentDate = new Date();
+            Random random = new Random();
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTime(currentDate);
+            calendar.add(Calendar.YEAR, -18);
+            Date birthDate = calendar.getTime();
+            String customerCode = "KH" + random.nextInt(1000);
+            customer.setCustomerCode(customerCode);
+            customer.setUsername(customerCode);
+            customer.setCitizenId(null);
+            customer.setBirthday(birthDate);
+            customer.setDistricts("N/A");
+            customer.setStatus(Constant.COMMON_STATUS.ACTIVE);
+            customer.setCreateAt(new Date());
+            customer.setEmail(email);
+            customer.setFullname(fullName);
+            customer.setPassword(customerCode + "12345");
+            customer.setPhoneNumber(phoneNumber);
+            customer = customerService.add(customer);
+        }
+        return customer;
+
+    }
+
+    private Booking createBooking(Map<String, Object> requestBody, Customer customer) {
+        long amount = ((Integer) requestBody.get("amount")).longValue();
+        long roomPrice = ((Integer) requestBody.get("roomPrice")).longValue();
+        String checkInStr = (String) requestBody.get("checkIn");
+        String checkOutStr = (String) requestBody.get("checkOut");
+        LocalDate checkIn = DataUtil.convertStringToLocalDate(checkInStr);
+        LocalDate checkOut = DataUtil.convertStringToLocalDate(checkOutStr);
+        Date checkInDateConfig = DataUtil.convertLocalDateToDateWithTime(checkIn, 14);
+        Date checkOutDateConfig = DataUtil.convertLocalDateToDateWithTime(checkOut, 12);
+        Integer numberNight = Integer.valueOf(requestBody.get("numberNight").toString());
+        Integer numberRoom = Integer.valueOf(requestBody.get("numberRoom").toString());
+        Integer numberCustomer = Integer.valueOf(requestBody.get("numberCustomer").toString());
+        Integer numberChildren = Integer.valueOf( requestBody.get("numberChildren").toString());
+        String typeRoomChose = (String) requestBody.get("typeRoomChose");
+        String note = (String) requestBody.get("note");
+        // History
+        String accountNumber = (String) requestBody.get("accountNumber");
+        String bankChose = requestBody.get("bankChose").toString();
+
+        TypeRoom typeRoom = typeRoomService.findByName(typeRoomChose);
+        Booking booking = new Booking();
+        booking.setBankAccountName(bankChose);
+        booking.setBankAccountNumber(accountNumber);
+        booking.setCheckInDate(checkInDateConfig);
+        booking.setCheckOutDate(checkOutDateConfig);
+        booking.setNote(note);
+        booking.setIdCustomer(customer.getId());
+        booking.setIdOrder(null);
+        booking.setIdTypeRoom(!DataUtil.isNull(typeRoom) ? typeRoom.getId() : null);
+        booking.setNumberAdults(numberCustomer);
+        booking.setNumberChildren(numberChildren);
+        booking.setNumberDays(numberNight);
+        booking.setNumberRooms(numberRoom);
+        booking.setTotalPrice(DataUtil.convertLongToBigDecimal(amount));
+        booking.setRoomPrice(DataUtil.convertLongToBigDecimal(roomPrice));
+        booking.setVat(DataUtil.convertLongToBigDecimal((long) (roomPrice*0.1)));
+        booking.setStatus(Constant.BOOKING.NEW);
+        booking.setCreateAt(new Date());
+        booking.setCreateBy(baseService.getCurrentUser().getFullname());
+        booking.setUpdateAt(new Date());
+        booking.setUpdatedBy(baseService.getCurrentUser().getFullname());
+        bookingService.create(booking);
+
+        // Thêm vào bảng history
+        BookingHistoryTransaction bookingHistoryTransaction = new BookingHistoryTransaction();
+        bookingHistoryTransaction.setIdBooking(booking.getId());
+        bookingHistoryTransaction.setNote(note);
+        bookingHistoryTransaction.setType(Constant.HISTORY_TYPE.CREATE);
+        bookingHistoryTransaction.setTotalPrice(DataUtil.convertLongToBigDecimal(amount));
+        bookingHistoryTransaction.setCreateAt(new Date());
+        bookingHistoryTransaction.setCreateBy(baseService.getCurrentUser().getFullname());
+        bookingHistoryTransaction.setUpdateAt(new Date());
+        bookingHistoryTransaction.setUpdatedBy(baseService.getCurrentUser().getFullname());
+        bookingHistoryTransactionService.create(bookingHistoryTransaction);
+        return booking;
+    }
+
+
     @GetMapping("/payment/done")
     @ResponseBody
     public ResponseEntity<String> vnPayDone(HttpServletRequest request, HttpServletResponse response) throws IOException {
@@ -262,7 +358,7 @@ public class PaymentMethodController {
         String discount = request.getParameter("vnp_OrderInfo");
         String orderId = request.getParameter("vnp_TxnRef"); // Lấy mã đơn hàng từ VNPay
         if (orderId.contains("BKOL")) {
-            return paymentBooking(vnp_ResponseCode, response , orderId);
+            return paymentBooking(vnp_ResponseCode, response, orderId);
         }
         String idRedirect = orderId.substring(0, 36);
         String idOrder = "";
@@ -346,50 +442,28 @@ public class PaymentMethodController {
         }
     }
 
+    private String removePrefix(String input, String prefix) {
+        if (input.startsWith(prefix)) {
+            return input.substring(prefix.length());
+        } else {
+            // Nếu chuỗi không bắt đầu bằng prefix, trả về chuỗi ban đầu
+            return input;
+        }
+    }
+
+
     private ResponseEntity<String> paymentBooking(String vnp_ResponseCode, HttpServletResponse response, String code) throws IOException {
-        System.out.println("Thành công :" + code );
+        System.out.println("Thành công :" + code);
+        String bookingID = removePrefix(code, "BKOL");
         // Insert vào bảng booking
         if (vnp_ResponseCode != null && vnp_ResponseCode.equals("00")) { // Mã 00 thường tượng trưng cho thanh toán thành công
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
-            // Todo lưu vào bảng booking
-            // Todo lưu vào các bảng phụ
-            PaymentMethod paymentMethod = new PaymentMethod();
-            paymentMethod.setOrder(null);
-            LocalDate currentDate = LocalDate.now();
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
-            String formattedDate = currentDate.format(formatter);
-            Random random = new Random();
-            int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
-            String paymentMethodCode = "PT" + formattedDate + randomDigits;
-            paymentMethod.setPaymentMethodCode(paymentMethodCode);
-            paymentMethod.setMethod(false);
-//            paymentMethod.setTotalMoney(order.getMoneyGivenByCustomer());
-//            paymentMethod.setNote(order.getNote());
-//            paymentMethod.setCreateAt(new Date());
-//            paymentMethod.setCreateBy(order.getCreateBy());
-//            paymentMethod.setUpdateAt(new Date());
-//            paymentMethod.setUpdatedBy(order.getUpdatedBy());
-            paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
-//            paymentMethodService.add(paymentMethod);
-
-            HistoryTransaction historyTransaction = new HistoryTransaction();
-//            historyTransaction.setOrder(order);
-//            historyTransaction.setTotalMoney(order.getMoneyGivenByCustomer());
-//            historyTransaction.setNote(order.getNote());
-//            historyTransaction.setCreateAt(new Date());
-//            historyTransaction.setCreateBy(order.getCreateBy());
-//            historyTransaction.setUpdateAt(new Date());
-//            historyTransaction.setUpdatedBy(order.getUpdatedBy());
-            historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
-//            historyTransactionService.add(historyTransaction);
-
-            OrderTimeline orderTimeline = new OrderTimeline();
-//            orderTimeline.setOrder(order);
-//            orderTimeline.setAccount(order.getAccount());
-            orderTimeline.setType(Constant.ORDER_TIMELINE.CHECKED_OUT);
-            orderTimeline.setNote("Khách chuyển khoản để thanh toán");
-            orderTimeline.setCreateAt(new Date());
-//            orderTimelineService.add(orderTimeline);
+            // Todo cập nhật lại trạng thái của booking
+            Booking booking = bookingService.findOne(bookingID);
+            if (!DataUtil.isNull(booking)) {
+                booking.setStatus(Constant.BOOKING.SUCCESS);
+                bookingService.create(booking);
+            }
             String redirectUrl = "http://localhost:3001";
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
