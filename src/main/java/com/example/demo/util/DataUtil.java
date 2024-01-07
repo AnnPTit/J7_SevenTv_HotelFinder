@@ -203,4 +203,11 @@ public class DataUtil {
 
         return result;
     }
+    public static LocalDateTime convertStringToLocalDateTime(String dateTimeStr) {
+        // Define the formatter for the given date-time pattern
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm:ss.SSSX");
+
+        // Parse the string to LocalDateTime
+        return LocalDateTime.parse(dateTimeStr, formatter);
+    }
 }

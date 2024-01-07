@@ -1,0 +1,34 @@
+package com.example.demo.service.impl;
+
+import com.example.demo.dto.BookingDTO;
+import com.example.demo.entity.Booking;
+import com.example.demo.mapper.BookingMapper;
+import com.example.demo.repository.BookingRepository;
+import com.example.demo.service.BookingService;
+import com.example.demo.util.DataUtil;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+@Service
+public class BookingServiceImpl implements BookingService {
+
+    @Autowired
+    private BookingMapper bookingMapper ;
+    @Autowired
+    private BookingRepository bookingRepository ;
+
+    @Override
+    public BookingDTO create(BookingDTO bookingDTO) {
+        Booking booking = bookingRepository.save(bookingMapper.toEntity(bookingDTO));
+        return bookingMapper.toDTO(booking);
+    }
+
+    @Override
+    public BookingDTO findOne(String id) {
+        Booking booking = bookingRepository.findById(id).orElse(null);
+        if(!DataUtil.isNull(booking)){
+            return bookingMapper.toDTO(booking);
+        }
+        return null;
+    }
+}
