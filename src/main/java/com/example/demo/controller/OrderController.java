@@ -460,7 +460,7 @@ public class OrderController {
             paymentMethodService.add(paymentMethod);
 
             booking.setOrder(order);
-            booking.setStatus(Constant.BOOKING.ACTIVE);
+            booking.setStatus(Constant.MANAGE_BOOKING.ACTIVE);
             bookingService.update(booking);
         } else {
             orderDetail.setOrderDetailCode(orderDetailCode);
@@ -483,7 +483,7 @@ public class OrderController {
             orderDetailService.add(orderDetail);
 
             booking.setOrder(booking.getOrder());
-            booking.setStatus(Constant.BOOKING.ACTIVE);
+            booking.setStatus(Constant.MANAGE_BOOKING.ACTIVE);
             bookingService.update(booking);
         }
         return new ResponseEntity<OrderDetail>(orderDetail, HttpStatus.OK);

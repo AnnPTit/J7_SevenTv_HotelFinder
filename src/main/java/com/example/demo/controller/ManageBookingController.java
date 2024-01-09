@@ -68,7 +68,7 @@ public class ManageBookingController {
     @DeleteMapping("/change-status/{id}")
     public ResponseEntity<String> changeStatus(@PathVariable("id") String id) {
         Booking booking = bookingService.getById(id);
-        booking.setStatus(Constant.BOOKING.ACTIVE);
+        booking.setStatus(Constant.MANAGE_BOOKING.ACTIVE);
         bookingService.update(booking);
         return new ResponseEntity<String>("Success " + id + " successfully", HttpStatus.OK);
     }
@@ -76,7 +76,7 @@ public class ManageBookingController {
     @DeleteMapping("/change-wait-room/{id}")
     public ResponseEntity<String> changeWaitRoom(@PathVariable("id") String id) {
         Booking booking = bookingService.getById(id);
-        booking.setStatus(Constant.BOOKING.WAIT_ROOM);
+        booking.setStatus(Constant.MANAGE_BOOKING.WAIT_ROOM);
         bookingService.update(booking);
         return new ResponseEntity<String>("Success " + id + " successfully", HttpStatus.OK);
     }
@@ -84,7 +84,7 @@ public class ManageBookingController {
     @DeleteMapping("/change-cancel/{id}")
     public ResponseEntity<String> changeCancel(@PathVariable("id") String id) {
         Booking booking = bookingService.getById(id);
-        booking.setStatus(Constant.BOOKING.UNACTIVE);
+        booking.setStatus(Constant.MANAGE_BOOKING.UNACTIVE);
         bookingService.update(booking);
         return new ResponseEntity<String>("Success " + id + " successfully", HttpStatus.OK);
     }
@@ -109,7 +109,7 @@ public class ManageBookingController {
         addInformationCustomer(customer, orderDetails);
 
         Booking booking = bookingService.getById(customerBookingDTO.getIdBooking());
-        booking.setStatus(Constant.BOOKING.CHECKED_IN);
+        booking.setStatus(Constant.MANAGE_BOOKING.CHECKED_IN);
         bookingService.update(booking);
 
         return new ResponseEntity<Customer>(customer, HttpStatus.OK);

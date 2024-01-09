@@ -9,14 +9,16 @@ public interface BookingService {
 
     Page<Booking> findAll(Pageable pageable);
 
-    BookingDTO create(BookingDTO bookingDTO);
+    BookingDTO create(Booking booking);
 
-    BookingDTO findOne(String id);
+    Booking findOne(String id);
 
     Booking getById(String id);
 
     Booking update(Booking booking);
 
     Booking getByIdOrder(String idOrder);
+
+    Booking getNumberRoomBooked(String typeRoomId , String checkIn , String checkOut);
 
 }

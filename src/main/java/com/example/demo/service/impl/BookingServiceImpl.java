@@ -11,15 +11,17 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.util.Date;
 
 @Service
 public class BookingServiceImpl implements BookingService {
 
     @Autowired
-    private BookingMapper bookingMapper ;
+    private BookingMapper bookingMapper;
     @Autowired
-    private BookingRepository bookingRepository ;
+    private BookingRepository bookingRepository;
 
     @Override
     public Page<Booking> findAll(Pageable pageable) {
@@ -27,17 +29,23 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public BookingDTO create(BookingDTO bookingDTO) {
-        Booking booking = bookingRepository.save(bookingMapper.toEntity(bookingDTO));
+    public BookingDTO create(Booking booking) {
+        bookingRepository.save(booking);
         return bookingMapper.toDTO(booking);
     }
 
     @Override
-    public BookingDTO findOne(String id) {
-        Booking booking = bookingRepository.findById(id).orElse(null);
-        if(!DataUtil.isNull(booking)){
-            return bookingMapper.toDTO(booking);
-        }
+    public Booking findOne(String id) {
+        return bookingRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Booking getNumberRoomBooked(String typeRoomId, String checkIn, String checkOut) {
+        LocalDate checkInTime = DataUtil.convertStringToLocalDate(checkIn);
+        LocalDate checkOutTime = DataUtil.convertStringToLocalDate(checkOut);
+        Date ci = DataUtil.convertLocalDateToDateWithTime(checkInTime, 14);
+        Date co = DataUtil.convertLocalDateToDateWithTime(checkOutTime, 12);
+        bookingRepository.checkRoomBooked(typeRoomId, ci, co);
         return null;
     }
 

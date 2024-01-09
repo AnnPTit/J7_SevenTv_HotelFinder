@@ -250,7 +250,7 @@ public class OrderDetailController {
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(idOrder);
         if (orderDetails.isEmpty()) {
             Booking booking = bookingService.getByIdOrder(idOrder);
-            booking.setStatus(Constant.BOOKING.WAIT_ROOM);
+            booking.setStatus(Constant.MANAGE_BOOKING.WAIT_ROOM);
             bookingService.update(booking);
         }
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);

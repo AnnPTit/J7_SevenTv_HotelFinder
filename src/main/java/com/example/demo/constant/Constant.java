@@ -34,7 +34,7 @@ public class Constant {
         public static Integer ACTIVE = 2;
     }
 
-    public static final class BOOKING {
+    public static final class MANAGE_BOOKING {
         public static Integer UNACTIVE = 0;
         public static Integer WAIT_ROOM = 1;
         public static Integer ACTIVE = 2;
@@ -71,5 +71,13 @@ public class Constant {
     public static final String PROBLEM_BASE_URL = "https://www.jhipster.tech/problem";
     public static final URI DEFAULT_TYPE = URI.create(PROBLEM_BASE_URL + "/problem-with-message");
 
+    public static final class BOOKING {
+        public static Integer NEW = -1 ;
+        public static Integer SUCCESS = 1 ;
+    }
+
+    public static final class HISTORY_TYPE {
+        public static Integer CREATE = 1 ;
+    }
 
 }
