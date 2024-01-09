@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.*;
 import com.example.demo.entity.BlogComment;
+import com.example.demo.entity.Booking;
 import com.example.demo.entity.Customer;
 import com.example.demo.entity.Deposit;
 import com.example.demo.entity.Facility;
@@ -508,5 +509,10 @@ public class HomeController {
         Date checkOutDateConfig = DataUtil.convertLocalDateToDateWithTime(checkOut, 12);
         String typeRoom = (String) requestBody.get("typeRoomChose");
         return typeRoomService.countRoomCanBeBook(typeRoom, checkInDateConfig, checkOutDateConfig);
+    }
+
+    @GetMapping("/booking/get-by-status/{status}/{idCuss}")
+    public List<Booking> getAllByStatus(@PathVariable("status") Integer status, @PathVariable("idCuss") String idCuss) {
+        return bookingService.getAllByStatus(status, idCuss);
     }
 }
