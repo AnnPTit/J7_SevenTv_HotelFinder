@@ -292,23 +292,6 @@ public class OrderServiceImpl implements OrderService {
     @Override
     public ConfirmOrderDTO updateSurcharge(ConfirmOrderDTO confirmOrderDTO) {
         Order order = orderRepository.getById(confirmOrderDTO.getOrderId());
-        for (OrderDetail orderDetail : orderDetailRepository.getAllByOrderId(order.getId())) {
-            if (orderDetail.getTimeIn() == 1) {
-                orderDetail.setCheckInDatetime(new Date());
-                Room room = roomService.getRoomById(orderDetail.getRoom().getId());
-                Date bookingStart = orderDetail.getCheckInDatetime();
-                Date bookingEnd = orderDetail.getCheckOutDatetime();
-                LocalDate startLocalDate = bookingStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                LocalDate endLocalDate = bookingEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
-                long days = ChronoUnit.DAYS.between(startLocalDate, endLocalDate);
-                System.out.println(days);
-                BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
-                BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days + 1));
-                orderDetail.setRoomPrice(totalCost);
-                orderDetail.setUpdateAt(new Date());
-                orderDetailRepository.save(orderDetail);
-            }
-        }
         order.setSurcharge(confirmOrderDTO.getSurcharge());
         orderRepository.save(order);
         return confirmOrderDTO;

@@ -40,4 +40,20 @@ public class BookingServiceImpl implements BookingService {
         }
         return null;
     }
+
+    @Override
+    public Booking getById(String id) {
+        return bookingRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public Booking update(Booking booking) {
+        return bookingRepository.save(booking);
+    }
+
+    @Override
+    public Booking getByIdOrder(String idOrder) {
+        return bookingRepository.getByIdOrder(idOrder);
+    }
+
 }

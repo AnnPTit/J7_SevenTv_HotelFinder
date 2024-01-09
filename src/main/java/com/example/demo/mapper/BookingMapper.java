@@ -14,7 +14,6 @@ public class BookingMapper {
         dto.setIdOrder(booking.getOrder().getId());
         dto.setNote(booking.getNote());
         dto.setNumberRooms(booking.getNumberRooms());
-        dto.setNumberCustomers(booking.getNumberCustomers());
         dto.setNumberAdults(booking.getNumberAdults());
         dto.setNumberChildren(booking.getNumberChildren());
         dto.setNumberDays(booking.getNumberDays());
@@ -43,7 +42,6 @@ public class BookingMapper {
         booking.getOrder().setId(dto.getIdOrder());
         booking.setNote(dto.getNote());
         booking.setNumberRooms(dto.getNumberRooms());
-        booking.setNumberCustomers(dto.getNumberCustomers());
         booking.setNumberAdults(dto.getNumberAdults());
         booking.setNumberChildren(dto.getNumberChildren());
         booking.setNumberDays(dto.getNumberDays());

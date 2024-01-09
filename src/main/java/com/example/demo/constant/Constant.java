@@ -34,6 +34,13 @@ public class Constant {
         public static Integer ACTIVE = 2;
     }
 
+    public static final class BOOKING {
+        public static Integer UNACTIVE = 0;
+        public static Integer WAIT_ROOM = 1;
+        public static Integer ACTIVE = 2;
+        public static Integer CHECKED_IN = 3;
+    }
+
     public static final class COMMON_STATUS {
         public static Integer UNACTIVE = 0;
         public static Integer ACTIVE = 1;

@@ -3,6 +3,7 @@ package com.example.demo.controller;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.OrderDetailDTO;
 import com.example.demo.entity.Account;
+import com.example.demo.entity.Booking;
 import com.example.demo.entity.ComboUsed;
 import com.example.demo.entity.InformationCustomer;
 import com.example.demo.entity.Order;
@@ -11,6 +12,7 @@ import com.example.demo.entity.OrderTimeline;
 import com.example.demo.entity.Photo;
 import com.example.demo.entity.Room;
 import com.example.demo.entity.ServiceUsed;
+import com.example.demo.service.BookingService;
 import com.example.demo.service.ComboUsedService;
 import com.example.demo.service.InformationCustomerService;
 import com.example.demo.service.OrderDetailService;
@@ -66,6 +68,8 @@ public class OrderDetailController {
     private InformationCustomerService informationCustomerService;
     @Autowired
     private ComboUsedService comboUsedService;
+    @Autowired
+    private BookingService bookingService;
     @Autowired
     private BaseService baseService;
 
@@ -230,6 +234,25 @@ public class OrderDetailController {
         orderDetail.setDeleted(baseService.getCurrentUser().getFullname());
         orderDetail.setStatus(Constant.ORDER_DETAIL.CANCEL);
         orderDetailService.add(orderDetail);
+        return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
+    }
+
+    @PutMapping("/delete-room-booking/{id}")
+    public ResponseEntity<String> deleteRoomBooking(@PathVariable("id") String id, @RequestParam("idOrder") String idOrder) {
+        OrderDetail orderDetail = orderDetailService.getOrderDetailById(id);
+//        orderDetail.getRoom().setStatus(Constant.ROOM.EMPTY);
+        Room room = orderDetail.getRoom();
+        room.setStatus(Constant.ROOM.EMPTY);
+        roomService.add(room);
+
+        orderDetailService.delete(orderDetail);
+
+        List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(idOrder);
+        if (orderDetails.isEmpty()) {
+            Booking booking = bookingService.getByIdOrder(idOrder);
+            booking.setStatus(Constant.BOOKING.WAIT_ROOM);
+            bookingService.update(booking);
+        }
         return new ResponseEntity<String>("Deleted " + id + " successfully", HttpStatus.OK);
     }
 
