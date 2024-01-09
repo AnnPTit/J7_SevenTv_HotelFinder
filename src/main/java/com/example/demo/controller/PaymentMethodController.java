@@ -289,19 +289,19 @@ public class PaymentMethodController {
         // validate số phòng
         Integer numberRoomCanBeBook = typeRoomService.countRoomCanBeBook(typeRoomChose, checkInDateConfig, checkOutDateConfig);
         if (numberRoom > numberRoomCanBeBook) {
-            return "Lỗi rồi đmm";
+            return "Số phòng còn trống trong khoảng " + checkInStr + " / " + checkOutStr + " không đủ đáp ứng ! \n vui lòng chọn loại phòng khác hoặc khoảng ngày khác !";
         }
 
-        if (fullName.isBlank()) {
+        if (DataUtil.isNull(fullName)) {
             return "Không được bỏ trống Họ và tên";
         }
-        if (phoneNumber.isBlank()) {
+        if (DataUtil.isNull(phoneNumber)) {
             return "Không được bỏ trống Số điện thoại";
         }
-        if (email.isBlank()) {
+        if (DataUtil.isNull(email)) {
             return "Không được bỏ trống Email";
         }
-        if (accountNumber.isBlank()) {
+        if (DataUtil.isNull(accountNumber)) {
             return "Không được bỏ trống Số tài khoản ngân hàng";
         }
 
