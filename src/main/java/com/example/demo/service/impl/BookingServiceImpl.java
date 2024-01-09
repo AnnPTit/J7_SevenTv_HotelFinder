@@ -14,6 +14,7 @@ import org.springframework.stereotype.Service;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -47,5 +48,11 @@ public class BookingServiceImpl implements BookingService {
         Date co = DataUtil.convertLocalDateToDateWithTime(checkOutTime, 12);
         bookingRepository.checkRoomBooked(typeRoomId, ci, co);
         return null;
+    }
+
+    @Override
+    public List<Booking> getAllByStatus(Integer status, String idCuss) {
+        return bookingRepository.getAllByStatus(status, idCuss)
+                ;
     }
 }

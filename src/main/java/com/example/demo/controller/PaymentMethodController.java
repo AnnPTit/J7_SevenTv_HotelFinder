@@ -291,6 +291,10 @@ public class PaymentMethodController {
         if (numberRoom > numberRoomCanBeBook) {
             return "Số phòng còn trống trong khoảng " + checkInStr + " / " + checkOutStr + " không đủ đáp ứng ! \n vui lòng chọn loại phòng khác hoặc khoảng ngày khác !";
         }
+        Date now = new Date();
+        if (checkInDateConfig.before(now)) {
+            return "Ngày check in phải lớn hơn ngày hôm nay";
+        }
 
         if (DataUtil.isNull(fullName)) {
             return "Không được bỏ trống Họ và tên";

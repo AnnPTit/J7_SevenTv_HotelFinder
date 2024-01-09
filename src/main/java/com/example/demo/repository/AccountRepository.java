@@ -15,7 +15,6 @@ import java.util.List;
 import java.util.Optional;
 
 @Repository
-@Transactional
 public interface AccountRepository extends JpaRepository<Account, String> {
 
     Optional<Account> findByAccountCode(String code);
