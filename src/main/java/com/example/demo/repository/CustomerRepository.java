@@ -18,20 +18,22 @@ public interface CustomerRepository extends JpaRepository<Customer, String> {
     Page<Customer> findAll(Pageable pageable);
 
     @Query(value = "SELECT * FROM customer WHERE status = 1 " +
-            "AND ((:citizenId is null or citizen_id LIKE CONCAT('%', :citizenId ,'%'))" +
-            "OR (:fullname is null or fullname LIKE CONCAT('%', :fullname ,'%'))" +
-            "OR (:phoneNumber is null or phone_number LIKE CONCAT('%', :phoneNumber ,'%')))" +
+            "AND ((:citizenId is null) OR (citizen_id LIKE CONCAT('%', :citizenId ,'%')))" +
+            "AND (:fullname is null or fullname LIKE CONCAT('%', :fullname ,'%'))" +
+            "AND (:phoneNumber is null or phone_number LIKE CONCAT('%', :phoneNumber ,'%'))" +
+            "AND citizen_id is not null " +
             "ORDER BY update_at DESC", nativeQuery = true)
     List<Customer> getAllByStatus(@Param("citizenId") String citizenId,
                                   @Param("fullname") String fullname,
                                   @Param("phoneNumber") String phoneNumber);
+
 
     @Query(value = "select * from customer", nativeQuery = true)
     List<Customer> getAllCustomer();
 
     Optional<Customer> findByEmail(String email);
 
-    @Query(value = "select * from customer c where c.citizen_id =:citizenId and status =1 ",nativeQuery = true)
+    @Query(value = "select * from customer c where c.citizen_id =:citizenId and status =1 ", nativeQuery = true)
     List<Customer> findByCitizenId(@Param("citizenId") String citizenId);
 
     @Query(value = "SELECT * FROM customer " +

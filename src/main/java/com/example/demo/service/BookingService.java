@@ -9,13 +9,20 @@ import java.util.List;
 
 public interface BookingService {
 
-    Page<Booking> findAll(Pageable pageable);
+    Page<Booking> findAll(String customerFullname, String customerPhone, String customerEmail, Integer status, Pageable pageable);
 
     BookingDTO create(Booking booking);
 
     Booking findOne(String id);
 
+    Booking getById(String id);
+
+    Booking update(Booking booking);
+
+    Booking getByIdOrder(String idOrder);
+
     Booking getNumberRoomBooked(String typeRoomId , String checkIn , String checkOut);
 
     List<Booking> getAllByStatus(Integer status, String idCuss);
+
 }

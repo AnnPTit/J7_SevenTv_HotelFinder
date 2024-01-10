@@ -27,6 +27,7 @@ public class OrderDTO {
     private String note;
     private BigDecimal vat;
     private BigDecimal moneyGivenByCustomer;
+    private BigDecimal moneyPayment;
     private BigDecimal excessMoney;
     private BigDecimal deposit;
     private String customerId;
