@@ -7,7 +7,7 @@ import org.springframework.data.domain.Pageable;
 
 public interface BookingService {
 
-    Page<Booking> findAll(Pageable pageable);
+    Page<Booking> findAll(String customerFullname, String customerPhone, String customerEmail, Integer status, Pageable pageable);
 
     BookingDTO create(Booking booking);
 

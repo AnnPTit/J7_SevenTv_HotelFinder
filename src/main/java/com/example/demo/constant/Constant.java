@@ -39,6 +39,7 @@ public class Constant {
         public static Integer WAIT_ROOM = 1;
         public static Integer ACTIVE = 2;
         public static Integer CHECKED_IN = 3;
+        public static Integer CHECKED_OUT = 4;
     }
 
     public static final class COMMON_STATUS {
@@ -78,6 +79,7 @@ public class Constant {
 
     public static final class HISTORY_TYPE {
         public static Integer CREATE = 1 ;
+        public static Integer CANCEL = 2 ;
     }
 
 }

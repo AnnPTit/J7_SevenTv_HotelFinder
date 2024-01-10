@@ -14,8 +14,16 @@ import java.util.List;
 @Repository
 public interface BookingRepository extends JpaRepository<Booking, String> {
 
-    @Query(value = "SELECT * FROM booking ORDER BY create_at DESC", nativeQuery = true)
-    Page<Booking> findAll(Pageable pageable);
+    @Query(value = "SELECT o.* FROM booking o " +
+            "JOIN customer c ON o.id_customer = c.id\n" +
+            "WHERE ((:customerFullname IS NULL OR c.fullname LIKE CONCAT('%', :customerFullname, '%'))" +
+            "OR (:customerPhone IS NULL OR c.phone_number LIKE CONCAT('%', :customerPhone, '%'))" +
+            "OR (:customerEmail IS NULL OR c.email LIKE CONCAT('%', :customerEmail, '%')))\n" +
+            " AND (:status IS NULL OR o.status = :status) ORDER BY o.update_at DESC", nativeQuery = true)
+    Page<Booking> findAll(@Param("customerFullname") String customerFullname,
+                          @Param("customerPhone") String customerPhone,
+                          @Param("customerEmail") String customerEmail,
+                          @Param("status") Integer status, Pageable pageable);
 
     @Query(value = "SELECT * FROM booking WHERE id_order = ?1", nativeQuery = true)
     Booking getByIdOrder(String idOrder);

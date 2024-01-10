@@ -12,7 +12,6 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
-import java.time.LocalDateTime;
 import java.util.Date;
 
 @Service
@@ -24,8 +23,11 @@ public class BookingServiceImpl implements BookingService {
     private BookingRepository bookingRepository;
 
     @Override
-    public Page<Booking> findAll(Pageable pageable) {
-        return bookingRepository.findAll(pageable);
+    public Page<Booking> findAll(String customerFullname, String customerPhone, String customerEmail, Integer status, Pageable pageable) {
+        return bookingRepository.findAll((customerFullname != null && !customerFullname.isEmpty()) ? customerFullname : null,
+                (customerPhone != null && !customerPhone.isEmpty()) ? customerPhone : null,
+                (customerEmail != null && !customerEmail.isEmpty()) ? customerEmail : null,
+                (status != null && !status.toString().isEmpty()) ? status : null, pageable);
     }
 
     @Override

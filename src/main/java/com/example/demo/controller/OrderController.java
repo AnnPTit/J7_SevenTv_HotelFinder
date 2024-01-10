@@ -419,7 +419,7 @@ public class OrderController {
             orderDetail.setUpdateAt(new Date());
             orderDetail.setUpdatedBy(baseService.getCurrentUser().getFullname());
             orderDetail.setStatus(Constant.ORDER_DETAIL.WAIT_CONFIRM);
-            orderDetail.getRoom().setStatus(Constant.ROOM.ACTIVE);
+//            orderDetail.getRoom().setStatus(Constant.ROOM.ACTIVE);
             orderDetailService.add(orderDetail);
 
 //            Room room = orderDetail.getRoom();
@@ -522,6 +522,12 @@ public class OrderController {
             roomService.add(room);
         }
 
+        Booking booking = bookingService.getByIdOrder(id);
+        if (booking != null) {
+            booking.setStatus(Constant.MANAGE_BOOKING.CHECKED_IN);
+            bookingService.update(booking);
+        }
+
         OrderTimeline orderTimeline = new OrderTimeline();
         orderTimeline.setOrder(order);
         orderTimeline.setAccount(order.getAccount());
@@ -559,6 +565,12 @@ public class OrderController {
             Room room = orderDetail.getRoom();
             room.setStatus(Constant.ROOM.EMPTY);
             roomService.add(room);
+        }
+
+        Booking booking = bookingService.getByIdOrder(id);
+        if (booking != null) {
+            booking.setStatus(Constant.MANAGE_BOOKING.CHECKED_OUT);
+            bookingService.update(booking);
         }
 
         PaymentMethod paymentMethod = new PaymentMethod();
