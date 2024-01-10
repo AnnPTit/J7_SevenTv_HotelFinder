@@ -211,7 +211,7 @@ public class PaymentMethodController {
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(booking.getTotalPrice()));
+        vnp_Params.put("vnp_Amount", String.valueOf(booking.getTotalPrice().multiply(new BigDecimal(100))));
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_BankCode", "");
         vnp_Params.put("vnp_TxnRef", "BKOL" + booking.getId());
@@ -315,7 +315,7 @@ public class PaymentMethodController {
         if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")) {
             return "Email không đúng định dạng";
         }
-        if (!accountNumber.matches("^[0-9]{12,20}$")) {
+        if (!accountNumber.matches("^[0-9]{5,20}$")) {
             return "Số tài khoản ngân hàng không đúng định dang";
         }
 

@@ -149,8 +149,8 @@ public class ManageBookingController {
         informationCustomerService.add(informationCustomer);
     }
 
-    @PutMapping("/cancel-booking/{id}")
-    public ResponseEntity<?> cancelBooking(@PathVariable("id") String id, @RequestBody BookingDTO bookingDTO) {
+    @PutMapping("/cancel-booking/{id}/{type}")
+    public ResponseEntity<?> cancelBooking(@PathVariable("id") String id, @PathVariable("type") Integer type, @RequestBody BookingDTO bookingDTO) {
         if (StringUtils.isBlank(bookingDTO.getBankAccountName())) {
             return new ResponseEntity<>("Tên ngân hàng không được để trống", HttpStatus.BAD_REQUEST);
         } else if (StringUtils.isBlank(bookingDTO.getBankAccountNumber())) {
@@ -166,7 +166,11 @@ public class ManageBookingController {
         int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
 
         Booking booking = bookingService.getById(id);
-        booking.setStatus(Constant.MANAGE_BOOKING.UNACTIVE);
+        if (type == 1) {
+            booking.setStatus(Constant.MANAGE_BOOKING.UNACTIVE);
+        } else {
+            booking.setStatus(Constant.BOOKING.CANCELED);
+        }
         booking.setBankAccountName(bookingDTO.getBankAccountName());
         booking.setBankAccountNumber(bookingDTO.getBankAccountNumber());
         bookingService.update(booking);

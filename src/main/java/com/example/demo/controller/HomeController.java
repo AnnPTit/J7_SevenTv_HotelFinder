@@ -515,4 +515,10 @@ public class HomeController {
     public List<Booking> getAllByStatus(@PathVariable("status") Integer status, @PathVariable("idCuss") String idCuss) {
         return bookingService.getAllByStatus(status, idCuss);
     }
+
+    @GetMapping("/booking/cancel/{id}")
+    public ResponseEntity<Void> cancel(@PathVariable("id") String id) {
+        if (bookingService.cancel(id)) return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 }

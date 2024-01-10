@@ -1,5 +1,6 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.BookingDTO;
 import com.example.demo.entity.Booking;
 import com.example.demo.mapper.BookingMapper;
@@ -9,6 +10,7 @@ import com.example.demo.util.DataUtil;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -69,5 +71,17 @@ public class BookingServiceImpl implements BookingService {
 
     public List<Booking> getAllByStatus(Integer status, String idCuss) {
         return bookingRepository.getAllByStatus(status, idCuss);
+    }
+
+    @Override
+    public boolean cancel(String id) {
+        // Đổi trạng thái booking về cancel và đẩy xuống
+        Booking booking = bookingRepository.findById(id).orElse(null);
+        if (booking == null) {
+            return false;
+        }
+        booking.setStatus(Constant.BOOKING.CANCEL);
+        bookingRepository.save(booking);
+        return true;
     }
 }
