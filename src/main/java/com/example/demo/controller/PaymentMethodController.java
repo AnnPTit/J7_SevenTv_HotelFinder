@@ -279,6 +279,9 @@ public class PaymentMethodController {
         Integer numberChildren = Integer.valueOf(requestBody.get("numberChildren").toString());
         String typeRoomChose = (String) requestBody.get("typeRoomChose");
         String note = (String) requestBody.get("note");
+        String fullName = (String) requestBody.get("fullName");
+        String phoneNumber = (String) requestBody.get("phoneNumber");
+        String email = (String) requestBody.get("email");
         // History
         String accountNumber = (String) requestBody.get("accountNumber");
         String bankChose = requestBody.get("bankChose").toString();
@@ -286,7 +289,41 @@ public class PaymentMethodController {
         // validate số phòng
         Integer numberRoomCanBeBook = typeRoomService.countRoomCanBeBook(typeRoomChose, checkInDateConfig, checkOutDateConfig);
         if (numberRoom > numberRoomCanBeBook) {
-            return "Lỗi rồi đmm";
+            return "Số phòng còn trống trong khoảng " + checkInStr + " / " + checkOutStr + " không đủ đáp ứng ! \n vui lòng chọn loại phòng khác hoặc khoảng ngày khác !";
+        }
+        Date now = new Date();
+        if (checkInDateConfig.before(now)) {
+            return "Ngày check in phải lớn hơn ngày hôm nay";
+        }
+
+        if (DataUtil.isNull(fullName)) {
+            return "Không được bỏ trống Họ và tên";
+        }
+        if (DataUtil.isNull(phoneNumber)) {
+            return "Không được bỏ trống Số điện thoại";
+        }
+        if (DataUtil.isNull(email)) {
+            return "Không được bỏ trống Email";
+        }
+        if (DataUtil.isNull(accountNumber)) {
+            return "Không được bỏ trống Số tài khoản ngân hàng";
+        }
+
+        if (!phoneNumber.matches("^(\\+84|0)[35789][0-9]{8}$")) {
+            return "Số điện thoại không đúng định dạng";
+        }
+        if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")) {
+            return "Email không đúng định dạng";
+        }
+        if (!accountNumber.matches("^[0-9]{12,20}$")) {
+            return "Số tài khoản ngân hàng không đúng định dang";
+        }
+
+        // Lấy ngày hiện tại
+        LocalDate currentDate = LocalDate.now();
+
+        if (!(checkIn.isAfter(currentDate) && checkIn.isBefore(currentDate.plusDays(30)))) {
+            return "Ngày Check-in không được vượt quá 30 ngày.";
         }
         return null;
     }

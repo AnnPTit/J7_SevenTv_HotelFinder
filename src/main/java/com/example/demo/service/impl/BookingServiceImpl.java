@@ -13,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
 import java.util.Date;
+import java.util.List;
 
 @Service
 public class BookingServiceImpl implements BookingService {
@@ -66,4 +67,7 @@ public class BookingServiceImpl implements BookingService {
         return bookingRepository.getByIdOrder(idOrder);
     }
 
+    public List<Booking> getAllByStatus(Integer status, String idCuss) {
+        return bookingRepository.getAllByStatus(status, idCuss);
+    }
 }
