@@ -9,6 +9,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
+
 @AllArgsConstructor
 @NoArgsConstructor
 @Data
@@ -35,4 +36,6 @@ public class BookingDTO {
     private String updatedBy;
     private String deleted;
     private Integer status;
+    private String url;
+
 }

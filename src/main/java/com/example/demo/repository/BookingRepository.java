@@ -4,6 +4,7 @@ import com.example.demo.entity.Booking;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
@@ -42,4 +43,9 @@ public interface BookingRepository extends JpaRepository<Booking, String> {
     @Query(value = "select * from booking b\n" +
             "where b.status =:status  and b.id_customer =:idCuss", nativeQuery = true)
     List<Booking> getAllByStatus(@Param("status") Integer status, @Param("idCuss") String idCuss);
+
+
+    @Modifying
+    @Query(value = "update booking set status = 6 where id = :id ", nativeQuery = true)
+    void updateCancel(@Param("id") String id);
 }

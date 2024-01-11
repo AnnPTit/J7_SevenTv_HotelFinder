@@ -2,15 +2,10 @@ package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.*;
-import com.example.demo.entity.BlogComment;
-import com.example.demo.entity.Booking;
-import com.example.demo.entity.Customer;
-import com.example.demo.entity.Deposit;
-import com.example.demo.entity.Facility;
-import com.example.demo.entity.Room;
-import com.example.demo.entity.Service;
-import com.example.demo.entity.TypeRoom;
+import com.example.demo.entity.*;
+import com.example.demo.mapper.BookingMapper;
 import com.example.demo.service.*;
+import com.example.demo.service.ComboService;
 import com.example.demo.util.DataUtil;
 import jakarta.validation.Valid;
 import org.apache.commons.lang3.StringUtils;
@@ -71,6 +66,11 @@ public class HomeController {
     private FacilityService facilityService;
     @Autowired
     private BookingService bookingService;
+    @Autowired
+    private BookingHistoryTransactionService bookingHistoryTransactionService;
+    @Autowired
+    private BookingMapper bookingMapper;
+
 
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
@@ -517,8 +517,8 @@ public class HomeController {
     }
 
     @GetMapping("/booking/cancel/{id}")
-    public ResponseEntity<Void> cancel(@PathVariable("id") String id) {
-        if (bookingService.cancel(id)) return new ResponseEntity<>(HttpStatus.OK);
+    public ResponseEntity<Void> cancel(@PathVariable("id") String id, @RequestParam("reason") String reason) {
+        if (bookingService.cancel(id, reason)) return new ResponseEntity<>(HttpStatus.OK);
         return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
     }
 }

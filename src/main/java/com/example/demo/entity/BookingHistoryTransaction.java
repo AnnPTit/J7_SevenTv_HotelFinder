@@ -26,10 +26,10 @@ public class BookingHistoryTransaction {
     private BigDecimal totalPrice;
 
     @Column(name = "payment_method")
-    private Integer paymentMethod ;
+    private Integer paymentMethod;
 
     @Column(name = "type")
-    private Integer type ;
+    private Integer type;
 
     @Column(name = "note")
     private String note;
@@ -60,4 +60,8 @@ public class BookingHistoryTransaction {
 
     @Column(name = "status")
     private Integer status;
+
+    @Column(name = "url")
+    private String url;
+
 }

@@ -533,7 +533,7 @@ public class PaymentMethodController {
                 booking.setId(bookingID);
                 bookingService.create(booking);
             }
-            String redirectUrl = "http://localhost:3001";
+            String redirectUrl = "http://localhost:3001/success";
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         }

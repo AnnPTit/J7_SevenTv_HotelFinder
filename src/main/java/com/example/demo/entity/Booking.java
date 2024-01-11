@@ -7,6 +7,7 @@ import lombok.NoArgsConstructor;
 
 import java.math.BigDecimal;
 import java.util.Date;
+import java.util.List;
 
 @Entity
 @Table(name = "booking")
@@ -84,4 +85,13 @@ public class Booking {
 
     @Column(name = "status")
     private Integer status;
+
+    @Column(name = "cancel_reason")
+    private String cancelReason;
+
+    @Column(name = "url")
+    private String url;
+
+//    @OneToMany(mappedBy = "booking", fetch = FetchType.LAZY)
+//    private List<BookingHistoryTransaction> list;
 }

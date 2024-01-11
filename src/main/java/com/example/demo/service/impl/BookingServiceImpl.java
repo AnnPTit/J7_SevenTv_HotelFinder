@@ -74,14 +74,26 @@ public class BookingServiceImpl implements BookingService {
     }
 
     @Override
-    public boolean cancel(String id) {
+    public boolean cancel(String id, String reason) {
         // Đổi trạng thái booking về cancel và đẩy xuống
         Booking booking = bookingRepository.findById(id).orElse(null);
         if (booking == null) {
             return false;
         }
         booking.setStatus(Constant.BOOKING.CANCEL);
+        booking.setCancelReason(reason);
         bookingRepository.save(booking);
         return true;
+    }
+
+    @Override
+    public boolean confirmCancel(String id) {
+        try {
+            bookingRepository.updateCancel(id);
+            return true;
+        } catch (Exception e) {
+            e.printStackTrace();
+            return false;
+        }
     }
 }

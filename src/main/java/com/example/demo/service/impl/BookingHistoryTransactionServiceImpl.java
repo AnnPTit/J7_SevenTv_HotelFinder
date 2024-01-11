@@ -7,6 +7,8 @@ import com.example.demo.service.BookingHistoryTransactionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class BookingHistoryTransactionServiceImpl implements BookingHistoryTransactionService {
     @Autowired
@@ -14,7 +16,12 @@ public class BookingHistoryTransactionServiceImpl implements BookingHistoryTrans
 
     @Override
     public BookingHistoryTransaction create(BookingHistoryTransaction bookingHistoryTransaction) {
-        return  bookingHistoryTransactionRepository.save(bookingHistoryTransaction);
+        return bookingHistoryTransactionRepository.save(bookingHistoryTransaction);
 
+    }
+
+    @Override
+    public List<BookingHistoryTransaction> getByIdBooking(String id) {
+        return bookingHistoryTransactionRepository.getByBookingId(id);
     }
 }

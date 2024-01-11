@@ -22,9 +22,11 @@ public interface BookingService {
 
     Booking getByIdOrder(String idOrder);
 
-    Booking getNumberRoomBooked(String typeRoomId , String checkIn , String checkOut);
+    Booking getNumberRoomBooked(String typeRoomId, String checkIn, String checkOut);
 
     List<Booking> getAllByStatus(Integer status, String idCuss);
 
-    boolean cancel(String id);
+    boolean cancel(String id, String reason);
+
+    boolean confirmCancel(String id);
 }
