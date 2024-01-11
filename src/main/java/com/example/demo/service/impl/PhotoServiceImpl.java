@@ -39,6 +39,11 @@ public class PhotoServiceImpl implements PhotoService {
     }
 
     @Override
+    public List<Photo> getPhotoByTypeRoom(String id) {
+        return photoRepository.getPhotoByTypeRoom(id);
+    }
+
+    @Override
     public void delete(String id) {
         try {
             photoRepository.deleteById(id);
@@ -70,6 +75,11 @@ public class PhotoServiceImpl implements PhotoService {
     @Override
     public List<String> getUrlByIdBlog(String id) {
         return photoRepository.getUrlByIdBlog(id);
+    }
+
+    @Override
+    public List<String> getUrlByIdTypeRoom(String id) {
+        return photoRepository.getUrlByIdTypeRoom(id);
     }
 
 }

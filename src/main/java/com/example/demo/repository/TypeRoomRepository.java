@@ -1,5 +1,6 @@
 package com.example.demo.repository;
 
+import com.example.demo.dto.TypeRoomDTO;
 import com.example.demo.entity.TypeRoom;
 import lombok.experimental.PackagePrivate;
 import org.springframework.data.domain.Page;
@@ -26,6 +27,9 @@ public interface TypeRoomRepository extends JpaRepository<TypeRoom, String> {
 
     @Query(value = "select * from type_room tr where tr.type_room_name =:name", nativeQuery = true)
     List<TypeRoom> findByName(@Param("name") String name);
+
+//    @Query(value = "select * from type_room tr where tr.id =:id", nativeQuery = true)
+//    TypeRoomDTO getTypeRoomByID(@Param("name") String id);
 
     boolean existsByTypeRoomCode(String code);
 
