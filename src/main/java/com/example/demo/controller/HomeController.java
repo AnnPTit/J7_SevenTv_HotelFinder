@@ -12,6 +12,9 @@ import com.example.demo.entity.Service;
 import com.example.demo.entity.TypeRoom;
 import com.example.demo.service.BlogCommentService;
 import com.example.demo.service.BlogService;
+import com.example.demo.entity.*;
+import com.example.demo.mapper.BookingMapper;
+import com.example.demo.service.*;
 import com.example.demo.service.ComboService;
 import com.example.demo.service.CustomerService;
 import com.example.demo.service.DepositService;
@@ -23,6 +26,7 @@ import com.example.demo.service.PhotoService;
 import com.example.demo.service.RoomService;
 import com.example.demo.service.ServiceService;
 import com.example.demo.service.TypeRoomService;
+import com.example.demo.util.DataUtil;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
@@ -45,6 +49,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
@@ -81,6 +86,13 @@ public class HomeController {
     private FavouriteService favouriteService;
     @Autowired
     private FacilityService facilityService;
+    @Autowired
+    private BookingService bookingService;
+    @Autowired
+    private BookingHistoryTransactionService bookingHistoryTransactionService;
+    @Autowired
+    private BookingMapper bookingMapper;
+
 
     private final PhotoService photoService;
     @GetMapping("/room/loadAndSearch")
@@ -523,4 +535,27 @@ public class HomeController {
         return new ResponseEntity<TypeRoom>(typeRoom, HttpStatus.OK);
     }
 
+
+    @PostMapping("/booking/check-room")
+    public Integer countRoomCanBeBook(@RequestBody Map<String, Object> requestBody) {
+        String checkInStr = (String) requestBody.get("checkIn");
+        String checkOutStr = (String) requestBody.get("checkOut");
+        LocalDate checkIn = DataUtil.convertStringToLocalDate(checkInStr);
+        LocalDate checkOut = DataUtil.convertStringToLocalDate(checkOutStr);
+        Date checkInDateConfig = DataUtil.convertLocalDateToDateWithTime(checkIn, 14);
+        Date checkOutDateConfig = DataUtil.convertLocalDateToDateWithTime(checkOut, 12);
+        String typeRoom = (String) requestBody.get("typeRoomChose");
+        return typeRoomService.countRoomCanBeBook(typeRoom, checkInDateConfig, checkOutDateConfig);
+    }
+
+    @GetMapping("/booking/get-by-status/{status}/{idCuss}")
+    public List<Booking> getAllByStatus(@PathVariable("status") Integer status, @PathVariable("idCuss") String idCuss) {
+        return bookingService.getAllByStatus(status, idCuss);
+    }
+
+    @GetMapping("/booking/cancel/{id}")
+    public ResponseEntity<Void> cancel(@PathVariable("id") String id, @RequestParam("reason") String reason) {
+        if (bookingService.cancel(id, reason)) return new ResponseEntity<>(HttpStatus.OK);
+        return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+    }
 }

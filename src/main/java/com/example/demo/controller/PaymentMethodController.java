@@ -27,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -190,13 +191,17 @@ public class PaymentMethodController {
     @ResponseBody
     public ResponseEntity<?> vnPayPostBook(HttpServletRequest req, @RequestBody Map<String, Object> requestBody) throws UnsupportedEncodingException {
 //        Order order = orderService.getOrderById(id);
+
         String vnp_Version = "2.1.0";
         String vnp_Command = "pay";
         // Lấy thông tin -> lưu vào bảng booking với trạng thái unactive
         // Thông tin khách hàng
+        if (validate(requestBody) != null) {
+            return new ResponseEntity<>(validate(requestBody), HttpStatus.BAD_REQUEST);
+        }
         Customer customer = createCustomer(requestBody);
-
         Booking booking = createBooking(requestBody, customer);
+
 
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
         String vnp_IpAddr = VNPayConfig.getIpAddress(req);
@@ -206,7 +211,7 @@ public class PaymentMethodController {
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(booking.getTotalPrice()));
+        vnp_Params.put("vnp_Amount", String.valueOf(booking.getTotalPrice().multiply(new BigDecimal(100))));
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_BankCode", "");
         vnp_Params.put("vnp_TxnRef", "BKOL" + booking.getId());
@@ -259,6 +264,70 @@ public class PaymentMethodController {
         return ResponseEntity.ok(vnp_Params);
     }
 
+    private String validate(Map<String, Object> requestBody) {
+        long amount = ((Integer) requestBody.get("amount")).longValue();
+        long roomPrice = ((Integer) requestBody.get("roomPrice")).longValue();
+        String checkInStr = (String) requestBody.get("checkIn");
+        String checkOutStr = (String) requestBody.get("checkOut");
+        LocalDate checkIn = DataUtil.convertStringToLocalDate(checkInStr);
+        LocalDate checkOut = DataUtil.convertStringToLocalDate(checkOutStr);
+        Date checkInDateConfig = DataUtil.convertLocalDateToDateWithTime(checkIn, 14);
+        Date checkOutDateConfig = DataUtil.convertLocalDateToDateWithTime(checkOut, 12);
+        Integer numberNight = Integer.valueOf(requestBody.get("numberNight").toString());
+        Integer numberRoom = Integer.valueOf(requestBody.get("numberRoom").toString());
+        Integer numberCustomer = Integer.valueOf(requestBody.get("numberCustomer").toString());
+        Integer numberChildren = Integer.valueOf(requestBody.get("numberChildren").toString());
+        String typeRoomChose = (String) requestBody.get("typeRoomChose");
+        String note = (String) requestBody.get("note");
+        String fullName = (String) requestBody.get("fullName");
+        String phoneNumber = (String) requestBody.get("phoneNumber");
+        String email = (String) requestBody.get("email");
+        // History
+        String accountNumber = (String) requestBody.get("accountNumber");
+        String bankChose = requestBody.get("bankChose").toString();
+
+        // validate số phòng
+        Integer numberRoomCanBeBook = typeRoomService.countRoomCanBeBook(typeRoomChose, checkInDateConfig, checkOutDateConfig);
+        if (numberRoom > numberRoomCanBeBook) {
+            return "Số phòng còn trống trong khoảng " + checkInStr + " / " + checkOutStr + " không đủ đáp ứng ! \n vui lòng chọn loại phòng khác hoặc khoảng ngày khác !";
+        }
+        Date now = new Date();
+        if (checkInDateConfig.before(now)) {
+            return "Ngày check in phải lớn hơn ngày hôm nay";
+        }
+
+        if (DataUtil.isNull(fullName)) {
+            return "Không được bỏ trống Họ và tên";
+        }
+        if (DataUtil.isNull(phoneNumber)) {
+            return "Không được bỏ trống Số điện thoại";
+        }
+        if (DataUtil.isNull(email)) {
+            return "Không được bỏ trống Email";
+        }
+        if (DataUtil.isNull(accountNumber)) {
+            return "Không được bỏ trống Số tài khoản ngân hàng";
+        }
+
+        if (!phoneNumber.matches("^(\\+84|0)[35789][0-9]{8}$")) {
+            return "Số điện thoại không đúng định dạng";
+        }
+        if (!email.matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")) {
+            return "Email không đúng định dạng";
+        }
+        if (!accountNumber.matches("^[0-9]{5,20}$")) {
+            return "Số tài khoản ngân hàng không đúng định dang";
+        }
+
+        // Lấy ngày hiện tại
+        LocalDate currentDate = LocalDate.now();
+
+        if (!(checkIn.isAfter(currentDate) && checkIn.isBefore(currentDate.plusDays(30)))) {
+            return "Ngày Check-in không được vượt quá 30 ngày.";
+        }
+        return null;
+    }
+
     private Customer createCustomer(Map<String, Object> requestBody) {
         String fullName = (String) requestBody.get("fullName");
         String phoneNumber = (String) requestBody.get("phoneNumber");
@@ -303,7 +372,7 @@ public class PaymentMethodController {
         Integer numberNight = Integer.valueOf(requestBody.get("numberNight").toString());
         Integer numberRoom = Integer.valueOf(requestBody.get("numberRoom").toString());
         Integer numberCustomer = Integer.valueOf(requestBody.get("numberCustomer").toString());
-        Integer numberChildren = Integer.valueOf( requestBody.get("numberChildren").toString());
+        Integer numberChildren = Integer.valueOf(requestBody.get("numberChildren").toString());
         String typeRoomChose = (String) requestBody.get("typeRoomChose");
         String note = (String) requestBody.get("note");
         // History
@@ -319,14 +388,14 @@ public class PaymentMethodController {
         booking.setNote(note);
         booking.setCustomer(customer);
         booking.setOrder(null);
-        booking.setTypeRoom(!DataUtil.isNull(typeRoom) ? typeRoom: null);
+        booking.setTypeRoom(!DataUtil.isNull(typeRoom) ? typeRoom : null);
         booking.setNumberAdults(numberCustomer);
         booking.setNumberChildren(numberChildren);
         booking.setNumberDays(numberNight);
         booking.setNumberRooms(numberRoom);
         booking.setTotalPrice(DataUtil.convertLongToBigDecimal(amount));
         booking.setRoomPrice(DataUtil.convertLongToBigDecimal(roomPrice));
-        booking.setVat(DataUtil.convertLongToBigDecimal((long) (roomPrice*0.1)));
+        booking.setVat(DataUtil.convertLongToBigDecimal((long) (roomPrice * 0.1)));
         booking.setStatus(Constant.BOOKING.NEW);
         booking.setCreateAt(new Date());
         booking.setCreateBy(baseService.getCurrentUser().getFullname());
@@ -464,7 +533,7 @@ public class PaymentMethodController {
                 booking.setId(bookingID);
                 bookingService.create(booking);
             }
-            String redirectUrl = "http://localhost:3001";
+            String redirectUrl = "http://localhost:3001/success";
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");
         }

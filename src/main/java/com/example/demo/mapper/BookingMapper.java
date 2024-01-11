@@ -31,6 +31,7 @@ public class BookingMapper {
         dto.setUpdatedBy(booking.getUpdatedBy());
         dto.setDeleted(booking.getDeleted());
         dto.setStatus(booking.getStatus());
+        dto.setUrl(booking.getUrl());
 
         return dto;
     }
@@ -60,6 +61,7 @@ public class BookingMapper {
         booking.setUpdatedBy(dto.getUpdatedBy());
         booking.setDeleted(dto.getDeleted());
         booking.setStatus(dto.getStatus());
+        booking.setUrl(dto.getUrl());
 
         return booking;
     }

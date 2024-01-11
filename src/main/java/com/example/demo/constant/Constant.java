@@ -34,6 +34,14 @@ public class Constant {
         public static Integer ACTIVE = 2;
     }
 
+    public static final class MANAGE_BOOKING {
+        public static Integer UNACTIVE = 0;
+        public static Integer WAIT_ROOM = 1;
+        public static Integer ACTIVE = 2;
+        public static Integer CHECKED_IN = 3;
+        public static Integer CHECKED_OUT = 4;
+    }
+
     public static final class COMMON_STATUS {
         public static Integer UNACTIVE = 0;
         public static Integer ACTIVE = 1;
@@ -65,12 +73,20 @@ public class Constant {
     public static final URI DEFAULT_TYPE = URI.create(PROBLEM_BASE_URL + "/problem-with-message");
 
     public static final class BOOKING {
-        public static Integer NEW = -1 ;
-        public static Integer SUCCESS = 1 ;
+        public static Integer NEW = -1;
+        public static Integer SUCCESS = 1;
+        public static Integer XEP_PHONG = 2;
+        public static Integer CHECKIN = 3;
+        public static Integer CHECKOUT = 4;
+        public static Integer CANCEL = 5;
+        public static Integer REFUSE = 0;
+        public static Integer CANCELED = 6;
+
     }
 
     public static final class HISTORY_TYPE {
-        public static Integer CREATE = 1 ;
+        public static Integer CREATE = 1;
+        public static Integer CANCEL = 2;
     }
 
 }

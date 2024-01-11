@@ -1,6 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
+import com.example.demo.dto.AddRoomDTO;
 import com.example.demo.dto.ConfirmOrderDTO;
 import com.example.demo.dto.OrderDTO;
 import com.example.demo.dto.OrderDetailDTO;
@@ -56,6 +57,8 @@ public class OrderController {
     private OrderTimelineService orderTimelineService;
     @Autowired
     private DiscountProgramService discountProgramService;
+    @Autowired
+    private BookingService bookingService;
     @Autowired
     private BaseService baseService;
 
@@ -340,6 +343,152 @@ public class OrderController {
         return new ResponseEntity<Order>(order, HttpStatus.OK);
     }
 
+    @PostMapping("/add-room-booking")
+    public ResponseEntity<?> addRoomBooking(@RequestBody AddRoomDTO addRoomDTO) {
+        Account account = accountService.findById(baseService.getCurrentUser().getId());
+        Booking booking = bookingService.getById(addRoomDTO.getIdBooking());
+        Customer customer = customerService.getCustomerById(booking.getCustomer().getId());
+
+        Date dayStart = booking.getCheckInDate();
+        Date dayEnd = booking.getCheckOutDate();
+        System.out.println(dayStart);
+        System.out.println(dayEnd);
+        String id = addRoomDTO.getIdRoom();
+        System.out.println(id);
+
+        List<String> list = orderDetailService.checkRoomExist(DataUtil.dateToStringSql(dayStart), DataUtil.dateToStringSql(dayEnd), id);
+        System.out.println(list.toString());
+        if (!list.isEmpty()) {
+            SimpleDateFormat sdf = new SimpleDateFormat("dd/MM/yyyy");
+            String startDate = sdf.format(dayStart);
+            String endDate = sdf.format(dayEnd);
+            String errorMessage = "Phòng đã được đặt trong khoảng từ ngày " + startDate + " đến ngày " + endDate;
+            return new ResponseEntity<String>(errorMessage, HttpStatus.BAD_REQUEST);
+        }
+
+        LocalDate startLocalDate = dayStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        LocalDate endLocalDate = dayEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+        long days = ChronoUnit.DAYS.between(startLocalDate, endLocalDate);
+        System.out.println(days);
+
+        LocalDate currentDate = LocalDate.now();
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("ddMMyyyy");
+        String formattedDate = currentDate.format(formatter);
+        Random random = new Random();
+        int randomDigits = random.nextInt(90000) + 10000; // Sinh số ngẫu nhiên từ 10000 đến 99999
+        String orderCode = "HD" + formattedDate + randomDigits;
+        String orderDetailCode = "HDCT" + formattedDate + randomDigits;
+        OrderDetail orderDetail = new OrderDetail();
+
+        if (booking.getOrder() == null) {
+            Order order = new Order();
+            order.setOrderCode(orderCode);
+            order.setTypeOfOrder(false);
+            order.setTotalMoney(booking.getTotalPrice());
+            order.setDeposit(BigDecimal.valueOf(0));
+            order.setSurcharge(BigDecimal.valueOf(0));
+            order.setVat(booking.getVat());
+            order.setDiscount(BigDecimal.valueOf(0));
+            order.setMoneyGivenByCustomer(booking.getTotalPrice());
+            order.setExcessMoney(BigDecimal.valueOf(0));
+            order.setBookingDateStart(dayStart);
+            order.setBookingDateEnd(dayEnd);
+            order.setAccount(account);
+            order.setCustomer(customer);
+            order.setCreateAt(new Date());
+            order.setCreateBy(account.getFullname());
+            order.setUpdateAt(new Date());
+            order.setUpdatedBy(account.getFullname());
+            order.setStatus(Constant.ORDER_STATUS.WAIT_CONFIRM);
+            order.setNote(account.getFullname() + " tạo hóa đơn");
+            orderService.add(order);
+
+            orderDetail.setOrderDetailCode(orderDetailCode);
+            Room room = roomService.getRoomById(addRoomDTO.getIdRoom());
+            orderDetail.setRoom(room);
+            orderDetail.setOrder(order);
+            orderDetail.setCheckInDatetime(dayStart);
+            orderDetail.setCheckOutDatetime(dayEnd);
+            orderDetail.setTimeIn(1);
+            BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
+            BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days));
+            orderDetail.setRoomPrice(totalCost);
+            orderDetail.setCustomerQuantity(booking.getTypeRoom().getAdult());
+            orderDetail.setCreateAt(new Date());
+            orderDetail.setCreateBy(baseService.getCurrentUser().getFullname());
+            orderDetail.setUpdateAt(new Date());
+            orderDetail.setUpdatedBy(baseService.getCurrentUser().getFullname());
+            orderDetail.setStatus(Constant.ORDER_DETAIL.WAIT_CONFIRM);
+//            orderDetail.getRoom().setStatus(Constant.ROOM.ACTIVE);
+            orderDetailService.add(orderDetail);
+
+//            Room room = orderDetail.getRoom();
+//            room.setStatus(Constant.ROOM.ACTIVE);
+//            roomService.add(room);
+
+            OrderTimeline orderTimeline = new OrderTimeline();
+            orderTimeline.setOrder(order);
+            orderTimeline.setAccount(account);
+            orderTimeline.setType(Constant.ORDER_TIMELINE.WAIT_CONFIRM);
+            orderTimeline.setNote(account.getFullname() + "tạo hóa đơn");
+            orderTimeline.setCreateAt(new Date());
+            orderTimelineService.add(orderTimeline);
+
+            HistoryTransaction historyTransaction = new HistoryTransaction();
+            historyTransaction.setOrder(order);
+            historyTransaction.setTotalMoney(booking.getTotalPrice());
+            historyTransaction.setCreateAt(new Date());
+            historyTransaction.setCreateBy(baseService.getCurrentUser().getFullname());
+            historyTransaction.setUpdateAt(new Date());
+            historyTransaction.setUpdatedBy(baseService.getCurrentUser().getFullname());
+            historyTransaction.setStatus(Constant.COMMON_STATUS.ACTIVE);
+            historyTransactionService.add(historyTransaction);
+
+            String paymentMethodCode = "PT" + formattedDate + randomDigits;
+
+            PaymentMethod paymentMethod = new PaymentMethod();
+            paymentMethod.setOrder(order);
+            paymentMethod.setMethod(false);
+            paymentMethod.setPaymentMethodCode(paymentMethodCode);
+            paymentMethod.setNote(customer.getFullname() + "chuyển tiền.");
+            paymentMethod.setTotalMoney(booking.getTotalPrice());
+            paymentMethod.setCreateAt(new Date());
+            paymentMethod.setCreateBy(baseService.getCurrentUser().getFullname());
+            paymentMethod.setUpdateAt(new Date());
+            paymentMethod.setUpdatedBy(baseService.getCurrentUser().getFullname());
+            paymentMethod.setStatus(Constant.COMMON_STATUS.ACTIVE);
+            paymentMethodService.add(paymentMethod);
+
+            booking.setOrder(order);
+            booking.setStatus(Constant.MANAGE_BOOKING.ACTIVE);
+            bookingService.update(booking);
+        } else {
+            orderDetail.setOrderDetailCode(orderDetailCode);
+            Room room = roomService.getRoomById(addRoomDTO.getIdRoom());
+            orderDetail.setRoom(room);
+            orderDetail.setOrder(booking.getOrder());
+            orderDetail.setCheckInDatetime(dayStart);
+            orderDetail.setCheckOutDatetime(dayEnd);
+            orderDetail.setTimeIn(1);
+            BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
+            BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days));
+            orderDetail.setRoomPrice(totalCost);
+            orderDetail.setCustomerQuantity(booking.getTypeRoom().getAdult());
+            orderDetail.setCreateAt(new Date());
+            orderDetail.setCreateBy(baseService.getCurrentUser().getFullname());
+            orderDetail.setUpdateAt(new Date());
+            orderDetail.setUpdatedBy(baseService.getCurrentUser().getFullname());
+            orderDetail.setStatus(Constant.ORDER_DETAIL.WAIT_CONFIRM);
+            orderDetail.getRoom().setStatus(Constant.ROOM.ACTIVE);
+            orderDetailService.add(orderDetail);
+
+            booking.setOrder(booking.getOrder());
+            booking.setStatus(Constant.MANAGE_BOOKING.ACTIVE);
+            bookingService.update(booking);
+        }
+        return new ResponseEntity<OrderDetail>(orderDetail, HttpStatus.OK);
+    }
+
     @PutMapping("/update/{id}")
     public ResponseEntity<Order> update(@PathVariable("id") String id, @RequestBody OrderDTO orderDTO) {
         Order order = orderService.getOrderById(id);
@@ -371,6 +520,12 @@ public class OrderController {
             Room room = orderDetail.getRoom();
             room.setStatus(Constant.ROOM.ACTIVE);
             roomService.add(room);
+        }
+
+        Booking booking = bookingService.getByIdOrder(id);
+        if (booking != null) {
+            booking.setStatus(Constant.MANAGE_BOOKING.CHECKED_IN);
+            bookingService.update(booking);
         }
 
         OrderTimeline orderTimeline = new OrderTimeline();
@@ -412,6 +567,12 @@ public class OrderController {
             roomService.add(room);
         }
 
+        Booking booking = bookingService.getByIdOrder(id);
+        if (booking != null) {
+            booking.setStatus(Constant.MANAGE_BOOKING.CHECKED_OUT);
+            bookingService.update(booking);
+        }
+
         PaymentMethod paymentMethod = new PaymentMethod();
         paymentMethod.setOrder(order);
         LocalDate currentDate = LocalDate.now();
@@ -422,7 +583,7 @@ public class OrderController {
         String paymentMethodCode = "PT" + formattedDate + randomDigits;
         paymentMethod.setPaymentMethodCode(paymentMethodCode);
         paymentMethod.setMethod(true);
-        paymentMethod.setTotalMoney(order.getMoneyGivenByCustomer());
+        paymentMethod.setTotalMoney(orderDTO.getMoneyPayment());
         paymentMethod.setNote(order.getNote());
         paymentMethod.setCreateAt(new Date());
         paymentMethod.setCreateBy(order.getCreateBy());
@@ -433,7 +594,7 @@ public class OrderController {
 
         HistoryTransaction historyTransaction = new HistoryTransaction();
         historyTransaction.setOrder(order);
-        historyTransaction.setTotalMoney(order.getMoneyGivenByCustomer());
+        historyTransaction.setTotalMoney(orderDTO.getMoneyPayment());
         historyTransaction.setNote(order.getNote());
         historyTransaction.setCreateAt(new Date());
         historyTransaction.setCreateBy(order.getCreateBy());
@@ -570,7 +731,7 @@ public class OrderController {
                 long days = ChronoUnit.DAYS.between(startLocalDate, endLocalDate);
                 System.out.println(days);
                 BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
-                BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days + 1));
+                BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days));
                 orderDetail.setRoomPrice(totalCost);
                 orderDetail.setUpdateAt(new Date());
                 orderDetailService.add(orderDetail);

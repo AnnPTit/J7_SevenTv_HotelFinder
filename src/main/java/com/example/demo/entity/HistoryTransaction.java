@@ -26,7 +26,7 @@ import java.util.Date;
 @Table(name = "history_transaction")
 public class HistoryTransaction {
 
-   @Id
+    @Id
     @Column(name = "id")
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;

@@ -244,6 +244,7 @@ public class TypeRoomController {
                     photo.setUpdateAt(new Date());
                     photo.setStatus(Constant.COMMON_STATUS.ACTIVE);
                     photoService.add(photo);
+                    // Photo này của room mà Quang
                 }
             }
         } catch (IOException e) {
