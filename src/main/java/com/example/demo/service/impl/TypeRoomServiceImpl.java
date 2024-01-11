@@ -90,11 +90,6 @@ public class TypeRoomServiceImpl implements TypeRoomService {
         return typeRoomRepository.existsByTypeRoomCode(code);
     }
 
-//    @Override
-//    public TypeRoomDTO getTypeRoomByID(String id) {
-//        return typeRoomRepository.getTypeRoomByID(id);
-//    }
-
     public TypeRoomDTO toDTO(TypeRoom entity){
         TypeRoomDTO typeRoomDTO = new TypeRoomDTO();
         typeRoomDTO.setId(entity.getId());
