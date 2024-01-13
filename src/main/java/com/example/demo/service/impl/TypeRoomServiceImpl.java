@@ -90,7 +90,7 @@ public class TypeRoomServiceImpl implements TypeRoomService {
         return typeRoomRepository.existsByTypeRoomCode(code);
     }
 
-    public TypeRoomDTO toDTO(TypeRoom entity){
+    public TypeRoomDTO toDTO(TypeRoom entity) {
         TypeRoomDTO typeRoomDTO = new TypeRoomDTO();
         typeRoomDTO.setId(entity.getId());
         typeRoomDTO.setTypeRoomCode(entity.getTypeRoomCode());
@@ -116,7 +116,7 @@ public class TypeRoomServiceImpl implements TypeRoomService {
     @Override
     public Integer countRoomCanBeBook(String typeRoomName, Date checkIn, Date checkOut) {
         List<TypeRoom> typeRoom = typeRoomRepository.findByName(typeRoomName);
-        if(typeRoom.size()==0) return 0;
+        if (typeRoom.size() == 0) return 0;
         // B1 : lấy ra số lượng phòng của loại phòng
         List<Room> list = romRoomRepository.findByTypeRoomId(typeRoom.get(0).getId());
         if (list.size() == 0) return 0;
@@ -125,9 +125,10 @@ public class TypeRoomServiceImpl implements TypeRoomService {
         // B3 : Kiểm tra ngày check in check out có nằm trong khoảng ngày đã đặt
         List<Booking> bookingNotOk = new ArrayList<>();
         for (Booking booking : bookingList) {
-            // Nếu check in > checkinDb -> check out > CheckOutDb
-            // Nếu check in < checkinDb -> check out < CheckOutDb
-            if (!(booking.getCheckInDate().before(checkIn) && booking.getCheckOutDate().before(checkOut)) || !(booking.getCheckInDate().after(checkIn) && booking.getCheckOutDate().after(checkOut))) {
+            Date bookingDbCi = booking.getCheckInDate();
+            Date bookingDbCo = booking.getCheckOutDate();
+            // Checkin và check out không nằm giữa khoảng check in check out trong đb
+            if ((!bookingDbCi.after(checkIn) && bookingDbCo.after(checkIn)) || (!bookingDbCi.after(checkOut) && bookingDbCo.after(checkOut))) {
                 bookingNotOk.add(booking);
             }
         }

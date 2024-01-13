@@ -331,6 +331,7 @@ public class ManageBookingController {
         booking.setStatus(Constant.BOOKING.CANCELED);
         booking.setBankAccountName(bankAccountName);
         booking.setBankAccountNumber(bankAccountNumber);
+        booking.setUrl(url);
         bookingHistoryTransaction.setUrl(url);
         bookingService.update(booking);
 

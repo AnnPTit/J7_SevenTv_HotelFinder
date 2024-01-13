@@ -201,6 +201,7 @@ public class PaymentMethodController {
         }
         Customer customer = createCustomer(requestBody);
         Booking booking = createBooking(requestBody, customer);
+        Long amount = booking.getTotalPrice().multiply(new BigDecimal(100)).longValue() ;
 
 
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
@@ -211,7 +212,7 @@ public class PaymentMethodController {
         vnp_Params.put("vnp_Version", vnp_Version);
         vnp_Params.put("vnp_Command", vnp_Command);
         vnp_Params.put("vnp_TmnCode", vnp_TmnCode);
-        vnp_Params.put("vnp_Amount", String.valueOf(booking.getTotalPrice().multiply(new BigDecimal(100))));
+        vnp_Params.put("vnp_Amount", String.valueOf(amount));
         vnp_Params.put("vnp_CurrCode", "VND");
         vnp_Params.put("vnp_BankCode", "");
         vnp_Params.put("vnp_TxnRef", "BKOL" + booking.getId());
@@ -361,8 +362,7 @@ public class PaymentMethodController {
     }
 
     private Booking createBooking(Map<String, Object> requestBody, Customer customer) {
-        long amount = ((Integer) requestBody.get("amount")).longValue();
-        long roomPrice = ((Integer) requestBody.get("roomPrice")).longValue();
+
         String checkInStr = (String) requestBody.get("checkIn");
         String checkOutStr = (String) requestBody.get("checkOut");
         LocalDate checkIn = DataUtil.convertStringToLocalDate(checkInStr);
@@ -375,6 +375,8 @@ public class PaymentMethodController {
         Integer numberChildren = Integer.valueOf(requestBody.get("numberChildren").toString());
         String typeRoomChose = (String) requestBody.get("typeRoomChose");
         String note = (String) requestBody.get("note");
+        long amount = ((Integer) requestBody.get("amount")).longValue() * numberRoom;
+        long roomPrice = ((Integer) requestBody.get("roomPrice")).longValue() * numberRoom;
         // History
         String accountNumber = (String) requestBody.get("accountNumber");
         String bankChose = requestBody.get("bankChose").toString();
