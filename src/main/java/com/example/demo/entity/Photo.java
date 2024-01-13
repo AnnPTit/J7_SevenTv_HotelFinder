@@ -42,6 +42,9 @@ public class Photo {
     @Column(name = "blog_id", nullable = false)
     private String blog;
 
+    @Column(name = "type_room_id", nullable = false)
+    private String typeRoom;
+
     @Column(name = "url")
     private String url;
 

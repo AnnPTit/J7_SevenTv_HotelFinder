@@ -15,6 +15,8 @@ public interface PhotoService {
 
     List<Photo> getPhotoByBlog(String id);
 
+    List<Photo> getPhotoByTypeRoom(String id);
+
     void delete(String id);
 
     Photo getPhotoById(String id);
@@ -25,5 +27,6 @@ public interface PhotoService {
 
     List<String> getUrlByIdRoom(String id);
     List<String> getUrlByIdBlog(String id);
+    List<String> getUrlByIdTypeRoom(String id);
 
 }

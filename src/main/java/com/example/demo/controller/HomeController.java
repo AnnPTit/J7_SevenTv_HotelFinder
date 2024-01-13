@@ -2,12 +2,33 @@ package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.*;
+import com.example.demo.entity.BlogComment;
+import com.example.demo.entity.Customer;
+import com.example.demo.entity.Deposit;
+import com.example.demo.entity.Facility;
+import com.example.demo.entity.Photo;
+import com.example.demo.entity.Room;
+import com.example.demo.entity.Service;
+import com.example.demo.entity.TypeRoom;
+import com.example.demo.service.BlogCommentService;
+import com.example.demo.service.BlogService;
 import com.example.demo.entity.*;
 import com.example.demo.mapper.BookingMapper;
 import com.example.demo.service.*;
 import com.example.demo.service.ComboService;
+import com.example.demo.service.CustomerService;
+import com.example.demo.service.DepositService;
+import com.example.demo.service.FacilityService;
+import com.example.demo.service.FavouriteService;
+import com.example.demo.service.HomeService;
+import com.example.demo.service.OrderDetailService;
+import com.example.demo.service.PhotoService;
+import com.example.demo.service.RoomService;
+import com.example.demo.service.ServiceService;
+import com.example.demo.service.TypeRoomService;
 import com.example.demo.util.DataUtil;
 import jakarta.validation.Valid;
+import lombok.RequiredArgsConstructor;
 import org.apache.commons.lang3.StringUtils;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -38,6 +59,7 @@ import java.util.stream.Collectors;
 
 @CrossOrigin("*")
 @RestController
+@RequiredArgsConstructor
 @RequestMapping("/api/home")
 public class HomeController {
     @Autowired
@@ -72,6 +94,7 @@ public class HomeController {
     private BookingMapper bookingMapper;
 
 
+    private final PhotoService photoService;
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
                                     @RequestParam(name = "floorId", defaultValue = "") String floorId,
@@ -477,16 +500,29 @@ public class HomeController {
 
 
     @GetMapping("/type-room/search")
-    public Page<TypeRoom> searchTypeRoom(@RequestParam(name = "key", defaultValue = "") String key,
+    public Page<TypeRoomDTO> searchTypeRoom(@RequestParam(name = "key", defaultValue = "") String key,
                                          @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        if (StringUtils.isBlank(key) || "".equals(key)) {
-            return typeRoomService.getAll(pageable);
-        }
+//        if (StringUtils.isBlank(key) || "".equals(key)) {
+//            return typeRoomService.getAll(pageable);
+//        }
 
         return typeRoomService.findByCodeOrName(key, pageable);
     }
+    @GetMapping("/photo/{id}")
+    public ResponseEntity<List<PhotoDTO>> getTypeRoomImages(@PathVariable("id") String id) {
+        List<PhotoDTO> photoDTOs = new ArrayList<>();
+        List<Photo> blogPhotos = photoService.getPhotoByTypeRoom(id);
 
+        for (Photo photo : blogPhotos) {
+            PhotoDTO photoDTO = new PhotoDTO();
+            System.out.println("Id: " + photo.getId());
+            photoDTO.setId(photo.getId());
+            photoDTO.setUrl(photo.getUrl());
+            photoDTOs.add(photoDTO);
+        }
+        return new ResponseEntity<>(photoDTOs, HttpStatus.OK);
+    }
     @GetMapping("/type-room/detail/{id}")
     public ResponseEntity<TypeRoom> detailTypeRoom(@PathVariable("id") String id) {
         TypeRoom typeRoom = typeRoomService.getTypeRoomById(id);
@@ -498,6 +534,7 @@ public class HomeController {
         TypeRoom typeRoom = typeRoomService.findByName(name);
         return new ResponseEntity<TypeRoom>(typeRoom, HttpStatus.OK);
     }
+
 
     @PostMapping("/booking/check-room")
     public Integer countRoomCanBeBook(@RequestBody Map<String, Object> requestBody) {

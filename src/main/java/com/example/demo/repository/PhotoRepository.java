@@ -18,6 +18,8 @@ public interface PhotoRepository extends JpaRepository<Photo, String> {
 
     List<Photo> getPhotoByBlog(String blog);
 
+    List<Photo> getPhotoByTypeRoom(String typeRoom);
+
     @Transactional
     @Modifying
     @Query(value = "DELETE FROM photo WHERE id = ?1", nativeQuery = true)
@@ -26,6 +28,10 @@ public interface PhotoRepository extends JpaRepository<Photo, String> {
 
     @Query(value = "select p.url from photo p where room_id = :id", nativeQuery = true)
     List<String> getUrlByIdRoom(@Param("id") String id);
+
     @Query(value = "select p.url from photo p where blog_id = :id", nativeQuery = true)
     List<String> getUrlByIdBlog(@Param("id") String id);
+
+    @Query(value = "select p.url from photo p where type_room_id = :id", nativeQuery = true)
+    List<String> getUrlByIdTypeRoom(@Param("id") String id);
 }

@@ -1,5 +1,6 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.TypeRoomDTO;
 import com.example.demo.entity.TypeRoom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -13,7 +14,7 @@ public interface TypeRoomService {
 
     Page<TypeRoom> getAll(Pageable pageable);
 
-    Page<TypeRoom> findByCodeOrName(String key, Pageable pageable);
+    Page<TypeRoomDTO> findByCodeOrName(String key, Pageable pageable);
 
     TypeRoom getTypeRoomById(String id);
 
@@ -26,5 +27,6 @@ public interface TypeRoomService {
     boolean existsByCode(String code);
 
     Integer countRoomCanBeBook(String typeRoomId , Date checkIn , Date checkOut );
+
 
 }
