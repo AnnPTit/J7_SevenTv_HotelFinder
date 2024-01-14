@@ -1,6 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.BookingDTO;
+import com.example.demo.dto.BookingRequest;
 import com.example.demo.entity.Booking;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -10,7 +11,7 @@ import java.util.List;
 
 public interface BookingService {
 
-    Page<Booking> findAll(String customerFullname, String customerPhone, String customerEmail, Integer status, Pageable pageable);
+    Page<Booking> findAll(BookingRequest request, Pageable pageable);
 
     BookingDTO create(Booking booking);
 

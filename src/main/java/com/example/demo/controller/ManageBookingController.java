@@ -7,6 +7,7 @@ import com.amazonaws.services.s3.AmazonS3ClientBuilder;
 import com.example.demo.config.S3Util;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.BookingDTO;
+import com.example.demo.dto.BookingRequest;
 import com.example.demo.dto.CustomerBookingDTO;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
@@ -67,12 +68,10 @@ public class ManageBookingController {
     public S3Util s3Util;
 
 
-    @GetMapping("/load")
-    public Page<Booking> findAll(@RequestParam(name = "key", defaultValue = "") String key,
-                                 @RequestParam(name = "status", defaultValue = "") Integer status,
-                                 @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+    @PostMapping("/load")
+    public Page<Booking> findAll(@RequestBody BookingRequest bookingRequest, @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
-        return bookingService.findAll(key, key, key, status, pageable);
+        return bookingService.findAll(bookingRequest, pageable);
     }
 
     @GetMapping("/getById/{id}")

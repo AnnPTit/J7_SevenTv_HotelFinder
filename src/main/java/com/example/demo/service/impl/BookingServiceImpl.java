@@ -2,6 +2,7 @@ package com.example.demo.service.impl;
 
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.BookingDTO;
+import com.example.demo.dto.BookingRequest;
 import com.example.demo.entity.Booking;
 import com.example.demo.mapper.BookingMapper;
 import com.example.demo.repository.BookingRepository;
@@ -26,11 +27,12 @@ public class BookingServiceImpl implements BookingService {
     private BookingRepository bookingRepository;
 
     @Override
-    public Page<Booking> findAll(String customerFullname, String customerPhone, String customerEmail, Integer status, Pageable pageable) {
-        return bookingRepository.findAll((customerFullname != null && !customerFullname.isEmpty()) ? customerFullname : null,
-                (customerPhone != null && !customerPhone.isEmpty()) ? customerPhone : null,
-                (customerEmail != null && !customerEmail.isEmpty()) ? customerEmail : null,
-                (status != null && !status.toString().isEmpty()) ? status : null, pageable);
+    public Page<Booking> findAll(BookingRequest request, Pageable pageable) {
+//        return bookingRepository.findAll((customerFullname != null && !customerFullname.isEmpty()) ? customerFullname : null,
+//                (customerPhone != null && !customerPhone.isEmpty()) ? customerPhone : null,
+//                (customerEmail != null && !customerEmail.isEmpty()) ? customerEmail : null,
+//                (status != null && !status.toString().isEmpty()) ? status : null, pageable);
+        return bookingRepository.search(request, pageable);
     }
 
     @Override

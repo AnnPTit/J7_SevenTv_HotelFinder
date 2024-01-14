@@ -202,7 +202,7 @@ public class PaymentMethodController {
         }
         Customer customer = createCustomer(requestBody);
         Booking booking = createBooking(requestBody, customer);
-        Long amount = booking.getTotalPrice().multiply(new BigDecimal(100)).longValue() ;
+        Long amount = booking.getTotalPrice().multiply(new BigDecimal(100)).longValue();
 
 
         String vnp_TxnRef = VNPayConfig.getRandomNumber(8);
@@ -342,6 +342,7 @@ public class PaymentMethodController {
         Customer customer = customerService.findCustomerByEmail(email).orElse(null);
         if (DataUtil.isNull(customer)) {
             // Nếu email chưa tồn tại thực hiện thêm tài khoản
+            Customer customer1 = new Customer();
             Date currentDate = new Date();
             Random random = new Random();
             Calendar calendar = Calendar.getInstance();
@@ -349,18 +350,19 @@ public class PaymentMethodController {
             calendar.add(Calendar.YEAR, -18);
             Date birthDate = calendar.getTime();
             String customerCode = "KH" + random.nextInt(1000);
-            customer.setCustomerCode(customerCode);
-            customer.setUsername(customerCode);
-            customer.setCitizenId(null);
-            customer.setBirthday(birthDate);
-            customer.setDistricts("N/A");
-            customer.setStatus(Constant.COMMON_STATUS.ACTIVE);
-            customer.setCreateAt(new Date());
-            customer.setEmail(email);
-            customer.setFullname(fullName);
-            customer.setPassword(customerCode + "12345");
-            customer.setPhoneNumber(phoneNumber);
-            customer = customerService.add(customer);
+            customer1.setCustomerCode(customerCode);
+            customer1.setUsername(customerCode);
+            customer1.setCitizenId(null);
+            customer1.setBirthday(birthDate);
+            customer1.setDistricts("N/A");
+            customer1.setStatus(Constant.COMMON_STATUS.ACTIVE);
+            customer1.setCreateAt(new Date());
+            customer1.setEmail(email);
+            customer1.setFullname(fullName);
+            customer1.setPassword(customerCode + "12345");
+            customer1.setPhoneNumber(phoneNumber);
+            customer1 = customerService.add(customer1);
+            return customer1;
         }
         return customer;
 
@@ -556,7 +558,10 @@ public class PaymentMethodController {
                     "Loại phòng : " + booking.getTypeRoom().getTypeRoomName() + "\n" +
                     "Số lượng phòng: " + booking.getNumberRooms() + "\n" +
                     "Số người lớn : " + booking.getNumberAdults() + "\n" +
-                    "Số trẻ em : " + booking.getNumberChildren() + "\n";
+                    "Số trẻ em : " + booking.getNumberChildren() + "\n" +
+                    "Vui lòng đăng nhập theo thông tin sau để theo dõi đơn booking của bạn : \n" +
+                    "Email :" + booking.getCustomer().getEmail() + "\n" +
+                    "Password :" + booking.getCustomer().getPassword() + "\n";
 
             content = content + "\n Chúc bạn có một trải nghiệm tuyệt vời ! \n";
             mail.setMailSubject(subject);
