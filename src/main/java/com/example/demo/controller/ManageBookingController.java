@@ -8,22 +8,8 @@ import com.example.demo.config.S3Util;
 import com.example.demo.constant.Constant;
 import com.example.demo.dto.BookingDTO;
 import com.example.demo.dto.CustomerBookingDTO;
-import com.example.demo.entity.Booking;
-import com.example.demo.entity.BookingHistoryTransaction;
-import com.example.demo.entity.Customer;
-import com.example.demo.entity.HistoryTransaction;
-import com.example.demo.entity.InformationCustomer;
-import com.example.demo.entity.Order;
-import com.example.demo.entity.OrderDetail;
-import com.example.demo.entity.PaymentMethod;
-import com.example.demo.service.BookingHistoryTransactionService;
-import com.example.demo.service.BookingService;
-import com.example.demo.service.CustomerService;
-import com.example.demo.service.HistoryTransactionService;
-import com.example.demo.service.InformationCustomerService;
-import com.example.demo.service.OrderDetailService;
-import com.example.demo.service.OrderService;
-import com.example.demo.service.PaymentMethodService;
+import com.example.demo.entity.*;
+import com.example.demo.service.*;
 import com.example.demo.util.BaseService;
 import com.example.demo.util.DataUtil;
 import io.micrometer.common.util.StringUtils;
@@ -54,6 +40,8 @@ public class ManageBookingController {
     @Autowired
     private CustomerService customerService;
     @Autowired
+    private AccountService accountService;
+    @Autowired
     private InformationCustomerService informationCustomerService;
     @Autowired
     private OrderService orderService;
@@ -61,6 +49,8 @@ public class ManageBookingController {
     private OrderDetailService orderDetailService;
     @Autowired
     private BookingHistoryTransactionService bookingHistoryTransactionService;
+    @Autowired
+    private OrderTimelineService orderTimelineService;
     @Autowired
     private PaymentMethodService paymentMethodService;
     @Autowired
@@ -208,6 +198,15 @@ public class ManageBookingController {
                 }
             }
 
+            Account account = accountService.findById(baseService.getCurrentUser().getId());
+            OrderTimeline orderTimeline = new OrderTimeline();
+            orderTimeline.setAccount(account);
+            orderTimeline.setOrder(order);
+            orderTimeline.setType(Constant.ORDER_TIMELINE.CANCEL);
+            orderTimeline.setCreateAt(new Date());
+            orderTimeline.setNote(bookingDTO.getNote());
+            orderTimelineService.add(orderTimeline);
+
             HistoryTransaction historyTransaction = new HistoryTransaction();
             historyTransaction.setOrder(order);
             historyTransaction.setTotalMoney(booking.getTotalPrice());
@@ -301,6 +300,15 @@ public class ManageBookingController {
                     orderDetailService.add(orderDetail);
                 }
             }
+
+            Account account = accountService.findById(baseService.getCurrentUser().getId());
+            OrderTimeline orderTimeline = new OrderTimeline();
+            orderTimeline.setAccount(account);
+            orderTimeline.setOrder(order);
+            orderTimeline.setType(Constant.ORDER_TIMELINE.CANCEL);
+            orderTimeline.setCreateAt(new Date());
+            orderTimeline.setNote(note);
+            orderTimelineService.add(orderTimeline);
 
             HistoryTransaction historyTransaction = new HistoryTransaction();
             historyTransaction.setOrder(order);

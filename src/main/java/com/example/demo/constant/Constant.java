@@ -32,6 +32,7 @@ public class Constant {
         public static Integer UNACTIVE = 0;
         public static Integer EMPTY = 1;
         public static Integer ACTIVE = 2;
+        public static Integer WAIT_CLEAN = 3;
     }
 
     public static final class MANAGE_BOOKING {

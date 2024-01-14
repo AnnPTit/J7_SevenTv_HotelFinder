@@ -1,8 +1,5 @@
 package com.example.demo.dto;
 
-import com.example.demo.entity.Booking;
-import com.example.demo.entity.Photo;
-import com.example.demo.entity.Room;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;

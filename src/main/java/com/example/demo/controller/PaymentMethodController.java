@@ -5,6 +5,7 @@ import com.example.demo.config.VNPayConfig;
 import com.example.demo.config.ZaloPayConfig;
 import com.example.demo.constant.Constant;
 import com.example.demo.entity.*;
+import com.example.demo.model.Mail;
 import com.example.demo.service.*;
 import com.example.demo.util.BaseService;
 import com.example.demo.util.DataUtil;
@@ -297,6 +298,10 @@ public class PaymentMethodController {
             return "Ngày check in phải lớn hơn ngày hôm nay";
         }
 
+        if (!checkOutDateConfig.after(checkInDateConfig)) {
+            return "Ngày check out phải lớn hơn ngày check in";
+        }
+
         if (DataUtil.isNull(fullName)) {
             return "Không được bỏ trống Họ và tên";
         }
@@ -535,6 +540,28 @@ public class PaymentMethodController {
                 booking.setId(bookingID);
                 bookingService.create(booking);
             }
+            // gửi mail
+            Mail mail = new Mail();
+            mail.setMailFrom("nguyenvantundz2003@gmail.com");
+            mail.setMailTo(booking.getCustomer().getEmail());
+            String subject = "Đặt phòng thành công ! ";
+            String content = "Chúc mừng bạn đặt phòng thành công ! \n" +
+                    "Thông tin đơn hàng của bạn : \n" +
+                    "Tên khách hàng : " + booking.getCustomer().getFullname() + "\n" +
+                    "Số điện thoại : " + booking.getCustomer().getPhoneNumber() + "\n" +
+                    "Ngày đặt : " + DataUtil.convertDateToString(booking.getCreateAt()) + "\n" +
+                    "Ngày CheckIn : " + DataUtil.convertDateToString(booking.getCheckInDate()) + "\n" +
+                    "Ngày CheckOut : " + DataUtil.convertDateToString(booking.getCheckOutDate()) + "\n" +
+                    "Tổng tiền phòng tạm tính : " + DataUtil.formatMoney(booking.getTotalPrice()) + "\n" +
+                    "Loại phòng : " + booking.getTypeRoom().getTypeRoomName() + "\n" +
+                    "Số lượng phòng: " + booking.getNumberRooms() + "\n" +
+                    "Số người lớn : " + booking.getNumberAdults() + "\n" +
+                    "Số trẻ em : " + booking.getNumberChildren() + "\n";
+
+            content = content + "\n Chúc bạn có một trải nghiệm tuyệt vời ! \n";
+            mail.setMailSubject(subject);
+            mail.setMailContent(content);
+            mailService.sendEmail(mail);
             String redirectUrl = "http://localhost:3001/success";
             response.sendRedirect(redirectUrl);
             return ResponseEntity.ok("Payment successful. Redirect to confirmation page.");

@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.constant.Constant;
 import com.example.demo.dto.RevenueDTO;
 import com.example.demo.entity.Account;
 import com.example.demo.entity.Combo;
@@ -27,12 +28,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.CrossOrigin;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -195,6 +191,14 @@ public class ApiGeneralController {
     public List<Customer> getCustomerDifferentOrder(@PathVariable("orderId") String orderId,
                                                     @PathVariable("orderDetailId") String orderDetailId) {
         return customerService.getCustomerDifferentOrder(orderId, orderDetailId);
+    }
+
+    @PutMapping("/change-status/{id}")
+    public ResponseEntity<String> changeStatus(@PathVariable("id") String id) {
+        Room room = roomService.getRoomById(id);
+        room.setStatus(Constant.ROOM.EMPTY);
+        roomService.add(room);
+        return new ResponseEntity<String>("Success " + id + " successfully", HttpStatus.OK);
     }
 
     @GetMapping("/export-excel")

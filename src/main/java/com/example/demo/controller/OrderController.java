@@ -411,7 +411,7 @@ public class OrderController {
             orderDetail.setCheckOutDatetime(dayEnd);
             orderDetail.setTimeIn(1);
             BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
-            BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days));
+            BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days + 1));
             orderDetail.setRoomPrice(totalCost);
             orderDetail.setCustomerQuantity(booking.getTypeRoom().getAdult());
             orderDetail.setCreateAt(new Date());
@@ -471,7 +471,7 @@ public class OrderController {
             orderDetail.setCheckOutDatetime(dayEnd);
             orderDetail.setTimeIn(1);
             BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
-            BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days));
+            BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days + 1));
             orderDetail.setRoomPrice(totalCost);
             orderDetail.setCustomerQuantity(booking.getTypeRoom().getAdult());
             orderDetail.setCreateAt(new Date());
@@ -563,7 +563,7 @@ public class OrderController {
             orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_OUT);
             orderDetailService.add(orderDetail);
             Room room = orderDetail.getRoom();
-            room.setStatus(Constant.ROOM.EMPTY);
+            room.setStatus(Constant.ROOM.WAIT_CLEAN);
             roomService.add(room);
         }
 
@@ -731,7 +731,7 @@ public class OrderController {
                 long days = ChronoUnit.DAYS.between(startLocalDate, endLocalDate);
                 System.out.println(days);
                 BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
-                BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days));
+                BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days + 1));
                 orderDetail.setRoomPrice(totalCost);
                 orderDetail.setUpdateAt(new Date());
                 orderDetailService.add(orderDetail);

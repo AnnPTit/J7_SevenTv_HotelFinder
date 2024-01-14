@@ -16,10 +16,10 @@ import java.util.List;
 public interface BookingRepository extends JpaRepository<Booking, String> {
 
     @Query(value = "SELECT o.* FROM booking o " +
-            "JOIN customer c ON o.id_customer = c.id\n" +
+            "JOIN customer c ON o.id_customer = c.id " +
             "WHERE ((:customerFullname IS NULL OR c.fullname LIKE CONCAT('%', :customerFullname, '%'))" +
             "OR (:customerPhone IS NULL OR c.phone_number LIKE CONCAT('%', :customerPhone, '%'))" +
-            "OR (:customerEmail IS NULL OR c.email LIKE CONCAT('%', :customerEmail, '%')))\n" +
+            "OR (:customerEmail IS NULL OR c.email LIKE CONCAT('%', :customerEmail, '%'))) " +
             " AND (:status IS NULL OR o.status = :status) ORDER BY o.update_at DESC", nativeQuery = true)
     Page<Booking> findAll(@Param("customerFullname") String customerFullname,
                           @Param("customerPhone") String customerPhone,

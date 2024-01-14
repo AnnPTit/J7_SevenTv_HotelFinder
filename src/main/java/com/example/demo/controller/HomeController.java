@@ -95,6 +95,7 @@ public class HomeController {
 
 
     private final PhotoService photoService;
+
     @GetMapping("/room/loadAndSearch")
     public Page<Room> loadAndSearch(@RequestParam(name = "key", defaultValue = "") String key,
                                     @RequestParam(name = "floorId", defaultValue = "") String floorId,
@@ -501,7 +502,7 @@ public class HomeController {
 
     @GetMapping("/type-room/search")
     public Page<TypeRoomDTO> searchTypeRoom(@RequestParam(name = "key", defaultValue = "") String key,
-                                         @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
+                                            @RequestParam(name = "current_page", defaultValue = "0") int current_page) {
         Pageable pageable = PageRequest.of(current_page, 5);
 //        if (StringUtils.isBlank(key) || "".equals(key)) {
 //            return typeRoomService.getAll(pageable);
@@ -509,6 +510,7 @@ public class HomeController {
 
         return typeRoomService.findByCodeOrName(key, pageable);
     }
+
     @GetMapping("/photo/{id}")
     public ResponseEntity<List<PhotoDTO>> getTypeRoomImages(@PathVariable("id") String id) {
         List<PhotoDTO> photoDTOs = new ArrayList<>();
@@ -523,6 +525,7 @@ public class HomeController {
         }
         return new ResponseEntity<>(photoDTOs, HttpStatus.OK);
     }
+
     @GetMapping("/type-room/detail/{id}")
     public ResponseEntity<TypeRoom> detailTypeRoom(@PathVariable("id") String id) {
         TypeRoom typeRoom = typeRoomService.getTypeRoomById(id);
@@ -530,9 +533,34 @@ public class HomeController {
     }
 
     @GetMapping("/type-room/getByName")
-    public ResponseEntity<TypeRoom> findByName(@RequestParam("name") String name) {
+    public ResponseEntity<TypeRoomDTO> findByName(@RequestParam("name") String name) {
         TypeRoom typeRoom = typeRoomService.findByName(name);
-        return new ResponseEntity<TypeRoom>(typeRoom, HttpStatus.OK);
+        List<Photo> list;
+        List<String> stringList;
+        TypeRoomDTO dto = new TypeRoomDTO();
+        if (typeRoom != null) {
+            list = photoService.getPhotoByTypeRoom(typeRoom.getId());
+            stringList = list.stream().map(item -> item.getUrl()).collect(Collectors.toList());
+            dto.setId(typeRoom.getId());
+            dto.setTypeRoomCode(typeRoom.getTypeRoomCode());
+            dto.setTypeRoomName(typeRoom.getTypeRoomName());
+            dto.setPricePerDay(typeRoom.getPricePerDay());
+            dto.setPricePerHours(typeRoom.getPricePerHours());
+            dto.setCapacity(typeRoom.getCapacity());
+            dto.setAdult(typeRoom.getAdult());
+            dto.setChildren(typeRoom.getChildren());
+            dto.setNote(typeRoom.getNote());
+            dto.setCreateAt(typeRoom.getCreateAt());
+            dto.setCreateBy(typeRoom.getCreateBy());
+            dto.setUpdateAt(typeRoom.getUpdateAt());
+            dto.setUpdatedBy(typeRoom.getUpdatedBy());
+            dto.setDeleted(typeRoom.getDeleted());
+            dto.setStatus(typeRoom.getStatus());
+            dto.setPhotoDTOS(stringList);
+        }
+
+        return new ResponseEntity<TypeRoomDTO>(dto, HttpStatus.OK);
+
     }
 
 
