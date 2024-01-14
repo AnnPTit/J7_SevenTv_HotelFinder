@@ -120,7 +120,7 @@ public class TypeRoomServiceImpl implements TypeRoomService {
         // B1 : lấy ra số lượng phòng của loại phòng
         List<Room> list = romRoomRepository.findByTypeRoomId(typeRoom.get(0).getId());
         if (list.size() == 0) return 0;
-        // B2 : Lấy tất cả các đơn booking với type =1 ( Thanh toán thành công ) của loại phòng
+        // B2 : Lấy tất cả các đơn booking với type = 1 ( Thanh toán thành công ) của loại phòng
         List<Booking> bookingList = bookingRepository.getAllByTypeRoom(typeRoom.get(0).getId());
         // B3 : Kiểm tra ngày check in check out có nằm trong khoảng ngày đã đặt
         List<Booking> bookingNotOk = new ArrayList<>();

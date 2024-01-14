@@ -38,7 +38,7 @@ public interface BookingRepository extends JpaRepository<Booking, String> , Book
     List<Booking> checkRoomBooked(@Param("typeRoomId") String typeRoomId, @Param("ci") Date checkIn, @Param("co") Date checkOut);
 
     @Query(value = "select * from booking b\n" +
-            "where b.id_type_room =:typeRoomId and b.status =1", nativeQuery = true)
+            "where b.id_type_room =:typeRoomId and b.status in (1,2 )", nativeQuery = true)
     List<Booking> getAllByTypeRoom(@Param("typeRoomId") String typeRoomId);
 
     @Query(value = "select * from booking b\n" +
