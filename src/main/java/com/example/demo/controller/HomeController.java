@@ -581,6 +581,40 @@ public class HomeController {
         return bookingService.getAllByStatus(status, idCuss);
     }
 
+    @GetMapping("/booking/get-photo")
+    public List<TypeRoomDTO> getPhoto() {
+        List<TypeRoom> list = typeRoomService.getList();
+        List<TypeRoomDTO> typeRoomDTOS = new ArrayList<>();
+        for (TypeRoom typeRoom : list) {
+            TypeRoomDTO dto = new TypeRoomDTO();
+            List<Photo> photos;
+            List<String> stringList = new ArrayList<>();
+            photos = photoService.getPhotoByTypeRoom(typeRoom.getId());
+            if (photos.size() != 0) {
+                stringList.add(photos.get(0).getUrl());
+            }
+            dto.setId(typeRoom.getId());
+            dto.setTypeRoomCode(typeRoom.getTypeRoomCode());
+            dto.setTypeRoomName(typeRoom.getTypeRoomName());
+            dto.setPricePerDay(typeRoom.getPricePerDay());
+            dto.setPricePerHours(typeRoom.getPricePerHours());
+            dto.setCapacity(typeRoom.getCapacity());
+            dto.setAdult(typeRoom.getAdult());
+            dto.setChildren(typeRoom.getChildren());
+            dto.setNote(typeRoom.getNote());
+            dto.setCreateAt(typeRoom.getCreateAt());
+            dto.setCreateBy(typeRoom.getCreateBy());
+            dto.setUpdateAt(typeRoom.getUpdateAt());
+            dto.setUpdatedBy(typeRoom.getUpdatedBy());
+            dto.setDeleted(typeRoom.getDeleted());
+            dto.setStatus(typeRoom.getStatus());
+            dto.setPhotoDTOS(stringList);
+            typeRoomDTOS.add(dto);
+        }
+        return typeRoomDTOS;
+
+    }
+
     @GetMapping("/booking/cancel/{id}")
     public ResponseEntity<Void> cancel(@PathVariable("id") String id, @RequestParam("reason") String reason) {
         if (bookingService.cancel(id, reason)) return new ResponseEntity<>(HttpStatus.OK);
