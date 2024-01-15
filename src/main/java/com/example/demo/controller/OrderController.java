@@ -479,7 +479,7 @@ public class OrderController {
             orderDetail.setUpdateAt(new Date());
             orderDetail.setUpdatedBy(baseService.getCurrentUser().getFullname());
             orderDetail.setStatus(Constant.ORDER_DETAIL.WAIT_CONFIRM);
-            orderDetail.getRoom().setStatus(Constant.ROOM.ACTIVE);
+//            orderDetail.getRoom().setStatus(Constant.ROOM.ACTIVE);
             orderDetailService.add(orderDetail);
 
             booking.setOrder(booking.getOrder());
@@ -723,8 +723,14 @@ public class OrderController {
         for (OrderDetail orderDetail : order.getOrderDetailList()) {
             if (orderDetail.getTimeIn() == 1) {
                 Room room = roomService.getRoomById(orderDetail.getRoom().getId());
+//                orderDetail.setCheckInDatetimeReal(new Date());
+                Date bookingStart;
                 orderDetail.setCheckOutDatetimeReal(new Date());
-                Date bookingStart = orderDetail.getCheckInDatetime();
+                if (orderDetail.getCheckInDatetimeReal() != null) {
+                    bookingStart = orderDetail.getCheckInDatetimeReal();
+                } else {
+                    bookingStart = orderDetail.getCheckInDatetime();
+                }
                 Date bookingEnd = orderDetail.getCheckOutDatetimeReal();
                 LocalDate startLocalDate = bookingStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
                 LocalDate endLocalDate = bookingEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();

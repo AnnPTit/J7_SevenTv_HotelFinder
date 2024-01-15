@@ -25,8 +25,11 @@ import org.springframework.web.multipart.MultipartFile;
 
 import java.io.File;
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.time.LocalDate;
+import java.time.ZoneId;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.Date;
 import java.util.List;
 import java.util.Random;
@@ -56,6 +59,8 @@ public class ManageBookingController {
     private PaymentMethodService paymentMethodService;
     @Autowired
     private HistoryTransactionService historyTransactionService;
+    @Autowired
+    private RoomService roomService;
     @Autowired
     private BaseService baseService;
     @Autowired
@@ -124,6 +129,23 @@ public class ManageBookingController {
 
         List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(customerBookingDTO.getIdOrder());
         addInformationCustomer(customer, orderDetails);
+
+        for (OrderDetail orderDetail : orderDetails) {
+            Room room = roomService.getRoomById(orderDetail.getRoom().getId());
+//                orderDetail.setCheckInDatetimeReal(new Date());
+            orderDetail.setCheckInDatetimeReal(new Date());
+            Date bookingStart = orderDetail.getCheckInDatetimeReal();
+            Date bookingEnd = orderDetail.getCheckOutDatetime();
+            LocalDate startLocalDate = bookingStart.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            LocalDate endLocalDate = bookingEnd.toInstant().atZone(ZoneId.systemDefault()).toLocalDate();
+            long days = ChronoUnit.DAYS.between(startLocalDate, endLocalDate);
+            System.out.println(days);
+            BigDecimal pricePerDay = room.getTypeRoom().getPricePerDay();
+            BigDecimal totalCost = pricePerDay.multiply(BigDecimal.valueOf(days + 1));
+            orderDetail.setRoomPrice(totalCost);
+            orderDetail.setUpdateAt(new Date());
+            orderDetailService.add(orderDetail);
+        }
 
         Booking booking = bookingService.getById(customerBookingDTO.getIdBooking());
         booking.setStatus(Constant.MANAGE_BOOKING.CHECKED_IN);

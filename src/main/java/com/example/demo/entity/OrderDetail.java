@@ -52,6 +52,9 @@ public class OrderDetail {
     @Column(name = "check_out_datetime")
     private Date checkOutDatetime;
 
+    @Column(name = "check_in_datetime_real")
+    private Date checkInDatetimeReal;
+
     @Column(name = "check_out_datetime_real")
     private Date checkOutDatetimeReal;
 
