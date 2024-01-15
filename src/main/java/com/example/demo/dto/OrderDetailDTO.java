@@ -29,6 +29,7 @@ public class OrderDetailDTO {
     private String roomId;
     private String orderDetailCode;
     private Date checkIn;
+    private Date checkInReal;
     private Date checkOut;
     private Date checkOutReal;
     private Integer timeIn;
