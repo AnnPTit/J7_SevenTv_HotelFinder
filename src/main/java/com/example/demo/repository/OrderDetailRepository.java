@@ -34,8 +34,8 @@ public interface OrderDetailRepository extends JpaRepository<OrderDetail, String
     List<String> checkRoomIsBooked(@Param("dayStart") String dayStart, @Param("dayEnd") String dayEnd, @Param("idsRoom") List<String> idsRoom);
 
     @Query(value = "select od.id from order_detail od where room_id = :idRoom " +
-            "and (((DATE(od.check_in_datetime) between :dayStart and :dayEnd) and od.status = 1) " +
-            "and ((DATE(od.check_out_datetime) between :dayStart and :dayEnd) and od.status = 1)) ", nativeQuery = true)
+            "and (((DATE(od.check_in_datetime) between :dayStart and :dayEnd) and od.status IN (1, 2)) " +
+            "and ((DATE(od.check_out_datetime) between :dayStart and :dayEnd) and od.status IN (1, 2))) ", nativeQuery = true)
     List<String> checkRoomExist(@Param("dayStart") String dayStart, @Param("dayEnd") String dayEnd, @Param("idRoom") String idRoom);
 
     @Query(value = "SELECT COUNT(`status`) FROM order_detail " +
