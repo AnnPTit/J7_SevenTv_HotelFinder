@@ -459,7 +459,7 @@ public class PaymentMethodController {
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
             Order order = orderService.getOrderById(idOrder);
             if (order != null) {
-                order.setTotalMoney(order.getTotalMoney().subtract(BigDecimal.valueOf(Long.parseLong(discount))));
+                order.setTotalMoney(order.getTotalMoney().subtract(BigDecimal.valueOf(Long.parseLong(discount) / 100)));
                 order.setMoneyGivenByCustomer(order.getMoneyGivenByCustomer().add(BigDecimal.valueOf(Long.parseLong(amount) / 100)));
                 order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setDiscount(BigDecimal.valueOf(Long.parseLong(discount) / 100));
