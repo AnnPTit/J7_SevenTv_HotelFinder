@@ -185,11 +185,11 @@ public class HomeController {
             return new ResponseEntity(errorMap, HttpStatus.BAD_REQUEST);
         }
 
-        if (customer.getFullname().isBlank()) {
+        if (DataUtil.isNull(customer.getFullname())) {
             return new ResponseEntity("Full name không được bỏ trống", HttpStatus.BAD_REQUEST);
         }
 
-        if (customer.getEmail().isBlank()) {
+        if (DataUtil.isNull(customer.getEmail())) {
             return new ResponseEntity("Email không được để trống!", HttpStatus.BAD_REQUEST);
         }
         if (!customer.getEmail().matches("^[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\\.[A-Z|a-z]{2,6}$")) {
@@ -199,14 +199,14 @@ public class HomeController {
             return new ResponseEntity("Email đã tồn tại, Vui lòng nhập E-mail mới!", HttpStatus.BAD_REQUEST);
         }
 
-        if (customer.getPhoneNumber().isBlank()) {
+        if (DataUtil.isNull(customer.getPhoneNumber())) {
             return new ResponseEntity("Số điện thoại không được bỏ trống", HttpStatus.BAD_REQUEST);
         }
         if (!customer.getPhoneNumber().matches("^(\\+84|0)[35789][0-9]{8}$")) {
             return new ResponseEntity("Số điện thoại không đúng định dạng!!", HttpStatus.BAD_REQUEST);
         }
 
-        if (customer.getCitizenId().isBlank()) {
+        if (DataUtil.isNull(customer.getCitizenId())) {
             return new ResponseEntity("Căn cước công dân không được để trống!!", HttpStatus.BAD_REQUEST);
         }
         if (!customer.getCitizenId().matches("\\d{12}")) {
@@ -216,12 +216,9 @@ public class HomeController {
             return new ResponseEntity("Căn cước công dân đã tồn tại!!", HttpStatus.BAD_REQUEST);
         }
 
-        if (customer.getPassword().isBlank()) {
+        if (DataUtil.isNull(customer.getPassword())) {
             return new ResponseEntity("Không được bỏ trống Mật khẩu", HttpStatus.BAD_REQUEST);
         }
-//        if (customer.getPassword().length() < 5 || customer.getPassword().length() > 20) {
-//            return new ResponseEntity("Mật khẩu phải từ 5-20 kí tự.", HttpStatus.BAD_REQUEST);
-//        }
 
         customer.setCustomerCode(customerService.generateCustomerCode());
         customer.setCreateAt(new Date());

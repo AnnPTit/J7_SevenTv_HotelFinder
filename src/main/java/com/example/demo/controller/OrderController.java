@@ -1,11 +1,7 @@
 package com.example.demo.controller;
 
 import com.example.demo.constant.Constant;
-import com.example.demo.dto.AddRoomDTO;
-import com.example.demo.dto.ConfirmOrderDTO;
-import com.example.demo.dto.OrderDTO;
-import com.example.demo.dto.OrderDetailDTO;
-import com.example.demo.dto.RevenueDTO;
+import com.example.demo.dto.*;
 import com.example.demo.entity.*;
 import com.example.demo.service.*;
 import com.example.demo.util.BaseService;
@@ -61,6 +57,8 @@ public class OrderController {
     private BookingService bookingService;
     @Autowired
     private BaseService baseService;
+    @Autowired
+    private TypeRoomService typeRoomService;
 
     @GetMapping("/load")
     public Page<Order> getAll(@RequestParam(name = "current_page", defaultValue = "0") int current_page) {
@@ -265,6 +263,21 @@ public class OrderController {
 
     @PostMapping("/save")
     public ResponseEntity<?> save(@RequestBody OrderDetailDTO orderDetailDTO) {
+        // Todo : Thực hiện kiểm tra các đơn booking của loại phòng này trong khoảng ngày này
+        Date checkInDateConfig = orderDetailDTO.getCheckIn();
+        Date checkOutDateConfig = orderDetailDTO.getCheckOut();
+        String roomId = orderDetailDTO.getRoomId();
+        TypeRoom typeRoom = typeRoomService.getTypeRoomByRoomId(roomId);
+
+        if (typeRoom != null) {
+            Integer count = typeRoomService.countRoomCanBeBook(typeRoom.getId(), checkInDateConfig, checkOutDateConfig);
+            if (count <= 0) {
+                String errorMessage = "Không đủ số phòng trống cho các đơn booking đang chờ !";
+                return new ResponseEntity<String>(errorMessage, HttpStatus.BAD_REQUEST);
+            }
+        }
+
+
         Account account = accountService.findById(baseService.getCurrentUser().getId());
         Customer customer = customerService.getCustomertByCode();
 

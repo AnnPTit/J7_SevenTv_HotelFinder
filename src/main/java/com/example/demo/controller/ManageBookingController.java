@@ -63,6 +63,8 @@ public class ManageBookingController {
     private RoomService roomService;
     @Autowired
     private BaseService baseService;
+    @Autowired
+    private MailService mailService;
 
 
     private static String bucketName = "j7v1"; // Thay bằng tên bucket AWS S3 của bạn
@@ -364,6 +366,34 @@ public class ManageBookingController {
         bookingHistoryTransaction.setUrl(url);
         bookingService.update(booking);
 
+        // send mail
+        String subject = " Xác Nhận Yêu Cầu Hủy Đặt Phòng";
+        String mailTo = booking.getCustomer().getEmail();
+        String content = "\n" +
+                "\n" +
+                "Chào " + booking.getCustomer().getFullname() + ",\n " +
+                "Chúng tôi xin chân thành cảm ơn bạn đã liên hệ với chúng tôi.\n" +
+                "\n" +
+                "Chúng tôi đã nhận được yêu cầu hủy đặt phòng của bạn. Dưới đây là thông tin chi tiết về yêu cầu của bạn:\n" +
+                "\n" +
+                "Tên Khách Hàng: " + booking.getCustomer().getFullname() + "\n" +
+                "Số Điện Thoại:" + booking.getCustomer().getPhoneNumber() + "\n" +
+                "Địa chỉ Email: " + booking.getCustomer().getEmail() + "\n" +
+                "Ngày Đặt Phòng: " + DataUtil.dateToString(booking.getCreateAt()) + "\n" +
+                "Ngày Check In : " + DataUtil.dateToString(booking.getCheckInDate()) + "\n" +
+                "Ngày Check Out: " + DataUtil.dateToString(booking.getCheckOutDate()) + "\n" +
+                "Loại Phòng: " + booking.getTypeRoom().getTypeRoomName() + "\n" +
+                "Chúng tôi đã xử lý yêu cầu hủy đặt phòng của bạn . Xin lưu ý rằng có thể áp dụng các điều khoản và điều kiện hủy đặt phòng của chúng tôi, vì vậy, xin vui lòng kiểm tra lại thông tin đặt phòng và điều khoản hủy đặt trong trang web hoặc hệ thống đặt phòng của chúng tôi.\n" +
+                "\n" +
+                "Nếu bạn cần thêm sự hỗ trợ hoặc có bất kỳ câu hỏi nào khác, vui lòng liên hệ với chúng tôi qua số điện thoại hoặc địa chỉ email dưới đây:\n" +
+                "\n" +
+                "Số Điện Thoại: [0389718892]\n" +
+                "Email Hỗ Trợ: [anptph27230@fpt.edu.vn]\n" +
+                "Chân thành cảm ơn bạn đã chọn chúng tôi và chúng tôi rất tiếc về sự bất tiện này. Mong rằng chúng tôi sẽ có cơ hội phục vụ bạn trong tương lai.\n" +
+                "\n" +
+                "Trân trọng,\n" +
+                "[Armani Hotel]\n";
+        DataUtil.sendMailCommon(mailTo, subject, content, mailService);
 
         return new ResponseEntity<Booking>(new Booking(), HttpStatus.OK);
     }
