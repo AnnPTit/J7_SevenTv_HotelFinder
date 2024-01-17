@@ -270,7 +270,7 @@ public class OrderController {
 //        TypeRoom typeRoom = typeRoomService.getTypeRoomByRoomId(roomId);
 
         if (typeRoom != null) {
-            Integer count = typeRoomService.countRoomCanBeBook(typeRoom.getTypeRoomName(), checkInDateConfig, checkOutDateConfig);
+            Integer count = typeRoomService.countRoomCanBeBook2(typeRoom.getTypeRoomName(), checkInDateConfig, checkOutDateConfig);
             if (count <= 0) {
                 String errorMessage = "Không đủ số phòng trống cho các đơn booking đang chờ !";
                 return new ResponseEntity<String>(errorMessage, HttpStatus.BAD_REQUEST);

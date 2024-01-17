@@ -149,4 +149,33 @@ public class TypeRoomServiceImpl implements TypeRoomService {
         Integer numberRoomOk = list.size() - numberRoomNotOk;
         return numberRoomOk;
     }
+
+    @Override
+    public Integer countRoomCanBeBook2(String typeRoomName, Date checkIn, Date checkOut) {
+        List<TypeRoom> typeRoom = typeRoomRepository.findByName(typeRoomName);
+        if (typeRoom.size() == 0) return 0;
+        // B1 : lấy ra số lượng phòng của loại phòng
+        List<Room> list = romRoomRepository.findByTypeRoomId(typeRoom.get(0).getId());
+        if (list.size() == 0) return 0;
+        // B2 : Lấy tất cả các đơn booking với type = 1 ( Thanh toán thành công ) của loại phòng
+        List<Booking> bookingList = bookingRepository.getAllByTypeRoom(typeRoom.get(0).getId());
+        // B3 : Kiểm tra ngày check in check out có nằm trong khoảng ngày đã đặt
+        List<Booking> bookingNotOk = new ArrayList<>();
+        for (Booking booking : bookingList) {
+            Date bookingDbCi = booking.getCheckInDate();
+            Date bookingDbCo = booking.getCheckOutDate();
+            // Checkin và check out không nằm giữa khoảng check in check out trong đb
+            if ((!checkIn.after(bookingDbCi) && !bookingDbCi.after(checkOut)) || (!checkIn.after(bookingDbCo) && !bookingDbCo.after(checkOut)) ) {
+                bookingNotOk.add(booking);
+            }
+        }
+        // bookingNotOk sẽ là list chứa các booking không thỏa mãn và sẽ phải trừ số lượng đi
+        if (bookingNotOk.size() == 0) return list.size();
+        Integer numberRoomNotOk = bookingNotOk.stream()
+                .mapToInt(Booking::getNumberRooms)
+                .sum();
+        // B4 : lấy tổng số phòng trừ đi số phòng không hợp lệ -> số phòng có thể đặt
+        Integer numberRoomOk = list.size() - numberRoomNotOk;
+        return numberRoomOk;
+    }
 }

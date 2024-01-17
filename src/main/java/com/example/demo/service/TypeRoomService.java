@@ -30,5 +30,7 @@ public interface TypeRoomService {
 
     Integer countRoomCanBeBook(String typeRoomName, Date checkIn, Date checkOut);
 
+    Integer countRoomCanBeBook2(String typeRoomName, Date checkIn, Date checkOut);
+
 
 }
