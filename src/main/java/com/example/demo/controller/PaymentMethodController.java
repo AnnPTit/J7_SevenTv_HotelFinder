@@ -451,6 +451,7 @@ public class PaymentMethodController {
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
             Order order = orderService.getOrderById(idOrder);
             if (order != null) {
+                order.setTotalMoney(order.getTotalMoney().subtract(BigDecimal.valueOf(Long.parseLong(discount))));
                 order.setMoneyGivenByCustomer(order.getMoneyGivenByCustomer().add(BigDecimal.valueOf(Long.parseLong(amount) / 100)));
                 order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setDiscount(BigDecimal.valueOf(Long.parseLong(discount) / 100));
@@ -462,6 +463,12 @@ public class PaymentMethodController {
                 order.setUpdateAt(new Date());
                 order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
                 orderService.add(order);
+
+                Booking booking = bookingService.getByIdOrder(idOrder);
+                if (booking != null) {
+                    booking.setStatus(Constant.MANAGE_BOOKING.CHECKED_OUT);
+                    bookingService.update(booking);
+                }
 
                 List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
                 for (OrderDetail orderDetail : orderDetails) {
@@ -674,6 +681,7 @@ public class PaymentMethodController {
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
             Order order = orderService.getOrderById(idOrder);
             if (order != null) {
+                order.setTotalMoney(order.getTotalMoney().subtract(BigDecimal.valueOf(Long.parseLong(discount))));
                 order.setMoneyGivenByCustomer(order.getMoneyGivenByCustomer().add(BigDecimal.valueOf(Long.parseLong(amount))));
                 order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setDiscount(BigDecimal.valueOf(Long.parseLong(discount)));
@@ -685,6 +693,12 @@ public class PaymentMethodController {
                 order.setUpdateAt(new Date());
                 order.setStatus(Constant.ORDER_STATUS.CHECKED_OUT);
                 orderService.add(order);
+
+                Booking booking = bookingService.getByIdOrder(idOrder);
+                if (booking != null) {
+                    booking.setStatus(Constant.MANAGE_BOOKING.CHECKED_OUT);
+                    bookingService.update(booking);
+                }
 
                 List<OrderDetail> orderDetails = orderDetailService.getOrderDetailByOrderId(order.getId());
                 for (OrderDetail orderDetail : orderDetails) {

@@ -1,6 +1,7 @@
 package com.example.demo.repository;
 
 import com.example.demo.entity.Booking;
+import com.example.demo.entity.Order;
 import com.example.demo.repository.custom.BookingRepositoryCustom;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -49,4 +50,8 @@ public interface BookingRepository extends JpaRepository<Booking, String>, Booki
     @Modifying
     @Query(value = "update booking set status = 6 where id = :id ", nativeQuery = true)
     void updateCancel(@Param("id") String id);
+
+    @Query(value = "SELECT o.* FROM booking o " +
+            " WHERE o.status = 1 ORDER BY o.update_at DESC", nativeQuery = true)
+    List<Booking> loadNotify();
 }

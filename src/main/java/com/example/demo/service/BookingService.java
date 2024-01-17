@@ -30,4 +30,6 @@ public interface BookingService {
     boolean cancel(String id, String reason);
 
     boolean confirmCancel(String id);
+
+    List<Booking> loadNotify();
 }
