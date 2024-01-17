@@ -98,4 +98,9 @@ public class BookingServiceImpl implements BookingService {
             return false;
         }
     }
+
+    @Override
+    public List<Booking> loadNotify() {
+        return bookingRepository.loadNotify();
+    }
 }
