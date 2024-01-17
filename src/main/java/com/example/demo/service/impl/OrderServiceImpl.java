@@ -338,6 +338,8 @@ public class OrderServiceImpl implements OrderService {
         parameters.put("bookingDay", DataUtil.dateToString(orderExportDTO.getBookingDay()));
         parameters.put("checkin", orderExportDTO.getCheckIn() != null ? DataUtil.dateToString(orderExportDTO.getCheckIn()) : dataTable.get(0).getCheckIn2());
         parameters.put("checkOut", orderExportDTO.getCheckOut() != null ? DataUtil.dateToString(orderExportDTO.getCheckOut()) : dataTable.get(0).getCheckOut3());
+        parameters.put("checkInFake", dataTable.get(0).getCheckIn2());
+        parameters.put("checkOutFake", dataTable.get(0).getCheckOut3());
         parameters.put("now", DataUtil.dateToString(new Date()));
         parameters.put("day", day);
         parameters.put("month", month);

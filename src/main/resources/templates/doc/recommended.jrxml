@@ -117,6 +117,8 @@
     <parameter name="surcharge" class="java.lang.String"/>
     <parameter name="discount" class="java.lang.String"/>
     <parameter name="now" class="java.lang.String"/>
+    <parameter name="checkInFake" class="java.lang.String"/>
+    <parameter name="checkOutFake" class="java.lang.String"/>
     <group name="Group1">
         <groupFooter>
             <band height="16">
@@ -158,6 +160,18 @@
                     <textFieldExpression><![CDATA["- Ngày Đặt : " + $P{bookingDay}]]></textFieldExpression>
                 </textField>
             </band>
+            <band height="14">
+                <textField textAdjust="StretchHeight">
+                    <reportElement stretchType="RelativeToTallestObject" x="-21" y="1" width="520" height="13" uuid="33ffdaf0-d90c-46ee-b8fc-e3fdae895660">
+                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
+                        <property name="com.jaspersoft.studio.unit.height" value="px"/>
+                    </reportElement>
+                    <textElement>
+                        <font fontName="Times New Roman" size="11"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["- Ngày Check-In Dự kiến  : " + $P{checkInFake}]]></textFieldExpression>
+                </textField>
+            </band>
             <band height="16">
                 <property name="com.jaspersoft.studio.unit.height" value="px"/>
                 <textField textAdjust="StretchHeight">
@@ -171,6 +185,18 @@
                     <textFieldExpression><![CDATA["- Check-In : " + $P{checkin}]]></textFieldExpression>
                 </textField>
             </band>
+            <band height="15">
+                <textField textAdjust="StretchHeight">
+                    <reportElement stretchType="RelativeToTallestObject" x="-21" y="2" width="520" height="13" uuid="0eba079c-2d7b-4926-88e7-4bb7f67467fb">
+                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
+                        <property name="com.jaspersoft.studio.unit.height" value="px"/>
+                    </reportElement>
+                    <textElement>
+                        <font fontName="Times New Roman" size="11"/>
+                    </textElement>
+                    <textFieldExpression><![CDATA["- Check-Out Dự kiến  : " + $P{checkOutFake}]]></textFieldExpression>
+                </textField>
+            </band>
             <band height="16">
                 <property name="com.jaspersoft.studio.unit.height" value="px"/>
                 <textField textAdjust="StretchHeight">
@@ -181,7 +207,7 @@
                     <textElement>
                         <font fontName="Times New Roman" size="11"/>
                     </textElement>
-                    <textFieldExpression><![CDATA["- Check-Out dự kiến : " + $P{checkOut}]]></textFieldExpression>
+                    <textFieldExpression><![CDATA["- Check-Out  : " + $P{checkOut}]]></textFieldExpression>
                 </textField>
             </band>
             <band height="15">
@@ -698,16 +724,7 @@
             <band height="15">
                 <property name="com.jaspersoft.studio.unit.height" value="px"/>
                 <textField textAdjust="StretchHeight">
-                    <reportElement stretchType="RelativeToTallestObject" x="-21" y="2" width="271" height="13" uuid="f5de8dc6-40ad-44ae-be34-021d75063412">
-                        <property name="com.jaspersoft.studio.unit.width" value="px"/>
-                    </reportElement>
-                    <textElement>
-                        <font fontName="Times New Roman" size="11"/>
-                    </textElement>
-                    <textFieldExpression><![CDATA["- Tiền cọc :  " + $P{deposit} +"VND"]]></textFieldExpression>
-                </textField>
-                <textField textAdjust="StretchHeight">
-                    <reportElement stretchType="RelativeToTallestObject" x="257" y="0" width="243" height="14" uuid="e6324f92-cbbd-4a50-bb90-051d7baf5bdd">
+                    <reportElement stretchType="RelativeToTallestObject" x="-21" y="0" width="243" height="14" uuid="e6324f92-cbbd-4a50-bb90-051d7baf5bdd">
                         <property name="com.jaspersoft.studio.unit.width" value="px"/>
                     </reportElement>
                     <textElement>
@@ -782,7 +799,6 @@
                     <textFieldExpression><![CDATA["- Tiền thừa : " +$P{excessMoney}+"VND"]]></textFieldExpression>
                 </textField>
             </band>
-            <band height="46"/>
         </groupFooter>
     </group>
     <background>
