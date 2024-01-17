@@ -1,8 +1,6 @@
 package com.example.demo.repository;
 
-import com.example.demo.dto.TypeRoomDTO;
 import com.example.demo.entity.TypeRoom;
-import lombok.experimental.PackagePrivate;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -32,5 +30,8 @@ public interface TypeRoomRepository extends JpaRepository<TypeRoom, String> {
 //    TypeRoomDTO getTypeRoomByID(@Param("name") String id);
 
     boolean existsByTypeRoomCode(String code);
+
+    @Query(value = "select * from type_room tr inner join room r on r.type_room_id = tr.id where r.id = :roomId", nativeQuery = true)
+    List<TypeRoom> getTypeRoomByRoomId(@Param("roomId") String roomId);
 
 }

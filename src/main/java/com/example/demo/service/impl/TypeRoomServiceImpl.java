@@ -1,24 +1,20 @@
 package com.example.demo.service.impl;
 
+import com.example.demo.dto.TypeRoomDTO;
 import com.example.demo.entity.Booking;
 import com.example.demo.entity.Room;
-import com.example.demo.dto.TypeRoomDTO;
 import com.example.demo.entity.TypeRoom;
 import com.example.demo.repository.BookingRepository;
 import com.example.demo.repository.RoomRepository;
 import com.example.demo.repository.TypeRoomRepository;
 import com.example.demo.service.PhotoService;
-import com.example.demo.service.BookingService;
-import com.example.demo.service.RoomService;
 import com.example.demo.service.TypeRoomService;
-import com.example.demo.util.DataUtil;
 import lombok.RequiredArgsConstructor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -55,6 +51,15 @@ public class TypeRoomServiceImpl implements TypeRoomService {
     @Override
     public TypeRoom getTypeRoomById(String id) {
         return typeRoomRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public TypeRoom getTypeRoomByRoomId(String roomId) {
+        List<TypeRoom> list = typeRoomRepository.getTypeRoomByRoomId(roomId);
+        if (list.size() != 0) {
+            return list.get(0);
+        }
+        return null;
     }
 
     @Override

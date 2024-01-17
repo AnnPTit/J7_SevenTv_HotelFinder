@@ -18,6 +18,8 @@ public interface TypeRoomService {
 
     TypeRoom getTypeRoomById(String id);
 
+    TypeRoom getTypeRoomByRoomId(String roomId);
+
     TypeRoom findByName(String name);
 
     TypeRoom add(TypeRoom typeRoom);
@@ -26,7 +28,7 @@ public interface TypeRoomService {
 
     boolean existsByCode(String code);
 
-    Integer countRoomCanBeBook(String typeRoomId , Date checkIn , Date checkOut );
+    Integer countRoomCanBeBook(String typeRoomId, Date checkIn, Date checkOut);
 
 
 }
