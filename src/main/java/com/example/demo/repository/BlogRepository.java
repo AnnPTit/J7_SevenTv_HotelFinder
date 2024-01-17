@@ -27,4 +27,6 @@ public interface BlogRepository extends JpaRepository<Blog, String> {
             "WHERE (:title is null or title LIKE CONCAT('%', :title ,'%'))\n" +
             " and status = 1 order by update_at desc", nativeQuery = true)
     Page<Blog> loadAndSearch(@Param("title") String title, Pageable pageable);
+
+
 }

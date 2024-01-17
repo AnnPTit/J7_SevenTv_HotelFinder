@@ -28,7 +28,7 @@ public interface TypeRoomService {
 
     boolean existsByCode(String code);
 
-    Integer countRoomCanBeBook(String typeRoomId, Date checkIn, Date checkOut);
+    Integer countRoomCanBeBook(String typeRoomName, Date checkIn, Date checkOut);
 
 
 }

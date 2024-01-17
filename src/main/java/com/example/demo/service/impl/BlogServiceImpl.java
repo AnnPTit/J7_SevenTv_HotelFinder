@@ -41,14 +41,13 @@ public class BlogServiceImpl implements BlogService {
 
     @Override
     public Page<BlogDTO> getPaginate(Pageable pageable) {
-        return blogRepository.findAll(pageable).map(item -> toDto(item));
+        return blogRepository.loadAndSearch(null, pageable).map(item -> toDto(item));
     }
 
     @Override
     public Page<BlogDTO> loadAndSearch(String title, Pageable pageable) {
         return blogRepository.loadAndSearch((title != null && !title.isEmpty()) ? "%" + title + "%" : null, pageable).map(item -> toDto(item));
     }
-
 
 
     @Override
@@ -79,6 +78,7 @@ public class BlogServiceImpl implements BlogService {
         }
 
     }
+
     @Override
     public Blog findOne(String blogId) {
         return blogRepository.getOne(blogId);
@@ -114,7 +114,6 @@ public class BlogServiceImpl implements BlogService {
         }
         return 0;
     }
-
 
 
     @Override
