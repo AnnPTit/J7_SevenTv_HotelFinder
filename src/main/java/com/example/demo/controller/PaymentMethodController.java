@@ -451,7 +451,7 @@ public class PaymentMethodController {
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
             Order order = orderService.getOrderById(idOrder);
             if (order != null) {
-                order.setMoneyGivenByCustomer(BigDecimal.valueOf(Long.parseLong(amount) / 100));
+                order.setMoneyGivenByCustomer(order.getMoneyGivenByCustomer().add(BigDecimal.valueOf(Long.parseLong(amount) / 100)));
                 order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setDiscount(BigDecimal.valueOf(Long.parseLong(discount) / 100));
                 order.setNote("Khách thanh toán bằng tài khoản ngân hàng");
@@ -468,7 +468,7 @@ public class PaymentMethodController {
                     orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_OUT);
                     orderDetailService.add(orderDetail);
                     Room room = orderDetail.getRoom();
-                    room.setStatus(Constant.ROOM.EMPTY);
+                    room.setStatus(Constant.ROOM.WAIT_CLEAN);
                     roomService.add(room);
                 }
 
@@ -674,8 +674,7 @@ public class PaymentMethodController {
             // Thanh toán thành công, lưu thông tin vào cơ sở dữ liệu
             Order order = orderService.getOrderById(idOrder);
             if (order != null) {
-                order.setTotalMoney(BigDecimal.valueOf(Long.parseLong(amount)));
-                order.setMoneyGivenByCustomer(BigDecimal.valueOf(Long.parseLong(amount)));
+                order.setMoneyGivenByCustomer(order.getMoneyGivenByCustomer().add(BigDecimal.valueOf(Long.parseLong(amount))));
                 order.setExcessMoney(BigDecimal.valueOf(0));
                 order.setDiscount(BigDecimal.valueOf(Long.parseLong(discount)));
                 order.setNote("Khách thanh toán bằng Momo");
@@ -692,7 +691,7 @@ public class PaymentMethodController {
                     orderDetail.setStatus(Constant.ORDER_DETAIL.CHECKED_OUT);
                     orderDetailService.add(orderDetail);
                     Room room = orderDetail.getRoom();
-                    room.setStatus(Constant.ROOM.EMPTY);
+                    room.setStatus(Constant.ROOM.WAIT_CLEAN);
                     roomService.add(room);
                 }
 
@@ -706,7 +705,7 @@ public class PaymentMethodController {
                 String paymentMethodCode = "PT" + formattedDate + randomDigits;
                 paymentMethod.setPaymentMethodCode(paymentMethodCode);
                 paymentMethod.setMethod(false);
-                paymentMethod.setTotalMoney(order.getMoneyGivenByCustomer());
+                paymentMethod.setTotalMoney(BigDecimal.valueOf(Long.parseLong(amount)));
                 paymentMethod.setNote(order.getNote());
                 paymentMethod.setCreateAt(new Date());
                 paymentMethod.setCreateBy(order.getCreateBy());
@@ -717,7 +716,7 @@ public class PaymentMethodController {
 
                 HistoryTransaction historyTransaction = new HistoryTransaction();
                 historyTransaction.setOrder(order);
-                historyTransaction.setTotalMoney(order.getMoneyGivenByCustomer());
+                historyTransaction.setTotalMoney(BigDecimal.valueOf(Long.parseLong(amount)));
                 historyTransaction.setNote(order.getNote());
                 historyTransaction.setCreateAt(new Date());
                 historyTransaction.setCreateBy(order.getCreateBy());
