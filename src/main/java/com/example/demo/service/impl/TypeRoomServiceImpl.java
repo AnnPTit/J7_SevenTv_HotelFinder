@@ -55,6 +55,9 @@ public class TypeRoomServiceImpl implements TypeRoomService {
 
     @Override
     public TypeRoom getTypeRoomByRoomId(String roomId) {
+        if (roomId == null) {
+            return null;
+        }
         List<TypeRoom> list = typeRoomRepository.getTypeRoomByRoomId(roomId);
         if (list.size() != 0) {
             return list.get(0);

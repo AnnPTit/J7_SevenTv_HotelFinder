@@ -45,6 +45,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
 @RestController
@@ -273,9 +274,16 @@ public class PaymentMethodController {
         String checkOutStr = (String) requestBody.get("checkOut");
         LocalDate checkIn = DataUtil.convertStringToLocalDate(checkInStr);
         LocalDate checkOut = DataUtil.convertStringToLocalDate(checkOutStr);
+        Integer numberNight = Integer.valueOf(requestBody.get("numberNight").toString());
+
+        // Calculate the number of nights
+        long nightsBetween = ChronoUnit.DAYS.between(checkIn, checkOut);
+        if (nightsBetween != numberNight) {
+            return "Vui lòng chọn lại ngày !";
+        }
+
         Date checkInDateConfig = DataUtil.convertLocalDateToDateWithTime(checkIn, 14);
         Date checkOutDateConfig = DataUtil.convertLocalDateToDateWithTime(checkOut, 12);
-        Integer numberNight = Integer.valueOf(requestBody.get("numberNight").toString());
         Integer numberRoom = Integer.valueOf(requestBody.get("numberRoom").toString());
         Integer numberCustomer = Integer.valueOf(requestBody.get("numberCustomer").toString());
         Integer numberChildren = Integer.valueOf(requestBody.get("numberChildren").toString());

@@ -31,7 +31,9 @@ public interface TypeRoomRepository extends JpaRepository<TypeRoom, String> {
 
     boolean existsByTypeRoomCode(String code);
 
-    @Query(value = "select * from type_room tr inner join room r on r.type_room_id = tr.id where r.id = :roomId", nativeQuery = true)
+    @Query(value = "SELECT * \n" +
+            "FROM type_room tr \n" +
+            "INNER JOIN room r ON r.type_room_id = tr.id AND r.id = :roomId;\n", nativeQuery = true)
     List<TypeRoom> getTypeRoomByRoomId(@Param("roomId") String roomId);
 
 }

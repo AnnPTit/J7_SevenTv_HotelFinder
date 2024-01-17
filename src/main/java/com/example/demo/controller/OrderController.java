@@ -266,11 +266,11 @@ public class OrderController {
         // Todo : Thực hiện kiểm tra các đơn booking của loại phòng này trong khoảng ngày này
         Date checkInDateConfig = orderDetailDTO.getCheckIn();
         Date checkOutDateConfig = orderDetailDTO.getCheckOut();
-        String roomId = orderDetailDTO.getRoomId();
-        TypeRoom typeRoom = typeRoomService.getTypeRoomByRoomId(roomId);
+        TypeRoom typeRoom = orderDetailDTO.getRoom().getTypeRoom();
+//        TypeRoom typeRoom = typeRoomService.getTypeRoomByRoomId(roomId);
 
         if (typeRoom != null) {
-            Integer count = typeRoomService.countRoomCanBeBook(typeRoom.getId(), checkInDateConfig, checkOutDateConfig);
+            Integer count = typeRoomService.countRoomCanBeBook(typeRoom.getTypeRoomName(), checkInDateConfig, checkOutDateConfig);
             if (count <= 0) {
                 String errorMessage = "Không đủ số phòng trống cho các đơn booking đang chờ !";
                 return new ResponseEntity<String>(errorMessage, HttpStatus.BAD_REQUEST);
